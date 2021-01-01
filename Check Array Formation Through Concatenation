@@ -1,0 +1,4 @@
+class Solution:
+    def canFormArray(self, arr, pieces):
+        arr_str = "!".join(map(str, arr)) + "!"
+        return all("!".join(map(str, p)) + "!" in arr_str for p in pieces)
