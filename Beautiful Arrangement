@@ -1,0 +1,48 @@
+class Solution:
+
+	# if we have time to lose, generate all the permutations and then verify the validity
+    def countArrangement(self, n: int) -> int:
+        def verify(arr):
+            for i in range(len(arr)):
+                if arr[i] % (i+1) != 0 and (i+1) % arr[i] != 0:
+                    return False
+            return True
+            
+        return sum(int(verify(arr)) for arr in itertools.permutations([i for i in range(1, n+1)]))
+    
+	# Bottom up, keep only valid answers, we recur only if the number at position i is valid. Accepted but takes around 2500ms
+    def countArrangement(self, n: int) -> int:
+        def verify(val, idx):
+            return val % (idx+1) == 0 or (idx+1) % val == 0
+            
+        def solve(cur=[]):
+            if len(cur) == len(base):
+                return 1
+            
+            cnt = 0
+            for i in range(len(base)):
+                if base[i] not in visited and verify(base[i], len(cur)):
+                    visited.add(base[i])
+                    cnt += solve(cur + [base[i]])
+                    visited.remove(base[i])
+            return cnt
+        
+        visited = set()
+        base = [i for i in range(1, n+1)]
+        return solve()
+    
+    # Top down, cache the current array for higher speed, takes around 60 ms 
+    def countArrangement(self, n: int) -> int:
+        @functools.cache
+        def solve(cur):
+            if len(cur) == 1:
+                return 1
+            
+            total = 0
+            for j in range(len(cur)):
+                if cur[j] % len(cur) == 0 or len(cur) % cur[j] == 0:
+                    total += solve(cur[:j] + cur[j+1:])
+    
+            return total 
+        
+        return solve(tuple(range(1, n+1)))
