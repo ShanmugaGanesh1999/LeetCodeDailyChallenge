@@ -1,0 +1,8 @@
+// return (lambda c: sum(min(c[n], c[k-n]) for n in c))(Counter(nums))//2
+//or 
+class Solution:
+    def maxOperations(self, nums, k):
+        cnt, ans = Counter(nums), 0
+        for val in cnt:
+            ans += min(cnt[val], cnt[k - val])
+        return ans//2
