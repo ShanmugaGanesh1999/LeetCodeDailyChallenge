@@ -1,0 +1,20 @@
+class Solution:
+    def minimumDeviation(self, nums: List[int]) -> int:
+        h = []
+        n = len(nums)
+        curr_min = float('inf')
+        for n in nums:
+            if n % 2 == 1:
+                n *= 2  # odd value can only be multiplied by 2 once. We do it now.
+            curr_min = min(curr_min, n) # keep track of the minimum value
+            heappush(h, -n)
+        devi = -h[0] - curr_min 
+        while h[0] % 2 == 0: # the deviation will stop changing when the maximum value is odd which can not be devided by 2 any more.
+            e = -heappop(h)
+            while e % 2 == 0 and e >= -h[0]: # we keep track of the deviation while reducing the maximum number.
+                devi = min(devi, e - curr_min)
+                e = e // 2
+            curr_min = min(curr_min, e)
+            heappush(h, -e)
+            devi = min(devi, -h[0] - curr_min)
+        return devi
