@@ -1,0 +1,4 @@
+class Solution:
+    def findLHS(self, nums):
+        C = Counter(nums)
+        return max((C[n] + C[n+1])*(C[n+1] != 0) for n in C)
