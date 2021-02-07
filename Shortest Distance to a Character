@@ -1,0 +1,11 @@
+class Solution:
+    def shortestToChar(self, S, C):
+        def letter_get(letter, dr):
+            n = len(S)
+            res, cur = [0]*n, -n
+            for i in range(n)[::dr]:
+                if S[i] == letter: cur = i
+                res[i] = abs(i - cur)
+            return res
+        
+        return [min(x,y) for x,y in zip(letter_get(C, 1), letter_get(C, -1))]
