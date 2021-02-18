@@ -8,3 +8,4 @@ class Solution:
 class Solution:
     def numberOfArithmeticSlices(self, A):
         return sum(((2*len(list(j))-1)**2-1)//8 for i, j in groupby([j-i for i,j in zip(A, A[1:])]))
+ 
