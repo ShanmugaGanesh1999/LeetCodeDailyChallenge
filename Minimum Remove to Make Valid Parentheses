@@ -14,3 +14,4 @@ class Solution:
             return ans
         
         return clean(clean(s, "(", ")")[::-1], ")", "(")[::-1]
+ 
