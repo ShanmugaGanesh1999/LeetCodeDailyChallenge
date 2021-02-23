@@ -1,0 +1,12 @@
+class Solution:
+    def searchMatrix(self, matrix, target):
+        rn, cn = len(matrix), len(matrix[0])
+        
+        def helper(rb, re, cb, ce):
+            if rb > re or cb > ce: return False
+            rm, cm = (rb + re) // 2, (cb + ce) // 2
+            if target == matrix[rm][cm]: return True
+            elif target < matrix[rm][cm]: return helper(rb, rm-1, cb, ce) or helper(rm, re, cb, cm-1)
+            else: return helper(rb, rm, cm+1, ce) or helper(rm+1, re, cb, ce)
+        
+        return helper(0, rn-1, 0, cn-1)
