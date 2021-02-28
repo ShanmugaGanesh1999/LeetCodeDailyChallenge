@@ -1,0 +1,25 @@
+from sortedcontainers import SortedList
+
+class FreqStack:
+    def __init__(self):
+        self.SList = SortedList()   #(freq, num, last)
+        self.Places = defaultdict(list)  #num -> all indexes
+        self.N = 0
+
+    def push(self, x):
+        freq_x = len(self.Places[x])
+        if freq_x > 0: self.SList.remove((freq_x, self.Places[x][-1], x))
+        self.SList.add((freq_x + 1, self.N, x))
+        self.Places[x].append(self.N)
+        self.N += 1
+        
+    def pop(self):
+        freq, end, num = self.SList.pop()
+        self.Places[num].pop()
+        if freq > 1: self.SList.add((freq - 1, self.Places[num][-1], num))
+        return num
+    
+# Your FreqStack object will be instantiated and called as such:
+# obj = FreqStack()
+# obj.push(x)
+# param_2 = obj.pop()
