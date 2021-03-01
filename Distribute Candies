@@ -1,0 +1,8 @@
+class Solution:
+    def distributeCandies(self, candies):
+        return min(len(candies)//2, len(Counter(candies)))
+        
+#or
+  return min(len(set(candyType)),len(candyType)//2)
+#or
+  return min(len(set(candyType)), len(candyType)//2)
