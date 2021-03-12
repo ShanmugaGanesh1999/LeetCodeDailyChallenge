@@ -1,0 +1,15 @@
+class Solution:
+    def hasAllCodes(self, s: str, k: int) -> bool:
+        n = len(s)
+        need = 2**k # there are total 2**k binary codes of length k
+        seen = [False] * need # seen[x] is to check if value x is existed as substring length k of string `s`
+        clearKthBitMask = need - 1 # mask to clear bit at k_th
+        
+        val = 0
+        for i in range(n):
+            val = (val << 1) & clearKthBitMask | int(s[i])
+            if i-k+1 >= 0 and seen[val] == False:
+                seen[val] = True
+                need -= 1
+                
+        return need == 0
