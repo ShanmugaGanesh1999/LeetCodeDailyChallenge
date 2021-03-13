@@ -11,3 +11,4 @@ class Solution:
             return ans
         
         return sum(dp(num) for num in s_arr) % N
+ 
