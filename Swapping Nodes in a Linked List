@@ -11,3 +11,4 @@ class Solution:
         while A: A, B = A.next, B.next
         nodeK.val, B.val = B.val, nodeK.val
         return head
+ 
