@@ -5,3 +5,4 @@ class Solution:
             buying = max(buying, selling + P[i] - F)
             selling = max(selling, buying - P[i])
         return buying
+ 
