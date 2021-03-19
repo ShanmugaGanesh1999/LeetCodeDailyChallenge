@@ -1,0 +1,26 @@
+class Solution:
+    def canVisitAllRooms(self, rooms):
+        visited = set([0])
+        
+        def dfs(room):
+            for neib in rooms[room]:
+                if neib not in visited:
+                    visited.add(neib)
+                    dfs(neib)
+                    
+        dfs(0)
+        return len(visited) == len(rooms)
+       
+# or
+
+from scipy.sparse.linalg import expm
+
+class Solution:
+    def canVisitAllRooms(self, rooms):
+        return 0 not in expm([[j in r + [i] for j in range(len(rooms))] for i,r in enumerate(rooms)])[0]
+        
+# or
+
+class Solution:
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        return len(rooms)==len((f:=lambda q,v:q and f(q|(n:=set(rooms[q.pop()])-v),v|n) or v)({0},{0}))
