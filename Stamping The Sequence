@@ -30,3 +30,4 @@ class Solution:
                     queue.append(j)
         
         return ans[::-1] if target_mask == 0 else []
+ 
