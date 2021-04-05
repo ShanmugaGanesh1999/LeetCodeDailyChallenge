@@ -4,7 +4,7 @@ class Solution:
             if i - A[i] > 1 or i - A[i] < -1: return False
         return True
 
-or
+// or
 
 class Solution {
     public boolean isIdealPermutation(int[] A) {
@@ -14,7 +14,7 @@ class Solution {
     }
 }
 
-or
+// or
 
 class Solution {
 public:
@@ -25,7 +25,7 @@ public:
     }
 };
 
-or
+// or
 
 var isIdealPermutation = function(A) {
     for (let i = 0; i < A.length; i++)
