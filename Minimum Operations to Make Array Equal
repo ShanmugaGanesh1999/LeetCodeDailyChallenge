@@ -1,0 +1,36 @@
+Javascript Code:
+
+The best result for the code below is 76ms / 38.6MB (beats 95% / 90%).
+
+var minOperations = function(n) {
+    return ~~(n * n / 4)
+};
+
+Python Code:
+
+The best result for the code below is 20ms / 14.2MB (beats 100% / 75%).
+
+class Solution:
+    def minOperations(self, n: int) -> int:
+        return n * n // 4
+
+Java Code:
+
+The best result for the code below is 0ms / 35.5MB (beats 100% / 89%).
+
+class Solution {
+    public int minOperations(int n) {
+        return n * n / 4;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 5.9MB (beats 100% / 2.4%).
+
+class Solution {
+public:
+    int minOperations(int n) {
+        return n * n / 4;
+    }
+};
