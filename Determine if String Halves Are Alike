@@ -1,0 +1,53 @@
+Javascript Code:
+
+const vowels = "aeiouAEIOU"
+
+var halvesAreAlike = function(S) {
+    let mid = S.length / 2, ans = 0
+    for (let i = 0, j = mid; i < mid; i++, j++)
+        ans += vowels.includes(S.charAt(i)) - vowels.includes(S.charAt(j))
+    return ans === 0
+};
+
+Python Code:
+
+vowels = "aeiouAEIOU"
+
+class Solution:
+    def halvesAreAlike(self, S: str) -> bool:
+        mid, ans = len(S) // 2, 0
+        for i in range(mid):
+            if S[i] in vowels: ans += 1
+            if S[mid+i] in vowels: ans -=1
+        return ans == 0
+
+Java Code:
+
+class Solution {
+    String vowels = "aeiouAEIOU";
+    
+    public boolean halvesAreAlike(String S) {
+        int mid = S.length() / 2, ans = 0;
+        for (int i = 0, j = mid; i < mid; i++, j++) {
+            if (vowels.indexOf(S.charAt(i)) >= 0) ans++;
+            if (vowels.indexOf(S.charAt(j)) >= 0) ans--;
+        }
+        return ans == 0;
+    }
+}
+
+C++ Code:
+
+string vowels = "aeiouAEIOU";
+
+class Solution {
+public:
+    bool halvesAreAlike(string S) {
+        int mid = S.size() / 2, ans = 0;
+        for (int i = 0, j = mid; i < mid; i++, j++) {
+            if (~vowels.find(S[i])) ans++;
+            if (~vowels.find(S[j])) ans--;
+        }
+        return ans == 0;
+    }
+};
