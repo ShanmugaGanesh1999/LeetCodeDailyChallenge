@@ -1,0 +1,73 @@
+Javascript Code:
+
+var isAlienSorted = function(W, O) {
+    let alpha = new Map([["",-1]])
+    for (let i = 0; i < O.length; i++)
+        alpha.set(O.charAt(i), i)
+    for (let i = 1; i < W.length; i++) {
+        let a = W[i-1], b = W[i]
+        for (let j = 0; j < a.length; j++) {
+            let achar = a.charAt(j), bchar = b.charAt(j),
+                aix = alpha.get(achar), bix = alpha.get(bchar)
+            if (aix < bix) break
+            if (aix > bix) return false
+        }
+    }
+    return true
+};
+
+Python Code:
+
+class Solution:
+    def isAlienSorted(self, W: List[str], O: str) -> bool:
+        alpha = {O[i]: i for i in range(len(O))}
+        for i in range(1,len(W)):
+            a, b = W[i-1], W[i]
+            for j in range(len(a)):
+                if j == len(b): return False
+                achar, bchar = a[j], b[j]
+                aix, bix = alpha[achar], alpha[bchar]
+                if aix < bix: break
+                if aix > bix: return False
+        return True
+
+Java Code:
+
+class Solution {
+    public boolean isAlienSorted(String[] W, String O) {
+        Map<Character,Integer> alpha = new HashMap<>();
+        for (int i = 0; i < O.length(); i++)
+            alpha.put(O.charAt(i), i);
+        for (int i = 1; i < W.length; i++) {
+            String a = W[i-1], b = W[i];
+            for (int j = 0; j < a.length(); j++) {
+                if (j == b.length()) return false;
+                char achar = a.charAt(j), bchar = b.charAt(j);
+                if (alpha.get(achar) < alpha.get(bchar)) break;
+                if (alpha.get(achar) > alpha.get(bchar)) return false;
+            }
+        }
+        return true;
+    }
+}
+
+C++ Code:
+
+class Solution {
+public:
+    bool isAlienSorted(vector<string>& W, string O) {
+        unordered_map<char,int> alpha;
+        for (int i = 0; i < O.size(); i++)
+            alpha[O[i]] = i;
+        for (int i = 1; i < W.size(); i++) {
+            string a = W[i-1], b = W[i];
+            for (int j = 0; j < a.size(); j++) {
+                if (j == b.size()) return false;
+                char achar = a[j], bchar = b[j];
+                if (alpha[achar] < alpha[bchar]) break;
+                if (alpha[achar] > alpha[bchar]) return false;
+            }
+        }
+        return true;
+    }
+};
