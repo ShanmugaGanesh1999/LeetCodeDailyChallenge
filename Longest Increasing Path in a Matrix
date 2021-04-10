@@ -1,0 +1,148 @@
+Python:
+
+class Solution:
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+		# This gives TLE for larger inputs
+        def bfs(row, col):
+            q = collections.deque()
+            visited = [[0 for _ in range(m)] for _ in range(n)]
+            visited[row][col] = 1
+            dist = 0
+            q.append((row, col))
+        
+            while q:
+                dist += 1
+                lq = len(q)
+                for i in range(lq):
+                    r, c = q.popleft()
+                    for nr, nc in [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]]:
+                        if 0 <= nr < n and 0 <= nc < m and not visited[nr][nc] and matrix[r][c] < matrix[nr][nc]:
+                            q.append((nr, nc))
+            
+            return dist
+                       
+        n, m = len(matrix), len(matrix[0])
+        best = 0
+        for r in range(n):
+            for c in range(m):
+                best = max(best, bfs(r, c))
+        return best
+    
+    
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        @functools.cache
+        def dfs(row, col):
+            
+            visited[row][col] = 1
+            best = 1
+            
+            for nr, nc in [[row + 1, col], [row - 1, col], [row, col + 1], [row, col - 1]]:
+                if 0 <= nr < n and 0 <= nc < m and not visited[nr][nc] and matrix[row][col] < matrix[nr][nc]:
+                    best = max(best, dfs(nr, nc) + 1)
+                    
+            visited[row][col] = 0
+            return best
+        
+        n, m = len(matrix), len(matrix[0])
+        visited = [[0 for _ in range(m)] for _ in range(n)]
+        res = 0
+        for r in range(n):
+            for c in range(m):
+                res = max(res, dfs(r, c))
+        return res
+    
+        
+    """
+    dp[i][j] depends only on the result of its neighbors. Can we find a dp solution?
+    the state dp[i][j] represents the longest increasing subsequence that arrives in i, j
+
+    to effectively perform the dp transition, we need to figure out the topological sort of the options graph,
+    so that, when we calculate dp[i][j], we need to have already calculated the result of its neighbors.
+    to do so, we can sort the cells in increasing order; in this case, all the neighbors with lower values than cell i,
+    have already been calculated
+	
+	complexity O(n * m * log(n * m))
+    """
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        n, m = len(matrix), len(matrix[0])
+        dp = [[1 for _ in range(m)] for _ in range(n)]
+        best = 1
+        nodes = sorted((matrix[i][j], i, j) for j in range(m) for i in range(n))
+
+        for value, row, col in nodes:
+            for nr, nc in [[row + 1, col], [row, col + 1], [row - 1, col], [row, col - 1]]:
+                if 0 <= nr < n and 0 <= nc < m and matrix[nr][nc] < value:
+                    dp[row][col] = max(dp[row][col], dp[nr][nc] + 1)
+                    best = max(best, dp[row][col])
+        return best
+        
+ Java:
+ 
+ public class Solution {
+    public static final int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+public int longestIncreasingPath(int[][] matrix) {
+    if(matrix.length == 0) return 0;
+    int m = matrix.length, n = matrix[0].length;
+    int[][] dp = new int[m][n];
+    int max = 1;
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < n; j++) {
+            int len = dfs(matrix, i, j, m, n,dp);
+            max = Math.max(max, len);
+        }
+    }   
+    return max;
+}
+
+public int dfs(int[][] matrix, int i, int j, int m, int n,int[][] dp) {
+    if(dp[i][j] != 0) return dp[i][j];
+    int max = 1;
+    for(int[] dir: dirs) {
+        int x = i + dir[0], y = j + dir[1];
+        if(x < 0 || x >= m || y < 0 || y >= n || matrix[x][y] <= matrix[i][j]) continue;
+        int len = 1 + dfs(matrix, x, y, m, n,dp);
+        max = Math.max(max, len);
+    }
+    dp[i][j] = max;
+    return max;
+}
+}
+
+C++:
+
+class Solution {
+public:
+    vector<vector<int>> dir = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    
+    int dfs(vector<vector<int>>& matrix, int row, int col, vector<vector<int>>& path)
+    {
+        if (path[row][col] > 1) {
+            return path[row][col];
+        }
+        
+        for (int d = 0; d < dir.size(); d++) 
+        {
+            int r = row + dir[d][0], c = col + dir[d][1];
+            if (r >= 0 && r < matrix.size() 
+             && c >= 0 && c < matrix[r].size() 
+             && matrix[row][col] < matrix[r][c]) 
+            {
+                path[row][col] = max(path[row][col], 1 + dfs(matrix, r, c, path));
+            }
+        }
+        
+        return path[row][col];
+    }
+    
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        vector<vector<int>> path(matrix.size(), vector<int>(matrix[0].size(), 1));
+        int res = 0;
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix[i].size(); j++) {
+                res = max(res, dfs(matrix, i, j, path));
+            }
+        }
+        return res;
+    }
+};
