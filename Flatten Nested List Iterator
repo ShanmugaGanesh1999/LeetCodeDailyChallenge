@@ -1,0 +1,86 @@
+Javascript Code:
+
+The best result for the code below is 96ms / 48.8MB (beats 96% / 100%).
+
+class NestedIterator {
+    constructor(nestedList) {
+        this.data = []
+        this.flatten(nestedList)
+    };
+    
+    flatten(list) {
+        for (let el of list)
+            if (el.isInteger()) this.data.push(el.getInteger())
+            else this.flatten(el.getList())
+    };
+    
+    hasNext() { return this.data.length };
+    
+    next() { return this.data.shift() };
+};
+
+Python Code:
+
+The best result for the code below is 60ms / 17.4MB (beats 93% / 95%).
+
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+        self.data = []
+        self.flatten(nestedList)
+        
+    def flatten(self, lst):
+        for el in lst:
+            if el.isInteger(): self.data.append(el.getInteger())
+            else: self.flatten(el.getList())
+    
+    def hasNext(self) -> bool: return len(self.data)
+    
+    def next(self) -> int: return self.data.pop(0)
+
+Java Code:
+
+The best result for the code below is 2ms / 40.9MB (beats 97% / 96%).
+
+public class NestedIterator implements Iterator<Integer> {
+    Queue<Integer> data = new LinkedList<>();
+
+    public NestedIterator(List<NestedInteger> nestedList) { 
+        flatten(nestedList);
+    }
+    
+    public void flatten(List<NestedInteger> list) {
+        for (NestedInteger el : list)
+            if (el.isInteger()) data.add(el.getInteger());
+            else flatten(el.getList());
+    }
+
+    public Integer next() { return data.poll(); }
+
+    public boolean hasNext() { return data.size() > 0; }
+}
+
+C++ Code:
+
+The best result for the code below is 8ms / 13.9MB (beats 99% / 51%).
+
+class NestedIterator {
+queue<int> data;
+    
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        flatten(nestedList);
+    }
+    
+    void flatten(vector<NestedInteger> &list) {
+        for (NestedInteger el : list)
+            if (el.isInteger()) data.push(el.getInteger());
+            else flatten(el.getList());
+    }
+    
+    int next() {
+        int res = data.front(); data.pop();
+        return res;
+    }
+    
+    bool hasNext() { return data.size() > 0; }
+};
