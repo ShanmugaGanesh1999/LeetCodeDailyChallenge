@@ -1,0 +1,83 @@
+Javascript Code:
+
+The best result for the code below is 80ms / 40.1MB (beats 92% / 66%).
+
+var partition = function(head, x) {
+    let fdum = new ListNode(0), bdum = new ListNode(0),
+        front = fdum, back = bdum, curr = head
+    while (curr) {
+        if (curr.val < x)front.next = curr, front = curr
+        else back.next = curr, back = curr
+        curr = curr.next
+    }
+    front.next = bdum.next, back.next = null
+    return fdum.next
+};
+
+Python Code:
+
+The best result for the code below is 24ms / 14.1MB (beats 99% / 85%).
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def partition(self, head: ListNode, x: int) -> ListNode:
+        fdum, bdum = ListNode(0), ListNode(0)
+        front, back, curr = fdum, bdum, head
+        while curr:
+            if curr.val < x:
+                front.next = curr
+                front = curr
+            else:
+                back.next = curr
+                back = curr
+            curr = curr.next
+        front.next, back.next = bdum.next, None
+        return fdum.next
+
+
+Java Code:
+
+The best result for the code below is 0ms / 38.2MB (beats 100% / 69%).
+
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode fdum = new ListNode(0), bdum = new ListNode(0),
+                 front = fdum, back = bdum, curr = head;
+        while (curr != null) {
+            if (curr.val < x) {
+                front.next = curr;
+                front = curr;
+            } else {
+                back.next = curr;
+                back = curr;
+            }
+            curr = curr.next;
+        }
+        front.next = bdum.next;
+        back.next = null;
+        return fdum.next;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 10.1MB (beats 100% / 90%).
+
+class Solution {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        ListNode *fdum = new ListNode(0), *bdum = new ListNode(0),
+                 *front = fdum, *back = bdum, *curr = head;
+        while (curr) {
+            if (curr->val < x) front->next = curr, front = curr;
+            else back->next = curr, back = curr;
+            curr = curr->next;
+        }
+        front->next = bdum->next, back->next = nullptr;
+        return fdum->next;
+    }
+};
