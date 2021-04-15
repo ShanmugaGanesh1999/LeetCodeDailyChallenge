@@ -1,0 +1,84 @@
+Javascript Code:
+w/ Binet's formula:
+
+var fib = function(n) {
+    let sqrt5 = Math.sqrt(5)
+    return (Math.pow(1 + sqrt5, n) - Math.pow(1 - sqrt5, n)) / Math.pow(2, n) / sqrt5
+};
+
+w/ O(N) iteration:
+
+var fib = function(n) {
+    if (n < 2) return n
+    let a = 0, b = 1
+    for (let i = 1; i < n; i++)
+        [a,b] = [b,a+b]
+    return b
+};
+
+Python Code:
+w/ Binet's formula:
+
+class Solution:
+    def fib(self, n: int) -> int:
+        sqrt5 = sqrt(5)
+        return int((pow(1 + sqrt5, n) - pow(1 - sqrt5, n)) / pow(2, n) / sqrt5)
+
+w/ O(N) iteration:
+
+class Solution:
+    def fib(self, n: int) -> int:
+        if n < 2: return n
+        a, b = 0, 1
+        for _ in range(1,n):
+            a, b = b, a+b
+        return b
+
+Java Code:
+w/ Binet's formula:
+
+class Solution {
+    public int fib(int n) {
+        double sqrt5 = Math.sqrt(5);
+        return (int)((Math.pow(1 + sqrt5, n) - Math.pow(1 - sqrt5, n)) / (double)Math.pow(2, n) / sqrt5);
+    }
+}
+
+w/ O(N) iteration:
+
+class Solution {
+    public int fib(int n) {
+        if (n < 2) return n;
+        int a = 0, b = 1, temp;
+        for (int i = 1; i < n; i++) {
+            temp = a;
+            a = b;
+            b += temp;
+        }
+        return b;
+    }
+}
+
+C++ Code:
+w/ Binet's formula:
+
+class Solution {
+public:
+    int fib(int n) {
+        double sqrt5 = sqrt(5);
+        return (pow(1 + sqrt5, n) - pow(1 - sqrt5, n)) / pow(2, n) / sqrt5;
+    }
+};
+
+w/ O(N) iteration:
+
+class Solution {
+public:
+    int fib(int n) {
+        if (n < 2) return n;
+        int a = 0, b = 1, temp;
+        for (int i = 1; i < n; i++)
+            temp = a, a = b, b += temp;
+        return b;
+    }
+};
