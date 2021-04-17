@@ -1,0 +1,94 @@
+Javascript Code:
+
+The best result for the code below is 232ms / 44.8MB (beats 100% / 81%).
+
+var numSubmatrixSumTarget = function(M, T) {
+    let xlen = M[0].length, ylen = M.length,
+        ans = 0, res = new Map()
+    for (let i = 0, r = M[0]; i < ylen; r = M[++i]) 
+        for (let j = 1; j < xlen; j++)
+            r[j] += r[j-1]
+    for (let j = 0; j < xlen; j++)
+        for (let k = j; k < xlen; k++) {
+            res.clear(), res.set(0,1), csum = 0
+            for (let i = 0; i < ylen; i++) {
+                csum += M[i][k] - (j ? M[i][j-1] : 0)
+                ans += (res.get(csum - T) || 0)
+                res.set(csum, (res.get(csum) || 0) + 1)
+            }
+        }
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 948ms / 15.0MB (beats 57% / 95%).
+
+class Solution:
+    def numSubmatrixSumTarget(self, M: List[List[int]], T: int) -> int:
+        xlen, ylen, ans, res = len(M[0]), len(M), 0, defaultdict(int)
+        for r in M:
+            for j in range(1, xlen):
+                r[j] += r[j-1]
+        for j in range(xlen):
+            for k in range(j, xlen):
+                res.clear()
+                res[0], csum = 1, 0
+                for i in range(ylen):
+                    csum += M[i][k] - (M[i][j-1] if j else 0)
+                    ans += res[csum - T]
+                    res[csum] += 1
+        return ans
+
+Java Code:
+
+The best result for the code below is 81ms / 39.3MB (beats 96% / 95%).
+
+class Solution {
+    public int numSubmatrixSumTarget(int[][] M, int T) {
+        int xlen = M[0].length, ylen = M.length, ans = 0;
+        Map<Integer, Integer> res = new HashMap<>();
+        for (int[] r : M)
+            for (int j = 1; j < xlen; j++)
+                r[j] += r[j-1];
+        for (int j = 0; j < xlen; j++)
+            for (int k = j; k < xlen; k++) {
+                res.clear();
+                res.put(0,1);
+                int csum = 0;
+                for (int i = 0; i < ylen; i++) {
+                    csum += M[i][k] - (j > 0 ? M[i][j-1] : 0);
+                    ans += res.getOrDefault(csum - T, 0);
+                    res.put(csum, res.getOrDefault(csum, 0) + 1);
+                }
+            }
+        return ans;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 484ms / 95.3MB (beats 96% / 76%).
+
+class Solution {
+public:
+    int numSubmatrixSumTarget(vector<vector<int>>& M, int T) {
+        int xlen = M[0].size(), ylen = M.size(), ans = 0;
+        unordered_map<int, int> res;
+        for (int i = 0; i < ylen; i++)
+            for (int j = 1; j < xlen; j++)
+                M[i][j] += M[i][j-1];
+        for (int j = 0; j < xlen; j++)
+            for (int k = j; k < xlen; k++) {
+                res.clear();
+                res[0] = 1;
+                int csum = 0;
+                for (int i = 0; i < ylen; i++) {
+                    csum += M[i][k] - (j ? M[i][j-1] : 0);
+                    ans += res.find(csum - T) != res.end() ? res[csum - T] : 0;
+                    res[csum]++;
+                }
+            }
+        return ans;
+    }
+};
