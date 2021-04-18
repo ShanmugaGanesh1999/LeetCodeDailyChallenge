@@ -1,0 +1,64 @@
+Javascript Code:
+
+The best result for the code below is 60ms / 40.6MB (beats 100% / 13%).
+
+var removeNthFromEnd = function(head, n) {
+    let fast = head, slow = head
+    for (let i = 0; i < n; i++) fast = fast.next
+    if (!fast) return head.next
+    while (fast.next) fast = fast.next, slow = slow.next
+    slow.next = slow.next.next
+    return head
+};
+
+Python Code:
+
+The best result for the code below is 28ms / 13.9MB (beats 92% / 99%).
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        fast, slow = head, head
+        for _ in range(n): fast = fast.next
+        if not fast: return head.next
+        while fast.next: fast, slow = fast.next, slow.next
+        slow.next = slow.next.next
+        return head
+
+Java Code:
+
+The best result for the code below is 0ms / 36.5MB (beats 100% / 97%).
+
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode fast = head, slow = head;
+        for (int i = 0; i < n; i++) fast = fast.next;
+        if (fast == null) return head.next;
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        slow.next = slow.next.next;
+        return head;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 10.6MB (beats 100% / 93%).
+
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode *fast = head, *slow = head;
+        for (int i = 0; i < n; i++) fast = fast->next;
+        if (!fast) return head->next;
+        while (fast->next) fast = fast->next, slow = slow->next;
+        slow->next = slow->next->next;
+        return head;
+    }
+};
