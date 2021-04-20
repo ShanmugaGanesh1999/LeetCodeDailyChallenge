@@ -1,0 +1,49 @@
+Javascript Code:
+
+var preorder = function(root, ans=[]) {
+    if (!root) return ans
+    ans.push(root.val)
+    for (let child of root.children)
+        preorder(child, ans)
+    return ans
+};
+
+Python Code:
+
+class Solution:
+    def preorder(self, root: 'Node', ans: list = None) -> List[int]:
+        if not root: return ans
+        if ans == None: ans = []
+        ans.append(root.val)
+        for child in root.children:
+            self.preorder(child, ans)
+        return ans
+
+Java Code:
+
+class Solution {
+    List<Integer> ans = new ArrayList<>();
+    public List<Integer> preorder(Node root) {
+        if (root == null) return ans;
+        ans.add(root.val);
+        for (Node child : root.children)
+            preorder(child);
+        return ans;
+    }
+}
+
+C++ Code:
+
+class Solution {
+public:
+    vector<int> preorder(Node* root) {
+        vector<int> ans;
+        if (root) pre(root, &ans);
+        return ans;
+    }
+    void pre(Node* node, vector<int>* ans) {
+        ans->push_back(node->val);
+        for (Node* child : node->children)
+            pre(child, ans);
+    }
+};
