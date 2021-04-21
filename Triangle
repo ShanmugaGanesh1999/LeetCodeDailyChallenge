@@ -1,0 +1,50 @@
+Javascript Code:
+
+The best result for the code below is 72ms / 38.8MB (beats 98% / 93%).
+
+var minimumTotal = function(T) {
+    for (let i = T.length - 2; ~i; i--) 
+        for (let j = T[i].length - 1; ~j; j--) 
+            T[i][j] += Math.min(T[i+1][j], T[i+1][j+1])
+    return T[0][0]
+}
+
+Python Code:
+
+The best result for the code below is 48ms / 14.9MB (beats 99% / 85%).
+
+class Solution:
+    def minimumTotal(self, T: List[List[int]]) -> int:
+        for i in range(len(T)-2,-1,-1):
+            for j in range(len(T[i])-1,-1,-1):
+                T[i][j] += min(T[i+1][j], T[i+1][j+1])
+        return T[0][0]
+
+Java Code:
+
+The best result for the code below is 4ms / 38.6MB (beats 32% / 96%).
+
+class Solution {
+    public int minimumTotal(List<List<Integer>> T) {
+        for (int i = T.size() - 2; i >= 0; i--) 
+            for (int j = T.get(i).size() - 1; j >= 0; j--) {
+                int min = Math.min(T.get(i+1).get(j), T.get(i+1).get(j+1));
+                T.get(i).set(j, T.get(i).get(j) + min);
+            }
+        return T.get(0).get(0);
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 8.3MB (beats 100% / 94%).
+
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& T) {
+        for (int i = T.size() - 2; ~i; i--) 
+            for (int j = T[i].size() - 1; ~j; j--) 
+                T[i][j] += min(T[i+1][j], T[i+1][j+1]);
+        return T[0][0];
+    }
+};
