@@ -1,0 +1,75 @@
+Javascript Code:
+
+The best result for the code below is 88ms / 44.6MB (beats 96% / 62%).
+
+var leastBricks = function(wall) {
+    let freq = new Map(), best = 0
+    for (let i = 0; i < wall.length; i++) {
+        let row = wall[i], rowSum = row[0]
+        for (let j = 1; j < row.length; j++) {
+            freq.set(rowSum, (freq.get(rowSum) || 0) + 1)
+            rowSum += row[j]
+        } 
+    }
+    for (let [k,v] of freq)
+        if (v > best) best = v
+    return wall.length - best
+};
+
+Python Code:
+
+The best result for the code below is 172ms / 19.1MB (beats 92% / 86%).
+
+class Solution:
+    def leastBricks(self, wall: List[List[int]]) -> int:
+        freq = defaultdict(int)
+        for row in wall:
+            rowSum = row[0]
+            for j in range(1, len(row)):
+                freq[rowSum] += 1
+                rowSum += row[j]
+        return len(wall) - max(freq.values() or [0])
+
+Java Code:
+
+The best result for the code below is 4ms / 41.9MB (beats 100% / 79%).
+
+class Solution {
+    int best = 0;
+    Map<Integer, Integer> freq = new HashMap<>();
+    public int leastBricks(List<List<Integer>> wall) {
+        for (int i = 0; i < wall.size(); i++)
+            processRow(wall.get(i));
+        return wall.size() - best;
+    }
+    public void processRow(List<Integer> row) {
+        int rowSum = row.get(0);
+        for (int j = 1; j < row.size(); j++) {
+            int f = freq.getOrDefault(rowSum, 0) + 1;
+            freq.put(rowSum, f);
+            if (f > best) best = f;
+            rowSum += row.get(j);
+        } 
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 36ms / 21.5MB (beats 97% / 81%).
+
+class Solution {
+public:
+    int leastBricks(vector<vector<int>>& wall) {
+        unordered_map<int, int> freq;
+        int best = 0;
+        for (int i = 0; i < wall.size(); i++) {
+            int rowSum = wall[i][0];
+            for (int j = 1; j < wall[i].size(); j++) {
+                freq[rowSum]++;
+                best = max(best, freq[rowSum]);
+                rowSum += wall[i][j];
+            };
+        };
+        return wall.size() - best;
+    };
+};
