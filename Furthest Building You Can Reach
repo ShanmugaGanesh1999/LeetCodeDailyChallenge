@@ -1,0 +1,128 @@
+Javascript Code:
+w/ MinPriorityQueue():
+
+The best result for the code below is 148ms / 53.1MB (beats 48% / 55%).
+
+var furthestBuilding = function(H, B, L) {
+    let len = H.length - 1,
+        pq = new MinPriorityQueue({priority: x => x})
+    for (let i = 0; i < len; i++) {
+        let diff = H[i+1] - H[i]
+        if (diff > 0) {
+            if (L > 0) pq.enqueue(diff), L--
+            else if (pq.front() && diff > pq.front().element)
+                pq.enqueue(diff), B -= pq.dequeue().element
+            else B -= diff
+            if (B < 0) return i
+        }
+    }
+    return len
+};
+
+w/ Min-Heap:
+
+The best result for the code below is 108ms / 49.7MB (beats 98% / 91%).
+
+var furthestBuilding = function(H, B, L) {
+    let len = H.length - 1, heap = [,]
+    const heapify = val => {
+        let i = heap.length, par = i >> 1, temp
+        heap.push(val)
+        while (heap[par] > heap[i]) {
+            temp = heap[par], heap[par] = heap[i], heap[i] = temp
+            i = par, par = i >> 1
+        }
+    }
+    const extract = () => {
+        if (heap.length === 1) return null
+        let top = heap[1], left, right, temp,
+            i = 1, child = heap[3] < heap[2] ? 3 : 2
+        if (heap.length > 2) heap[1] = heap.pop()
+        else heap.pop()
+        while (heap[i] > heap[child]) {
+            temp = heap[child], heap[child] = heap[i], heap[i] = temp
+            i = child, left = i << 1, right = left + 1
+            child = heap[right] < heap[left] ? right : left
+        }
+        return top
+    }    
+    for (let i = 0; i < len; i++) {
+        let diff = H[i+1] - H[i]
+        if (diff > 0) {
+            if (L > 0) heapify(diff), L--
+            else if (heap.length > 1 && diff > heap[1])
+                heapify(diff), B -= extract()
+            else B -= diff
+            if (B < 0) return i
+        }
+    }
+    return len
+};
+
+Python Code:
+
+The best result for the code below is 520ms / 28.7MB (beats 100% / 89%).
+
+class Solution:
+    def furthestBuilding(self, H: List[int], B: int, L: int) -> int:
+        heap = []
+        for i in range(len(H) - 1):
+            diff = H[i+1] - H[i]
+            if diff > 0:
+                if L > 0:
+                    heappush(heap, diff)
+                    L -= 1
+                elif heap and diff > heap[0]:
+                    heappush(heap, diff)
+                    B -= heappop(heap)
+                else: B -= diff
+                if B < 0: return i
+        return len(H) - 1
+
+Java Code:
+
+The best result for the code below is 13ms / 48.7MB (beats 87% / 97%).
+
+class Solution {
+    public int furthestBuilding(int[] H, int B, int L) {
+        int len = H.length - 1;
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for (int i = 0; i < len; i++) {
+            int diff = H[i+1] - H[i];
+            if (diff > 0) {
+                if (L > 0) {
+                    pq.add(diff);
+                    L--;
+                } else if (pq.size() > 0 && diff > pq.peek()) {
+                    pq.add(diff);
+                    B -= pq.poll();
+                } else B -= diff;
+                if (B < 0) return i;
+            }
+        }
+        return len;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 76ms / 53.5MB (beats 99% / 79%).
+
+class Solution {
+public:
+    int furthestBuilding(vector<int>& H, int B, int L) {
+        int len = H.size() - 1;
+        priority_queue<int> pq;
+        for (int i = 0; i < len; i++) {
+            int diff = H[i+1] - H[i];
+            if (diff > 0) {
+                if (L) pq.push(-diff), L--;
+                else if (!pq.empty() && diff > -pq.top())
+                    pq.push(-diff), B += pq.top(), pq.pop();
+                else B -= diff;
+                if (B < 0) return i;
+            }
+        }
+        return len;
+    }
+};
