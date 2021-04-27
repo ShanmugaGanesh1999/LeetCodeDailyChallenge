@@ -1,0 +1,66 @@
+Javascript Code:
+w/ Logarithms:
+
+var isPowerOfThree = function(n) {
+    let a = Math.log(n) / Math.log(3)
+    return Math.abs(a - Math.round(a)) < 1e-10
+};
+
+w/ Modulo:
+
+var isPowerOfThree = function(n) {
+    return n > 0 && 1162261467 % n === 0
+};
+
+Python Code:
+w/ Logarithms:
+
+class Solution:
+    def isPowerOfThree(self, n: int) -> bool:
+        if n < 1: return False
+        ans = log(n, 3)
+        return abs(ans - round(ans)) < 1e-10
+
+w/ Modulo:
+
+class Solution:
+    def isPowerOfThree(self, n: int) -> bool:
+        return n > 0 and 1162261467 % n == 0
+
+Java Code:
+w/ Logarithms:
+
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        double a = Math.log(n) / Math.log(3);
+        return Math.abs(a - Math.round(a)) < 1e-10;
+    }
+}
+
+w/ Modulo:
+
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        return n > 0 && 1162261467 % n == 0;
+    }
+}
+
+C++ Code:
+w/ Logarithms:
+
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        double a = log(n) / log(3);
+        return abs(a - round(a)) < 1e-10;
+    }
+};
+
+w/ Modulo:
+
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        return n > 0 && 1162261467 % n == 0;
+    }
+};
