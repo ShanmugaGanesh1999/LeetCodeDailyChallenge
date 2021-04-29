@@ -1,0 +1,92 @@
+Javascript Code:
+
+var searchRange = function(N, T) {
+    const find = (target, arr, left=0, right=arr.length) => {
+        while (left <= right) {
+            let mid = left + right >> 1
+            if (arr[mid] < target) left = mid + 1
+            else right = mid - 1
+        }
+        return left
+    } 
+    let Tleft = find(T, N)
+    if (N[Tleft] !== T) return [-1,-1]
+    return [Tleft, find(T+1, N, Tleft) - 1]
+};
+
+Python Code:
+w/ bisect_left() & bisect_right():
+
+class Solution:
+    def searchRange(self, N: List[int], T: int) -> List[int]:
+        Tleft = bisect_left(N, T)
+        if Tleft == len(N) or N[Tleft] != T: return [-1, -1]
+        return [Tleft, bisect_right(N, T) - 1]
+
+w/ Custom Binary Search:
+
+class Solution:
+    def searchRange(self, N: List[int], T: int) -> List[int]:
+        def find(target, arr, left=0):
+            right = len(arr) - 1
+            while left <= right:
+                mid = left + right >> 1
+                if arr[mid] < target: left = mid + 1
+                else: right = mid - 1
+            return left
+        Tleft = find(T, N)
+        if Tleft == len(N) or N[Tleft] != T: return [-1, -1]
+        return [Tleft, find(T+1, N, Tleft) - 1]
+
+Java Code:
+
+class Solution {
+    public int[] searchRange(int[] N, int T) {
+        int Tleft = find(T, N, 0);
+        if (Tleft == N.length || N[Tleft] != T) return new int[] {-1, -1};
+        return new int[] {Tleft, find(T+1, N, Tleft) - 1};
+    }
+    public int find(int target, int[] arr, int left) {
+        int right = arr.length - 1;
+        while (left <= right) {
+            int mid = left + right >> 1;
+            if (arr[mid] < target) left = mid + 1;
+            else right = mid - 1;
+        }
+        return left;
+    }
+}
+
+C++ Code:
+w/ equal_range():
+
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& N, int T) {
+        pair<vector<int>::iterator,vector<int>::iterator> range;
+        range = equal_range(N.begin(), N.end(), T);
+        int Tleft = distance(N.begin(), range.first);
+        if (Tleft == N.size() || N[Tleft] != T) return {-1, -1};
+        return {Tleft, (int)distance(N.begin(), range.second) - 1};
+    }
+};
+
+w/ Custom Binary Search:
+
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& N, int T) {
+        int Tleft = find(T, N);
+        if (Tleft == N.size() || N[Tleft] != T) return {-1, -1};
+        return {Tleft, find(T+1, N, Tleft) - 1};
+    }
+    int find(int target, vector<int> arr, int left=0) {
+        int right = arr.size() - 1;
+        while (left <= right) {
+            int mid = left + right >> 1;
+            if (arr[mid] < target) left = mid + 1;
+            else right = mid - 1;
+        }
+        return left;
+    }
+};
