@@ -1,0 +1,61 @@
+Javascript Code:
+
+The best result for the code below is 72ms / 37.7MB (beats 95% / 100%).
+
+var jump = function(N) {
+    let len = N.length - 1, curr = -1, next = 0, ans = 0
+    for (let i = 0; next < len; i++) {
+        if (i > curr) ans++, curr = next
+        next = Math.max(next, N[i] + i)
+    }
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 16ms / 14.0MB (beats 100% / 99%).
+
+class Solution:
+    def jump(self, N: List[int]) -> int:
+        Nlen, curr, nxt, ans, i = len(N) - 1, -1, 0, 0, 0
+        while nxt < Nlen:
+            if i > curr:
+                ans += 1
+                curr = nxt
+            nxt = max(nxt, N[i] + i)
+            i += 1
+        return ans
+
+Java Code:
+
+The best result for the code below is 0ms / 36.1MB (beats 100% / 85%).
+
+class Solution {
+    public int jump(int[] N) {
+        int len = N.length - 1, curr = -1, next = 0, ans = 0;
+        for (int i = 0; next < len; i++) {
+            if (i > curr) {
+                ans++;
+                curr = next;
+            };
+            next = Math.max(next, N[i] + i);
+        };
+        return ans;
+    };
+};
+
+C++ Code:
+
+The best result for the code below is 0ms / 7.9MB (beats 100% / 100%).
+
+class Solution {
+public:
+    int jump(vector<int>& N) {
+        int len = N.size() - 1, curr = -1, next = 0, ans = 0;
+        for (int i = 0; next < len; i++) {
+            if (i > curr) ans++, curr = next;
+            next = max(next, N[i] + i);
+        };
+        return ans;
+    }
+};
