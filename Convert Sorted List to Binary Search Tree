@@ -1,0 +1,163 @@
+c++
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* sortedListToBST(ListNode* head, ListNode* tail = NULL) {
+        if (head == tail) 
+            return NULL;
+        
+        ListNode* fast = head, *slow = head;
+        while (fast != tail && fast->next != tail) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        
+        TreeNode* root = new TreeNode(slow->val);
+        root->left = sortedListToBST(head, slow);
+        root->right = sortedListToBST(slow->next, tail);
+        
+        return root;
+    }
+    
+};
+
+python
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def binarySearch(self,arr,l,r):
+        if l<=r:
+            m = (l+r)//2
+            n = TreeNode(arr[m])
+            n.left = self.binarySearch(arr,l,m-1)
+            n.right = self.binarySearch(arr,m+1,r)
+            return n 
+        return None 
+    def sortedListToBST(self, head):
+        arr = []
+        tmp = head
+        while(tmp!=None):
+            arr.append(tmp.val)
+            tmp = tmp.next 
+        root = self.binarySearch(arr,0,len(arr)-1)
+        return root 
+        
+        
+java
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution 
+{
+    public TreeNode sortedListToBST(ListNode head)
+    {
+        ListNode temp = head;
+        
+        int size = 0;
+        
+        while(temp != null)
+        {
+            size += 1;
+            
+            temp = temp.next;
+        }
+        
+        int arr[] = new int[size];
+        
+        int i = 0;
+        
+        while(head != null)
+        {
+            arr[i++] = head.val;
+            
+            head = head.next;
+        }
+        
+        int lo = 0;
+        
+        int hi = size - 1;
+        
+        TreeNode root = construct(arr, lo, hi);
+        
+        return root;
+    }
+    
+    
+    public TreeNode construct(int arr[], int lo, int hi)
+    {
+        if(lo > hi)
+        {
+            return null;
+        }
+        
+        
+        
+        int mid = hi - (hi - lo) / 2;
+        
+        int val = arr[mid];
+        
+        System.out.println(val);
+        
+        TreeNode lc = construct(arr, lo, mid - 1);
+        
+        TreeNode rc = construct(arr, mid + 1, hi);
+        
+        TreeNode root = new TreeNode(val, lc, rc);
+        
+        return root;
+    }
+}
