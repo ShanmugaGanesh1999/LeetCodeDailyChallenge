@@ -1,0 +1,57 @@
+Javascript Code:
+
+The best result for the code below is 80ms / 45.4MB (beats 95% / 99%).
+
+var maxScore = function(C, K) {
+    let total = 0
+    for (let i = 0; i < K; i++) total += C[i]
+    let best = total
+    for (let i = K - 1, j = C.length - 1; ~i; i--, j--)
+        total += C[j] - C[i], best = Math.max(best, total)
+    return best
+};
+
+Python Code:
+
+The best result for the code below is 380ms / 27.5MB (beats 100% / 87%).
+
+class Solution:
+    def maxScore(self, C: List[int], K: int) -> int:
+        best = total = sum(C[:K])
+        for i in range (K-1, -1, -1):
+            total += C[i + len(C) - K] - C[i]
+            best = max(best, total)
+        return best
+
+Java Code:
+
+The best result for the code below is 1ms / 48.0MB (beats 100% / 75%).
+
+class Solution {
+    public int maxScore(int[] C, int K) {
+        int total = 0;
+        for (int i = 0; i < K; i++) total += C[i];
+        int best = total;
+        for (int i = K - 1, j = C.length - 1; i >= 0; i--, j--) {
+            total += C[j] - C[i];
+            best = Math.max(best, total);
+        }
+        return best;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 44ms / 42.3MB (beats 98% / 77%).
+
+class Solution {
+public:
+    int maxScore(vector<int>& C, int K) {
+        int total = 0;
+        for (int i = 0; i < K; i++) total += C[i];
+        int best = total;
+        for (int i = K - 1, j = C.size() - 1; ~i; i--, j--)
+            total += C[j] - C[i], best = max(best, total);
+        return best;
+    }
+};
