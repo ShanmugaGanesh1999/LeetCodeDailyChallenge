@@ -1,0 +1,112 @@
+Javascript Code:
+
+The best result for the code below is 88ms / 42.3MB (beats 100% / 100%).
+
+var ambiguousCoordinates = function(S) {
+    let ans = []
+    const isValid = (str, dec) => {
+        let n = str.length
+        if (dec && str[n-1] === "0") return false
+        if (n !== 1 && dec !== 1 && str[0] === "0") return false
+        return true
+    }
+    for (let i = 2; i < S.length - 1; i++) {
+        let xStr = S.slice(1,i), yStr = S.slice(i, S.length - 1),
+            xPoss = []
+        for (let j = 0; j < xStr.length; j++)
+            if (isValid(xStr, j))
+                xPoss.push(xStr.slice(0,j) + (j ? "." : "") + xStr.slice(j))
+        for (let j = 0; j < yStr.length; j++)
+            if (isValid(yStr, j)) {
+                let y = yStr.slice(0,j) + (j ? "." : "") + yStr.slice(j)
+                for (let x of xPoss)
+                    ans.push(`(${x}, ${y})`)
+            }
+    }
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 32ms / 14.1MB (beats 99% / 92%).
+
+class Solution:
+    def ambiguousCoordinates(self, S: str) -> List[str]:
+        ans = []
+        def isValid(st: str, dec: int) -> bool:
+            if dec and st[-1] == "0": return False
+            if len(st) != 1 and dec != 1 and st[0] == "0": return False
+            return True
+        for i in range(2, len(S)-1):
+            xStr, yStr = S[1:i], S[i:-1]
+            xPoss = []
+            for j in range(len(xStr)):
+                if isValid(xStr, j):
+                    xPoss.append(xStr[:j] + ("." if j else "") + xStr[j:])
+            for j in range(len(yStr)):
+                if isValid(yStr, j):
+                    y = yStr[:j] + ("." if j else "") + yStr[j:]
+                    for x in xPoss:
+                        ans.append("(" + x + ", " + y + ")")
+        return ans
+
+Java Code:
+
+The best result for the code below is 11ms / 39.5MB (beats 38% / 91%).
+
+class Solution {
+    public List<String> ambiguousCoordinates(String S) {
+        List<String> ans = new ArrayList<>();
+        for (int i = 2; i < S.length() - 1; i++) {
+            String xStr = S.substring(1,i), yStr = S.substring(i, S.length() - 1);
+            List<String> xPoss = new ArrayList<>();
+            for (int j = 0; j < xStr.length(); j++)
+                if (isValid(xStr, j))
+                    xPoss.add(xStr.substring(0,j) + (j > 0 ? "." : "") + xStr.substring(j));
+            for (int j = 0; j < yStr.length(); j++)
+                if (isValid(yStr, j)) {
+                    String y = yStr.substring(0,j) + (j > 0 ? "." : "") + yStr.substring(j);
+                    for (String x : xPoss)
+                        ans.add("(" + x + ", " + y + ")");
+                }
+        }
+        return ans;
+    }
+    
+    public boolean isValid(String str, int dec) {
+        if (dec != 0 && str.charAt(str.length()-1) == '0') return false;
+        if (str.length() != 1 && dec != 1 && str.charAt(0) == '0') return false;
+        return true;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 9.1MB (beats 100% / 95%).
+
+class Solution {
+public:
+    vector<string> ambiguousCoordinates(string S) {
+        vector<string> ans;
+        for (int i = 2; i < S.size() - 1; i++) {
+            string xStr = S.substr(1,i-1), yStr = S.substr(i, S.size() - 1 - i);
+            vector<string> xPoss;
+            for (int j = 0; j < xStr.size(); j++)
+                if (isValid(xStr, j))
+                    xPoss.push_back(xStr.substr(0,j) + (j ? "." : "") + xStr.substr(j));
+            for (int j = 0; j < yStr.size(); j++)
+                if (isValid(yStr, j)) {
+                    string y = yStr.substr(0,j) + (j ? "." : "") + yStr.substr(j);
+                    for (auto x : xPoss)
+                        ans.push_back("(" + x + ", " + y + ")");
+                }
+        }
+        return ans;
+    }
+    
+    bool isValid(string str, int dec) {
+        if (dec && str[str.size()-1] == '0') return false;
+        if (str.size() != 1 && dec != 1 && str[0] == '0') return false;
+        return true;
+    }
+};
