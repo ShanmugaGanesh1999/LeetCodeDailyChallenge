@@ -1,0 +1,134 @@
+avascript Code:
+w/ O(1) Space:
+
+The best result for the code below is 80ms / 40.6MB (beats 98% / 66%).
+
+var flatten = function(root) {
+    let head = null, curr = root
+    while (head != root) {
+        if (curr.right === head) curr.right = null
+        if (curr.left === head) curr.left = null
+        if (curr.right) curr = curr.right
+        else if (curr.left) curr = curr.left
+        else curr.right = head, head = curr, curr = root
+    }
+};
+
+w/ Recursion:
+
+The best result for the code below is 84ms / 40.6MB (beats 96% / 66%).
+
+var flatten = function(root) {
+    let head = null
+    const revPreOrder = node => {
+        if (node.right) revPreOrder(node.right)
+        if (node.left) revPreOrder(node.left)
+        node.left = null, node.right = head, head = node
+    }
+    if (root) revPreOrder(root)
+};
+
+Python Code:
+w/ O(1) Space:
+
+The best result for the code below is 32ms / 15.0MB (beats 92% / 91%).
+
+class Solution:
+    def flatten(self, root: TreeNode) -> None:
+        head, curr = None, root
+        while head != root:
+            if curr.right == head: curr.right = None
+            if curr.left == head: curr.left = None
+            if curr.right: curr = curr.right
+            elif curr.left: curr = curr.left
+            else: curr.right, head, curr = head, curr, root
+
+w/ Recursion:
+
+The best result for the code below is 28ms / 14.9MB (beats 98% / 98%).
+
+class Solution:
+    head = None
+    def flatten(self, root: TreeNode) -> None:
+        def revPreOrder(node: TreeNode) -> None:
+            if node.right: revPreOrder(node.right)
+            if node.left: revPreOrder(node.left)
+            node.left, node.right, self.head = None, self.head, node
+        if root: revPreOrder(root)
+
+Java Code:
+w/ O(1) Space:
+
+The best result for the code below is 0ms / 37.9MB (beats 100% / 98%).
+
+class Solution {
+    public void flatten(TreeNode root) {
+        TreeNode head = null, curr = root;
+        while (head != root) {
+            if (curr.right == head) curr.right = null;
+            if (curr.left == head) curr.left = null;
+            if (curr.right != null) curr = curr.right;
+            else if (curr.left != null) curr = curr.left;
+            else {
+                curr.right = head;
+                head = curr;
+                curr = root;
+            }
+        }
+    }
+}
+
+w/ Recursion:
+
+The best result for the code below is 0ms / 38.0MB (beats 100% / 98%).
+
+class Solution {
+    TreeNode head = null;
+    public void flatten(TreeNode root) {
+        if (root != null) revPreOrder(root);
+    }
+    private void revPreOrder(TreeNode node) {
+        if (node.right != null) revPreOrder(node.right);
+        if (node.left != null) revPreOrder(node.left);
+        node.left = null;
+        node.right = head;
+        head = node;
+    }
+}
+
+C++ Code:
+w/ O(1) Space:
+
+The best result for the code below is 0ms / 12.6MB (beats 100% / 95%).
+
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        TreeNode *head = nullptr, *curr = root;
+        while (head != root) {
+            if (curr->right == head) curr->right = nullptr;
+            if (curr->left == head) curr->left = nullptr;
+            if (curr->right) curr = curr->right;
+            else if (curr->left) curr = curr->left;
+            else curr->right = head, head = curr, curr = root;
+        }
+    }
+};
+
+w/ Recursion:
+
+The best result for the code below is 0ms / 12.6MB (beats 100% / 95%).
+
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        if (root) revPreOrder(root);
+    }
+private:
+    TreeNode* head = nullptr;
+    void revPreOrder(TreeNode* node) {
+        if (node->right) revPreOrder(node->right);
+        if (node->left) revPreOrder(node->left);
+        node->left = nullptr, node->right = head, head = node;
+    }
+};
