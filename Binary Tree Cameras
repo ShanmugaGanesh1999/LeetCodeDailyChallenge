@@ -1,0 +1,72 @@
+Javascript Code:
+
+The best result for the code below is 84ms / 41.5MB (beats 93% / 78%).
+
+var minCameraCover = function(root) {
+    let ans = 0
+    const dfs = node => {
+        if (!node) return 0
+        let val = dfs(node.left) + dfs(node.right)
+        if (val === 0) return 3
+        if (val < 3) return 0
+        ans++
+        return 1
+    }
+    return dfs(root) > 2 ? ans + 1 : ans    
+};
+
+Python Code:
+
+The best result for the code below is 28ms / 14.4MB (beats 100% / 97%).
+
+class Solution:
+    ans = 0
+    def minCameraCover(self, root: TreeNode) -> int:
+        def dfs(node: TreeNode) -> int:
+            if not node: return 0
+            val = dfs(node.left) + dfs(node.right)
+            if val == 0: return 3
+            if val < 3: return 0
+            self.ans += 1
+            return 1
+        return self.ans + 1 if dfs(root) > 2 else self.ans
+
+Java Code:
+
+The best result for the code below is 0ms / 38.1MB (beats 100% / 100%).
+
+class Solution {
+    private int ans = 0;
+    public int minCameraCover(TreeNode root) {
+        return dfs(root) > 2 ? ans + 1 : ans;
+    }
+    public int dfs(TreeNode node) {
+        if (node == null) return 0;
+        int val = dfs(node.left) + dfs(node.right);
+        if (val == 0) return 3;
+        if (val < 3) return 0;
+        ans++;
+        return 1;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 21.1MB (beats 100% / 97%).
+
+class Solution {
+public:
+    int minCameraCover(TreeNode* root) {
+        return dfs(root) > 2 ? ans + 1 : ans;
+    }
+    int dfs(TreeNode* node) {
+        if (!node) return 0;
+        int val = dfs(node->left) + dfs(node->right);
+        if (val == 0) return 3;
+        if (val < 3) return 0;
+        ans++;
+        return 1;
+    }
+private:
+    int ans = 0;
+};
