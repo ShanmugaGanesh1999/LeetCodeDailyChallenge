@@ -1,0 +1,99 @@
+class Solution:
+    def longestStrChain(self, words):
+        set_words = set(words)
+        
+        @lru_cache(None)
+        def dp(word):
+            if word not in set_words: return 0
+            return max(dp(word[:i] + word[i+1:]) for i in range(len(word))) + 1
+           
+        return max(dp(word) for word in words)
+        
+or
+        
+class Solution:
+    def longestStrChain(self, words: List[str]) -> int:
+        wordSet = set(words)
+        
+        @lru_cache(None)
+        def dp(word):
+            if word not in wordSet:
+                return 0
+            ans = 0
+            for i in range(len(word)):
+                predecessor = word[:i] + word[i+1:]
+                ans = max(ans, dp(predecessor) + 1)
+            return ans
+        
+        return max(dp(w) for w in words)
+        
+or
+
+class Solution:
+    def longestStrChain(self, words: List[str]) -> int:
+        words.sort(key=lambda x:len(x))  # sort words by its length
+        ans = 0
+        cnt = defaultdict(int)
+        for word in words:
+            cnt[word] = 1
+            for i in range(len(word)):
+                predecessor = word[:i] + word[i+1:]
+                if predecessor in cnt and cnt[word] < cnt[predecessor] + 1:
+                    cnt[word] = cnt[predecessor] + 1
+            ans = max(ans, cnt[word])
+        return ans
+        
+ or
+ 
+ class Solution {
+    public int longestStrChain(String[] words) {
+        Arrays.sort(words, Comparator.comparingInt(String::length));
+        Map<String, Integer> cnt = new HashMap<>();
+        int ans = 0;
+        for (String word : words) {
+            cnt.put(word, 1);
+            for (int i = 0; i < word.length(); i++) {
+                String predecessor = word.substring(0, i) + word.substring(i + 1);
+                if (cnt.containsKey(predecessor) && cnt.get(word) < cnt.get(predecessor) + 1) {
+                    int newValue = cnt.get(predecessor) + 1;
+                    cnt.put(word, newValue);
+                }
+            }
+            ans = Math.max(ans, cnt.get(word));
+        }
+        return ans;
+    }
+}
+
+or
+
+class Solution {
+public:
+    int longestStrChain(vector<string>& words) {
+        sort(words.begin(),words.end(),[](const string& s1,const string& s2){
+           return s1.length()>s2.length(); 
+        });
+        // mapping of string --> unique number
+        unordered_map<string,int> index;
+        int n = words.size();
+        
+        // assign every string a unique number
+        for(int i=0;i<n;i++)
+            index[words[i]] = i;
+        
+        int ans = 1;
+        vector<int> dp(n,1);
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<words[i].length();j++)
+            {
+                string new_string = words[i].substr(0,j)+words[i].substr(j+1);
+                if(index.count(new_string)){
+                    dp[index[new_string]] = max(dp[index[new_string]],1+dp[i]);
+                    ans = max(ans,dp[index[new_string]]);
+                }
+            }
+        }
+        return ans;
+    }
+};
