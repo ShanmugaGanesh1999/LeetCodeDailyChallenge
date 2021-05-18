@@ -1,0 +1,106 @@
+Javascript Code:
+
+The best result for the code below is 104ms / 52.6MB (beats 100% / 90%).
+
+var findDuplicate = function(paths) {
+    let contMap = new Map(), ans = []
+    for (let pStr of paths) {
+        let i = 0, j, k
+        while (pStr.charAt(i) !== ' ') i++
+        let path = pStr.slice(0,i)
+        for (j = ++i; i < pStr.length; i++)
+            if (pStr.charAt(i) === '(') k = i
+            else if (pStr.charAt(i) === ')') {
+                let pathfile = path + '/' + pStr.slice(j, k),
+                    cont = pStr.slice(k+1, i)
+                if (!contMap.has(cont))
+                    contMap.set(cont, [pathfile])
+                else contMap.get(cont).push(pathfile)
+                j = i + 2
+            }
+    }
+    for (let v of contMap.values())
+        if (v.length > 1) ans.push(v)
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 76ms / 24.0MB (beats 95% / 70%).
+
+class Solution:
+    def findDuplicate(self, paths: List[str]) -> List[List[str]]:
+        contMap, ans = defaultdict(list), []
+        for pStr in paths:
+            sep = pStr.split(" ")
+            for i in range(1, len(sep)):
+                parts = sep[i].split('(')
+                cont = parts[1][:-1]
+                contMap[cont].append(sep[0] + '/' + parts[0])
+        for v in contMap.values():
+            if len(v) > 1: ans.append(v)
+        return ans
+
+Java Code:
+
+The best result for the code below is 12ms / 48.5MB (beats 100% / 46%).
+
+class Solution {
+    public List<List<String>> findDuplicate(String[] paths) {
+        Map<String, List<String>> contMap = new HashMap<>();
+        StringBuilder pathfile = new StringBuilder();
+        for (String pStr : paths) {
+            int i = 0;
+            pathfile.setLength(0);
+            while (pStr.charAt(i) != ' ') i++;
+            pathfile.append(pStr.substring(0,i)).append('/');
+            int pLen = ++i;
+            for (int j = i, k = 0; i < pStr.length(); i++)
+                if (pStr.charAt(i) == '(') {
+                    pathfile.append(pStr.substring(j,i));
+                    k = i + 1;
+                } else if (pStr.charAt(i) == ')') {
+                    String cont = pStr.substring(k, i);
+                    if (!contMap.containsKey(cont))
+                        contMap.put(cont, new ArrayList<>());
+                    contMap.get(cont).add(pathfile.toString());
+                    j = i + 2;
+                    pathfile.setLength(pLen);
+                }
+        }
+        List<List<String>> ans = new ArrayList<>();
+        for (List<String> v : contMap.values())
+            if (v.size() > 1) ans.add(v);
+        return ans;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 76ms / 36.5MB (beats 92% / 78%).
+
+class Solution {
+public:
+    vector<vector<string>> findDuplicate(vector<string>& paths) {
+        unordered_map<string, vector<string>> contMap;
+        for (auto &pStr : paths) {
+            int i = 0;
+            while (pStr[i] != ' ') i++;
+            string path = pStr.substr(0,i);
+            for (int j = i + 1, k = 0; i < pStr.size(); i++)
+                if (pStr[i] == '(') k = i+1;
+                else if (pStr[i] == ')') {
+                    string pathfile = path + '/' + pStr.substr(j, k-j-1),
+                        cont = pStr.substr(k, i-k);
+                    if (contMap.find(cont) == contMap.end())
+                        contMap[cont] = vector<string>();
+                    contMap[cont].push_back(pathfile);
+                    j = i + 2;
+                }
+        }
+        vector<vector<string>> ans;
+        for (auto &kv : contMap)
+            if (kv.second.size() > 1) ans.push_back(kv.second);
+        return ans;
+    }
+};
