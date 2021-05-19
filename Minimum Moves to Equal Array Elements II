@@ -1,0 +1,41 @@
+C++:
+
+class Solution {
+public:
+    int minMoves2(vector<int>& nums) {
+        int n = nums.size ();
+        sort (nums.begin(), nums.end());
+        int mid = n/2, i = 0, count = 0;
+        for (i = 0; i < n; i++)
+            count += abs (nums [i] - nums [mid]);
+        return count;
+    }
+};
+
+Python:
+
+class Solution(object):
+    def minMoves2(self, nums):
+        n = len (nums)
+        mid = n/2
+        nums.sort ()
+        res = 0
+        for i in range (n):
+            res = res + abs (nums [i] - nums [mid])
+        return res
+
+JAVA:
+
+class Solution {
+    public int minMoves2 (int[] nums) {
+        if (nums == null || nums.length == 0)
+            return 0;
+        int n = nums.length;
+        Arrays.sort (nums);
+        int mid = n/2;
+        int count = 0;
+        for (int i = 0; i < n; i++)
+            count += (Math.abs (nums [i] - nums [mid]));
+        return count;
+    }
+}
