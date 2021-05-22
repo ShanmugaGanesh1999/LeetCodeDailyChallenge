@@ -1,0 +1,203 @@
+class Solution:
+    def solveNQueens(self, n):
+        def dfs(board, i, c1, c2, c3):
+            if i == n:
+                ans.append(["."*j + "Q" + "."*(n-j-1) for j in board])
+            
+            for j in range(n):
+                if c1 & (1<<j) == 0 and c2 & (1<<(i-j+n)) == 0 and c3 & (1<<(i+j)) == 0:
+                    dfs(board + [j], i + 1, c1 ^ (1<<j), c2 ^ (1<<(i-j+n)), c3 ^ (1<<(i+j)))
+        
+        ans = []
+        dfs([], 0, 0, 0, 0)
+        return ans
+        
+        
+ class Solution {
+    vector<bool> cols;
+    vector<bool> diag1; // diagonal from top-left to bottom-right.
+    vector<bool> diag2; // diagonal from bottom-left to top-right.
+    vector<string> board;
+    vector<vector<string>> ans;
+    
+    int N;
+    
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        N = n;
+        cols = vector<bool>(n, false);
+        diag1 = vector<bool>(2 * n - 1, false);
+        diag2 = vector<bool>(2 * n - 1, false);
+        board = vector<string>(n, string(n, '.'));
+        
+        dfs(0);
+        
+        return ans;
+    }
+    
+private:
+    bool canPlace(int r, int c) {
+        return !cols[c]
+            && !diag1[r + c]
+            && !diag2[c - r + (N - 1)];
+    }
+    
+    void placeQueen(int r, int c, bool place) {
+        cols[c] = place;
+        diag1[r + c] = place;
+        diag2[c - r + (N - 1)] = place;
+        board[r][c] = place ? 'Q' : '.';
+    }
+    
+    void dfs(int r) {
+        if (r == N) {
+            ans.push_back(board);
+            return;
+        }
+        
+        for (int i = 0; i < N; ++i) {
+            if (canPlace(r, i)) {
+                placeQueen(r, i, true);
+                dfs(r + 1);
+                placeQueen(r, i, false);
+            }
+        }
+    }
+};
+
+
+
+/*
+ * For N-Queens problem all distinct solutions need to be found, so
+ * we use a backtracking algorithm, if an optimal solution is needed
+ * then dynamic programming can be used.
+ * In chess, the queen can move vertical, horizantal and diagnol and
+ * constraint mentioned is that no two queens attack each other ie..,
+ *               Q1  x    x  x
+ *               x   x
+ *               x        x
+ *               x           x
+ * From above we can see that Q2 can be placed on row1 & col3 and so on.
+ *
+*/
+bool isValid(vector<int>& pos) {
+    // We need to check queen position of current row with all queen
+    // positions of previous rows. So loop goes till the previous row
+    // Loop goes till the previous row
+    int row = pos.size() - 1;
+
+    // Try to find whether the queens are in attacking or not
+    for (int i = 0; i < row; i++) {
+        // Check the difference of the queen pos on i th row with that of
+        // current row
+        int diff = abs(pos[i] - pos[row]);
+
+        // Check if it is in same column or same row or same diagnol
+        // If it is same col or row, then diff will be zero, if diff
+        // is equal to row - i then it is in same col
+        if (diff == 0 || diff == row - i) {
+            return false;
+        }
+    }
+
+    // Queen is in right position
+    return true;
+}
+
+void solveNqueens(int n, int row, vector<int>& queenPos, vector<vector<string>>& res) {
+    // Boundary Case where all rows are completed
+    if (n == row) {
+        // Done with all the rows and queens, generate the result
+        vector<string> temp;
+        for (int& pos : queenPos) {
+            // Generate the string based on the current queen pos
+            string str(n, '.');
+            str[pos] = 'Q';
+            temp.push_back(str);
+        }
+        // Push the current solution to result
+        res.push_back(temp);
+
+        return;
+    }
+
+    // As all distinct solutions need to find, loop for all columns
+    for (int col = 0; col < n; col++) {
+        // Place the queen in the col for current row
+        queenPos.push_back(col);
+
+        // Check if it is a valid placement ie.., whether the queens are
+        // in attack or not
+        if (isValid(queenPos)) {
+            // The current queen pos is valid, proceed with next row
+            solveNqueens(n, row + 1, queenPos, res);
+        }
+
+        // Done with the current col, remove form array queenPos to place it
+        // for a new position
+        //queenPos.erase(queenPos.begin() + row);
+        queenPos.pop_back();
+    }
+
+    return;
+}
+
+vector<vector<string>> solveNQueens(int n) {
+    // Stroring the result as the chess board is nxn, a double dimensional
+    // array
+    vector<vector<string>> res;
+
+    if (n == 1) {
+        // Only one queen and one row and one col
+        res.push_back({ "Q" });
+    }
+    else {
+        // array holds the queens position at each row
+        vector<int> queensPos;
+
+        // Helper method to solve N-Queens problem using backtracking
+        solveNqueens(n, 0/*current row*/, queensPos, res);
+    }
+
+    return res;
+}
+
+
+class Solution {
+    List<List<String>> res = new ArrayList();
+    boolean[] cols, diagonal, reverse;
+    int size;
+    char[][] arr;
+    
+    public List<List<String>> solveNQueens(int n) {
+        //Initialize data structures
+        size = n;
+        arr = new char[n][n];  for(char[] a : arr) Arrays.fill(a,'.');
+        cols = new boolean[n];
+        diagonal = new boolean[2*n - 1];
+        reverse = new boolean[2*n - 1];
+        //Apply Back-tracking.
+        recur(0);
+        return res;
+    }
+    
+    private void recur(int r){
+        if(r == size){
+            List<String> list = new ArrayList();
+            for(char[] array : arr) list.add(new String(array));
+            res.add(list);
+            return;
+        }
+        //Choose a column value from 0 to size-1.
+        for(int c = 0; c<size; c++){
+            //Check if (r,c) is a valid position to insert a Queen
+            if( !cols[c] && !diagonal[r + c] && !reverse[r-c+ size-1] ){
+                cols[c] = diagonal[r + c] = reverse[r-c+ size-1] = true;
+                arr[r][c] = 'Q';
+                recur(r+1);
+                arr[r][c] = '.';
+                cols[c] = diagonal[r + c] = reverse[r-c+ size-1] = false;
+            }
+        }       
+    }
+}
