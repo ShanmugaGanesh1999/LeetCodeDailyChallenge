@@ -1,0 +1,165 @@
+class Solution {
+public:
+    vector<int>len;
+    vector<vector<int>>overlap;
+    vector<vector<int>>dp;
+    int n;
+    map<pair<int, int>, int>mp;
+    int solve(int idx, int mask){
+        if(mask == (1 << n) - 1) return 0;
+        if(dp[idx][mask] != -1)return dp[idx][mask];
+        dp[idx][mask] = INT_MAX;
+        for(int i = 0; i < n; i++){
+            if((mask&(1 << i)) == 0){
+                int temp = len[i] - overlap[idx][i] + solve(i, mask|(1 << i));
+                if(temp < dp[idx][mask]){
+                    dp[idx][mask] = temp;
+                    mp[{idx, mask}] = i;
+                }
+            }
+        }
+        return dp[idx][mask];
+    }
+    string shortestSuperstring(vector<string>& A) {
+        n = A.size();
+        len.resize(n, 0);
+        overlap.resize(n, vector<int>(n, 0));
+        dp.resize(n, vector<int>((1 << n) + 1, -1));
+        for(int i = 0; i < n; i++){
+            len[i] = A[i].size();
+        }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                if(i != j){
+                    int m = min(len[i], len[j]);
+                    for(int k = m; k >= 0; k--){
+                        if(A[i].substr(len[i] - k) == A[j].substr(0, k)){
+                            overlap[i][j] = k;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        int mlen = INT_MAX;
+        int idx = 0;
+        for(int i = 0; i < n; i++){
+            int temp = len[i] + solve(i, (1 << i));
+            //cout<<temp<<endl;
+            if(temp < mlen){
+                mlen = temp;
+                idx = i;
+            }
+        }
+        string ans = A[idx];
+        int mask = 1 << idx;
+        for(int i = 1; i < n; i++){
+            int x = idx;
+            idx = mp[{idx, mask}];
+            ans += A[idx].substr(overlap[x][idx]);
+            mask |= (1 << idx); 
+        }
+        return ans;
+    }
+};
+
+
+
+class Solution: 
+    def shortestSuperstring(self, words):
+        def overLap(str1, str2):
+            l = min(len(str1), len(str2))
+            while True:
+                tmp = str2[:l]
+                if str1.endswith(tmp):
+                    return l
+                l -= 1
+
+        l = len(words)
+        overlap = {}
+        for i in words:
+            for j in words:
+                if i == j: continue
+                overlap[(i, j)] = overLap(i, j)
+
+        used = [False] * l
+        self.path = []
+        self.best_len = sys.maxsize
+        def dfs(cur, cur_len, d): #
+            if d == l:
+                self.best_len = cur_len
+                self.path = cur.copy()
+                return
+            for i in range(l):
+                if used[i]: continue
+                tmp_len = cur_len + len(words[i]) - overlap[(cur[-1], words[i])] if cur else cur_len + len(words[i])
+                if tmp_len >= self.best_len: break
+                used[i] = True
+                cur.append(words[i])
+                dfs(cur, tmp_len, d+1)
+                cur.pop()
+                used[i] = False
+        dfs([], 0, 0)
+
+        ans = self.path[0]
+        for k in range(1, l):
+            i, j = self.path[k-1], self.path[k]
+            ans += self.path[k][overlap[(i, j)]:]
+        return ans
+        
+        
+        
+class Solution {
+    public String shortestSuperstring(String[] A) {
+        int n = A.length;
+        int[][] g = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                g[i][j] = dist(A[i], A[j]);
+            }
+        }
+        int[][] dp = new int[1 << n][n];
+        int[][] path = new int[1 << n][n];
+        for (int[] row : dp) Arrays.fill(row, Integer.MAX_VALUE / 2); 
+        for (int[] row : path) Arrays.fill(row, -1); 
+        for (int i = 0; i < n; i++) dp[1 << i][i] = A[i].length();
+        for (int i = 0; i < 1 << n; i++) {
+            for (int j = 0; j < n; j++) {
+                if ((i & (1 << j)) != 0) {
+                    for (int k = 0; k < n; k++) {
+                        if ((i & (1 << k)) == 0 && dp[i | 1 << k][k] > dp[i][j] + g[j][k]) {
+                            dp[i | 1 << k][k] = dp[i][j] + g[j][k];
+                            path[i | 1 << k][k] = j;
+                        } 
+                    }
+                }
+            }
+        }
+        int idx = 0, len = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            if (dp[(1 << n) - 1][i] < len) {
+                idx = i;
+                len = dp[(1 << n) - 1][i];
+            } 
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(A[idx]);
+        int state = (1 << n) - 1;
+        while (true) {
+            int prev = path[state][idx];
+            if (prev == -1) break; 
+            int overlap = A[idx].length() - g[prev][idx];
+            int tmp = A[prev].length();
+            sb.insert(0, A[prev].substring(0, tmp - overlap));
+            state -= (1 << idx);
+            idx = prev;
+        }
+        return sb.toString();
+    }
+    private int dist(String s1, String s2) {
+        for (int i = s2.length() - 1; i >= 0; i--) {
+            if (s1.endsWith(s2.substring(0, i + 1))) return s2.length() - i - 1;
+        }
+        return s2.length();
+    }
+}
