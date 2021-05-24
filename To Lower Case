@@ -1,0 +1,25 @@
+Javascript:
+
+var toLowerCase = function(s) {
+    return s.toLowerCase();
+};
+
+CPP:
+
+string toLowerCase(string s) {
+	for(auto& c : s) if(c >= 'A' && c <= 'Z') c += 'a' - 'A';
+	return s;
+}
+
+string toLowerCase(string s) {
+	for(auto& c : s) c = tolower(c);
+	return s;
+}
+
+Python:
+
+def toLowerCase(self, s: str) -> str:
+	 # ord -> integer representation of character |  chr -> character representation of integer
+	 return "".join(chr(ord(c) - ord('A') + ord('a')) if c >= 'A' and c <= 'Z' else c for c in s)
+	 # or simpler -
+	 # return "".join(chr(ord(c) + 32) if c >= 'A' and c <= 'Z' else c for c in s)
