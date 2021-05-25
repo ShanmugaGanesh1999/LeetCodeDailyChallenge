@@ -1,0 +1,82 @@
+Javascript Code:
+
+The best result for the code below is 68ms / 40.2MB (beats 100% / 95%).
+
+let a, b
+const evaluate = {"+": ()=>a+b, "-": ()=>a-b, "*": ()=>a*b, "/": ()=>~~(a/b)}
+
+var evalRPN = function(tokens) {
+    let stack = []
+    for (let t of tokens) {
+        if (evaluate[t]) {
+            b = stack.pop(), a = stack.pop()
+            stack.push(evaluate[t]())
+        } else stack.push(~~t)
+    }
+    return stack[0]
+};
+
+Python Code:
+
+The best result for the code below is 56ms / 14.4MB (beats 98% / 96%).
+
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        stack = []
+        for t in tokens:
+            if t not in {"+", "-", "*", "/"}:
+                stack.append(int(t))
+            else:
+                b, a = stack.pop(), stack.pop()
+                if t == "+": stack.append(a + b)
+                elif t == "-": stack.append(a - b)
+                elif t == "*": stack.append(a * b)
+                else: stack.append(trunc(a / b))
+        return stack[0]
+
+Java Code:
+
+The best result for the code below is ms / MB (beats 91% / 91%).
+
+class Solution {
+    private Set<String> ops = new HashSet<>(Arrays.asList("+", "-", "*", "/"));
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> stack = new Stack<>();
+        for (String t : tokens) {
+            if (!ops.contains(t)) stack.push(Integer.parseInt(t));
+            else {
+                int b = stack.pop(), a = stack.pop();
+                if (t.equals("+")) stack.push(a + b);
+                else if (t.equals("-")) stack.push(a - b);
+                else if (t.equals("*")) stack.push(a * b);
+                else stack.push(a / b);
+            }
+        }
+        return stack.pop();
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 4ms / 11.9MB (beats 99% / 57%).
+
+static unordered_set<string> ops({"+", "-", "*", "/"});
+
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        stack<int> stack;
+        for (auto t : tokens) {
+            if (ops.find(t) == ops.end()) stack.push(stoi(t));
+            else {
+                int b = stack.top(); stack.pop();
+                int a = stack.top(); stack.pop();
+                if (t == "+") stack.push(a + b);
+                else if (t == "-") stack.push(a - b);
+                else if (t == "*") stack.push(a * b);
+                else stack.push(a / b);
+            }
+        }
+        return stack.top();
+    }
+};
