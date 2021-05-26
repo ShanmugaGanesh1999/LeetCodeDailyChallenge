@@ -1,0 +1,40 @@
+Javascript Code:
+
+The best result for the code below is 80ms / 46.4MB (beats 99% / 48%).
+
+const minPartitions = n => Math.max(...n.split(''))
+
+Python Code:
+
+The best result for the code below is 56ms / 15.3MB (beats 75% / 27%).
+
+class Solution:
+    def minPartitions(self, n: str) -> int:
+        return max(list(n))
+
+Java Code:
+
+The best result for the code below is 3ms / 39.2MB (beats 99% / 95%).
+
+class Solution {
+    public int minPartitions(String n) {
+        char best = '0';
+        for (char c : n.toCharArray())
+            if (c > best) best = c;
+        return best - '0';
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 28ms / 13.4MB (beats 96% / 97%).
+
+class Solution {
+public:
+    int minPartitions(string n) {
+        char best = '0';
+        for (auto& c : n)
+            if (c > best) best = c;
+        return best - '0';
+    }
+};
