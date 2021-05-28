@@ -1,0 +1,71 @@
+Javascript Code:
+
+The best result for the code below is 96ms / 49.4MB (beats 100% / 100%).
+
+var maximumUniqueSubarray = function(nums) {
+    let nmap = new Int8Array(10001), total = 0, best = 0
+    for (let left = 0, right = 0; right < nums.length; right++) {
+        nmap[nums[right]]++, total += nums[right]
+        while (nmap[nums[right]] > 1)
+            nmap[nums[left]]--, total -= nums[left++]
+        best = Math.max(best, total)
+    }
+    return best
+};
+
+Python Code:
+
+The best result for the code below is 1180ms / 28.2MB (beats 90% / 63%).
+
+class Solution:
+    def maximumUniqueSubarray(self, nums: List[int]) -> int:
+        nmap, total, best, left = [0] * 10001, 0, 0, 0
+        for right in nums:
+            nmap[right] += 1
+            total += right
+            while nmap[right] > 1:
+                nmap[nums[left]] -= 1
+                total -= nums[left]
+                left += 1
+            best = max(best, total)
+        return best
+
+Java Code:
+
+The best result for the code below is 6ms / 47.5MB (beats 97% / 100%).
+
+class Solution {
+    public int maximumUniqueSubarray(int[] nums) {
+        short[] nmap = new short[10001];
+        int total = 0, best = 0;
+        for (int left = 0, right = 0; right < nums.length; right++) {
+            nmap[nums[right]]++;
+            total += nums[right];
+            while (nmap[nums[right]] > 1) {
+                nmap[nums[left]]--;
+                total -= nums[left++];
+            }
+            best = Math.max(best, total);
+        }
+        return best;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 129ms / 88.9MB (beats 100% / 100%).
+
+class Solution {
+public:
+    int maximumUniqueSubarray(vector<int>& nums) {
+        char nmap[10001]{0};
+        int total = 0, best = 0;
+        for (int left = 0, right = 0; right < nums.size(); right++) {
+            nmap[nums[right]]++, total += nums[right];
+            while (nmap[nums[right]] > 1)
+                nmap[nums[left]]--, total -= nums[left++];
+            best = max(best, total);
+        }
+        return best;
+    }
+};
