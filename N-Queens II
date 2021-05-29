@@ -1,0 +1,86 @@
+Javascript Code:
+
+The best result for the code below is 68ms / 38.0MB (beats 100% / 99%).
+
+var totalNQueens = function(N) {
+    let ans = 0
+    
+    const place = (i, vert, ldiag, rdiag) => {
+        if (i === N) ans++
+        else for (let j = 0; j < N; j++) {
+            let vmask = 1 << j, lmask = 1 << (i+j), rmask = 1 << (N-i-1+j)
+            if (vert & vmask || ldiag & lmask || rdiag & rmask) continue
+            place(i+1, vert | vmask, ldiag | lmask, rdiag | rmask)
+        }
+    }
+
+    place(0,0,0,0)
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 44ms / 13.9MB (beats 90% / 99%).
+
+class Solution:
+    def totalNQueens(self, N: int) -> int:
+        self.ans = 0
+        
+        def place(i: int, vert: int, ldiag: int, rdiag:int) -> None:
+            if i == N: self.ans += 1
+            else:
+                for j in range(N):
+                    vmask, lmask, rmask = 1 << j, 1 << (i+j), 1 << (N-i-1+j)
+                    if vert & vmask or ldiag & lmask or rdiag & rmask: continue
+                    place(i+1, vert | vmask, ldiag | lmask, rdiag | rmask)
+            
+        place(0,0,0,0)
+        return self.ans
+
+Java Code:
+
+The best result for the code below is 0ms / 35.2MB (beats 100% / 99%).
+
+class Solution {
+    int ans;
+    
+    public int totalNQueens(int N) {
+        ans = 0;
+        place(0,0,0,0,N);
+        return ans;
+    }
+    
+    private void place(int i, int vert, int ldiag, int rdiag, int N) {
+        if (i == N) ans++;
+        else for (int j = 0; j < N; j++) {
+            int vmask = 1 << j, lmask = 1 << (i+j), rmask = 1 << (N-i-1+j);
+            if ((vert & vmask) + (ldiag & lmask) + (rdiag & rmask) > 0) continue;
+            place(i+1, vert | vmask, ldiag | lmask, rdiag | rmask, N);
+        }
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 5.8MB (beats 100% / 99%).
+
+class Solution {
+public:
+    int totalNQueens(int N) {
+        ans = 0;
+        place(0,0,0,0,N);
+        return ans;
+    }
+    
+private:
+    int ans;
+    
+    void place(int i, int vert, int ldiag, int rdiag, int N) {
+        if (i == N) ans++;
+        else for (int j = 0; j < N; j++) {
+            int vmask = 1 << j, lmask = 1 << (i+j), rmask = 1 << (N-i-1+j);
+            if (vert & vmask || ldiag & lmask || rdiag & rmask) continue;
+            place(i+1, vert | vmask, ldiag | lmask, rdiag | rmask, N);
+        }
+    }
+};
