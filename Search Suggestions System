@@ -1,0 +1,101 @@
+C++:-
+
+class Solution {
+public:
+    vector<vector<string>> suggestedProducts(vector<string>& products, string searchWord) {
+        vector<vector<string>> res;
+        string prefix = "";
+        auto i = products.begin(), it = i;
+        int k;
+        
+        sort(products.begin(), products.end());
+        
+        for (auto ch : searchWord) {
+            vector<string> tmp;
+            prefix += ch;
+            i = lower_bound(i, products.end(), prefix);
+            
+            for (it = i, k = 0; it != products.end() && k < 3; k++, it++) {
+                if ((*it).find(prefix) == -1) break;
+                tmp.push_back(*it);
+            }
+            res.push_back(tmp);
+        }
+        return res;
+    }
+};
+
+Java:-
+
+class Solution {
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        Trie root = new Trie();
+        
+        for(String s:products){
+            Trie node = root;
+            for(char c:s.toCharArray()){
+                if(node.next[c-'a']==null){
+                    node.next[c-'a'] = new Trie();
+                }
+                node = node.next[c-'a'];
+                node.words.add(s);
+            }
+        }
+        
+        List<List<String>> res = new ArrayList<>();
+        Trie head = root;
+        for(char c:searchWord.toCharArray()){
+            if(head.next[c-'a']==null) break;
+            
+            head = head.next[c-'a'];
+            List<String> ls = head.words;
+            Collections.sort(ls);
+            int toindex = ls.size()>3?3:ls.size();
+            res.add(ls.subList(0,toindex));
+        }
+        
+        for(int i=res.size();i<searchWord.length();i++){
+            res.add(new ArrayList<>());
+        }
+        
+        return res;
+    }
+}
+
+class Trie{
+    Trie[] next = new Trie[26];
+    List<String> words=new ArrayList<>();
+    
+}
+
+Python:- 
+
+class Solution:
+    def suggestedProducts(self, products, searchWord):
+        ans = []
+        
+        #create a heap of words
+        #this is automatically sorted by lexicographical order
+        hp = []
+        for x in products:
+            heapq.heappush(hp, x)
+        
+        #loop over every character of searchWord
+        for i, char in enumerate(searchWord):
+            #if empty heap, nothing to be done
+            if not hp:
+                ans.append([])
+                continue
+            #buffer contains at most 3 elements
+            buffer = []
+            while hp and len(buffer) < 3:
+                this = heapq.heappop(hp)
+                if len(this) >= i + 1 and this[:i+1] == searchWord[:i+1]:
+                    buffer.append(this)
+            #add the elements back to heap
+            for x in buffer:
+                heapq.heappush(hp, x)
+            #suggestions at current character
+            ans.append(buffer)
+        
+        return ans
