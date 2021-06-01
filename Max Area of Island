@@ -1,0 +1,76 @@
+Javascript Code:
+
+The best result for the code below is 92ms / 39.7MB (beats 95% / 100%).
+
+var maxAreaOfIsland = function(grid) {
+    let ans = 0, n = grid.length, m = grid[0].length
+    const trav = (i, j) => {
+        if (i < 0 || j < 0 || i >= n || j >= m || !grid[i][j]) return 0
+        grid[i][j] = 0
+        return 1 + trav(i-1, j) + trav(i, j-1) + trav(i+1, j) + trav(i, j+1)
+    }
+    for (let i = 0; i < n; i++) 
+        for (let j = 0; j < m; j++)
+            if (grid[i][j]) ans = Math.max(ans, trav(i, j))
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 124ms / 16.7MB (beats 95% / 48%).
+
+class Solution:
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        ans, n, m = 0, len(grid), len(grid[0])
+        def trav(i: int, j: int) -> int:
+            if i < 0 or j < 0 or i >= n or j >= m or grid[i][j] == 0: return 0
+            grid[i][j] = 0
+            return 1 + trav(i-1, j) + trav(i, j-1) + trav(i+1, j) + trav(i, j+1)
+        for i, j in product(range(n), range(m)):
+            if grid[i][j]: ans = max(ans, trav(i, j))
+        return ans
+
+Java Code:
+
+The best result for the code below is 2ms / 39.2MB (beats 99% / 83%).
+
+class Solution {
+    private int n, m;
+    public int maxAreaOfIsland(int[][] grid) {
+        int ans = 0;
+        n = grid.length;
+        m = grid[0].length;
+        for (int i = 0; i < n; i++) 
+            for (int j = 0; j < m; j++)
+                if (grid[i][j] > 0) ans = Math.max(ans, trav(i, j, grid));
+        return ans;
+    }
+    private int trav(int i, int j, int[][] grid) {
+        if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] < 1) return 0;
+        grid[i][j] = 0;
+        return 1 + trav(i-1, j, grid) + trav(i, j-1, grid) + trav(i+1, j, grid) + trav(i, j+1, grid);
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 8ms / 23.0MB (beats 100% / 95%).
+
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int ans = 0;
+        n = grid.size(), m = grid[0].size();
+        for (int i = 0; i < n; i++) 
+            for (int j = 0; j < m; j++)
+                if (grid[i][j]) ans = max(ans, trav(i, j, grid));
+        return ans;
+    }
+private:
+    int n, m;
+    int trav(int i, int j, vector<vector<int>>& grid) {
+        if (i < 0 || j < 0 || i >= n || j >= m || !grid[i][j]) return 0;
+        grid[i][j] = 0;
+        return 1 + trav(i-1, j, grid) + trav(i, j-1, grid) + trav(i+1, j, grid) + trav(i, j+1, grid);
+    }
+};
