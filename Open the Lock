@@ -1,0 +1,130 @@
+Javascript Code:
+
+The best result for the code below is 96ms / 41.7MB (beats 100% / 100%).
+
+var openLock = function(deadends, target) {
+    if (target === "0000") return 0
+    let queue = [0], seen = new Uint8Array(10000)
+    for (let d of deadends)
+        seen[~~d] = 1
+    target = ~~target
+    if (seen[0]) return -1
+    for (let turns = 1; queue.length; turns++) {
+        let qlen = queue.length
+        for (let i = 0; i < qlen; i++) {
+            let curr = queue.shift()
+            for (let j = 1; j < 10000; j *= 10) {
+                let mask = ~~(curr % (j * 10) / j),
+                    masked = curr - (mask * j)
+                for (let k = 1; k < 10; k += 8) {
+                    let next = masked + (mask + k) % 10 * j
+                    if (seen[next]) continue
+                    if (next === target) return turns
+                    seen[next] = 1
+                    queue.push(next)
+                }
+            }
+        }
+    }
+    return -1
+};
+
+Python Code:
+
+The best result for the code below is 284ms / 14.3MB (beats 96% / 100%).
+
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+        if target == "0000": return 0
+        queue, target = deque([0]), int(target)
+        seen, turns = [0] * 10000, 1
+        for d in deadends: seen[int(d)] = 1
+        if seen[0]: return -1
+        while len(queue):
+            qlen = len(queue)
+            for i in range(qlen):
+                curr, j = queue.popleft(), 1
+                while j < 10000:
+                    mask = curr % (j * 10) // j
+                    masked = curr - (mask * j)
+                    for k in range(1,10,8):
+                        nxt = masked + (mask + k) % 10 * j
+                        if seen[nxt]: continue
+                        if nxt == target: return turns
+                        seen[nxt] = 1
+                        queue.append(nxt)
+                    j *= 10
+            turns += 1
+        return -1
+
+Java Code:
+
+The best result for the code below is 12ms / 39.1MB (beats 99% / 99%).
+
+class Solution {
+    public int openLock(String[] deadends, String target) {
+        if (target.equals("0000")) return 0;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(0);
+        boolean[] seen = new boolean[10000];
+        for (String el : deadends)
+            seen[Integer.parseInt(el)] = true;
+        int targ = Integer.parseInt(target);
+        if (seen[0]) return -1;
+        for (int turns = 1; !queue.isEmpty(); turns++) {
+            int qlen = queue.size();
+            for (int i = 0; i < qlen; i++) {
+                int curr = queue.poll();
+                for (int j = 1; j < 10000; j *= 10) {
+                    int mask = curr % (j * 10) / j,
+                        masked = curr - (mask * j);
+                    for (int k = 1; k < 10; k += 8) {
+                        int next = masked + (mask + k) % 10 * j;
+                        if (seen[next]) continue;
+                        if (next == targ) return turns;
+                        seen[next] = true;
+                        queue.add(next);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 12ms / 9.8MB (beats 100% / 100%).
+
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        if (target == "0000") return 0;
+        queue<int> queue;
+        queue.push(0);
+        bool seen[10000]{false};
+        for (auto& d : deadends)
+            seen[stoi(d)] = true;
+        int targ = stoi(target);
+        if (seen[0]) return -1;
+        for (int turns = 1; queue.size(); turns++) {
+            int qlen = queue.size();
+            for (int i = 0; i < qlen; i++) {
+                int curr = queue.front();
+                queue.pop();
+                for (int j = 1; j < 10000; j *= 10) {
+                    int mask = curr % (j * 10) / j,
+                        masked = curr - (mask * j);
+                    for (int k = 1; k < 10; k += 8) {
+                        int next = masked + (mask + k) % 10 * j;
+                        if (seen[next]) continue;
+                        if (next == targ) return turns;
+                        seen[next] = true;
+                        queue.push(next);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+};
