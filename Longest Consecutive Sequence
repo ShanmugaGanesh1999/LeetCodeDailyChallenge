@@ -1,0 +1,134 @@
+sgallivan's avatar
+sgallivan
+4244
+
+5 hours ago
+
+50 VIEWS
+
+(Note: This is part of a series of Leetcode solution explanations. If you like this solution or find it useful, please upvote this post.)
+
+Idea:
+
+In order to accomplish this task in O(N) time, we'll have to have some way of looking up values, which means a set or map object. The problem with using a set in this situation is that we will also need to prevent redoing the same path over and over again (pushing the time complexity to O(N^2)), which means keeping track of which numbers have been seen.
+
+This would tend to point towards a map approach where we store the numbers in nums as the key and the index of the number as the value in our map (nmap). Then we can set up a seen array based on the indexes of the numbers so that we don't redo already-visited numbers.
+
+(Note: Since we'll be iterating through nums from front to back in the next section, we should store the first index that a number is found at in nmap. Later indexes of duplicate numbers can be ignored.)
+
+But now we run into the issue of potentially finding the middle of a sequence before we find the beginning of the sequence. For this we can take inspiration from a union-find approach, and use seen to store the length of the sequence found when starting at the given number.
+
+We only need to store the path length in the seen index representing the point of entry, because it's the only element that we might later find while iterating through unseen numbers. For the other indexes we pass through while tracking the sequence, we can just fill seen with a 1 to indicate that it has been visited.
+
+Then, if we later find an earlier number in the same sequence, we can notice the number in seen when we reach the visited portion and just add that to our count of numbers.
+
+For example, consider nums = [4,5,6,1,2,3,0]. We start at 4, then track through 5 and 6, filling the seen indexes corresponding to 5 and 6 with a 1 each. Once we reach the end of that chain and have a count of 3, we store that 3 in the seen index corresponding to 4 (seen[0]).
+
+Then, because we've seen 5 and 6, we skip to 1. At 1, we track through 2 and 3, filling them with 1s, then we run into 4, which has a value of 3 stored in seen. At this point, count is 3, but we've just run into another already-discovered chain of 3, so we can fill the seen index corresponding to 1 (seen[3]) with a 6. Then we skip past 2 and 3, and the 0 will lead us back to 1, so we'll have a result of 7 for the seen index corresponding to 0 (seen[6]).
+
+At each step, when we're about to store the count in seen, we can also update our best result so far (ans). Then, once we've reached the end of the iteration, we can just return ans.
+
+    Time Complexity: O(N) where N is the length of nums
+    Space Complexity: O(N) for nmap and seen
+
+Javascript Code:
+
+var longestConsecutive = function(nums) {
+    let nmap = new Map(), ans = 0,
+        seen = new Uint32Array(nums.length)
+    for (let i = 0; i < nums.length; i++)
+        if (!nmap.has(nums[i])) nmap.set(nums[i], i)
+    for (let n of nums) {
+        let curr = n, count = 1
+        if (seen[nmap.get(curr)]) continue
+        while (nmap.has(curr+1)) {
+            let ix = nmap.get(++curr)
+            if (seen[ix]) {
+                count += seen[ix]
+                break
+            } else seen[ix] = 1, count++
+        }
+        seen[nmap.get(n)] = count
+        ans = Math.max(ans, count)
+    }
+    return ans
+};
+
+Python Code:
+
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        nmap, seen, ans = defaultdict(int), [0] * len(nums), 0
+        for i in range(len(nums)):
+            if nums[i] not in nmap: nmap[nums[i]] = i
+        for n in nums:
+            curr, count = n, 1
+            if seen[nmap[n]]: continue
+            while curr+1 in nmap:
+                curr += 1
+                ix = nmap[curr]
+                if seen[ix]:
+                    count += seen[ix]
+                    break
+                else:
+                    seen[ix] = 1
+                    count += 1
+            seen[nmap[n]], ans = count, max(ans, count)
+        return ans
+
+Java Code:
+
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        Map<Integer, Integer> nmap = new HashMap<>();
+        int ans = 0;
+        int[] seen = new int[nums.length];
+        for (int i = 0; i < nums.length; i++)
+            if (!nmap.containsKey(nums[i])) nmap.put(nums[i], i);
+        for (int n : nums) {
+            int curr = n, count = 1;
+            if (seen[nmap.get(curr)] > 0) continue;
+            while (nmap.containsKey(curr+1)) {
+                int ix = nmap.get(++curr);
+                if (seen[ix] > 0) {
+                    count += seen[ix];
+                    break;
+                } else {
+                    seen[ix] = 1;
+                    count++;
+                }
+            }
+            seen[nmap.get(n)] = count;
+            ans = Math.max(ans, count);
+        }
+        return ans;
+    }
+}
+
+C++ Code:
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_map<int, int> nmap;
+        int ans = 0;
+        vector<int> seen(nums.size());
+        for (int i = 0; i < nums.size(); i++)
+            if (nmap.find(nums[i]) == nmap.end())
+                nmap[nums[i]] = i;
+        for (auto& n : nums) {
+            int curr = n, count = 1;
+            if (seen[nmap[curr]]) continue;
+            while (nmap.find(curr+1) != nmap.end()) {
+                int ix = nmap[++curr];
+                if (seen[ix]) {
+                    count += seen[ix];
+                    break;
+                } else seen[ix] = 1, count++;
+            }
+            seen[nmap[n]] = count;
+            ans = max(ans, count);
+        }
+        return ans;
+    }
+};
