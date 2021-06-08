@@ -1,0 +1,95 @@
+Javascript Code:
+
+var buildTree = function(P, I) {
+    let M = new Map()
+    for (let i = 0; i < I.length; i++)
+        M.set(I[i], i)
+    return splitTree(P, I, M, 0, 0, I.length-1)
+};
+
+var splitTree = function(P, I, M, pix, ileft, iright) {
+    let rval = P[pix],
+        root = new TreeNode(rval),
+        imid = M.get(rval)
+    if (imid > ileft)
+        root.left = splitTree(P, I, M, pix+1, ileft, imid-1)
+    if (imid < iright)
+        root.right = splitTree(P, I, M, pix+imid-ileft+1, imid+1, iright)
+    return root
+}
+
+Python Code:
+
+class Solution:
+    def buildTree(self, P: List[int], I: List[int]) -> TreeNode:
+        M = {I[i]: i for i in range(len(I))}
+        return self.splitTree(P, I, M, 0, 0, len(P)-1)
+    
+    def splitTree(self, P: List[int], I: List[int], M: dict, pix: int, ileft: int, iright: int) -> TreeNode:
+        rval = P[pix]
+        root, imid = TreeNode(rval), M[rval]
+        if imid > ileft:
+            root.left = self.splitTree(P, I, M, pix+1, ileft, imid-1)
+        if imid < iright:
+            root.right = self.splitTree(P, I, M, pix+imid-ileft+1, imid+1, iright)
+        return root
+
+Java Code:
+
+The best result for the code below is ms / MB (beats % / %).
+
+class Solution {
+    public TreeNode buildTree(int[] P, int[] I) {
+        Map<Integer, Integer> M = new HashMap<>();
+        for (int i = 0; i < I.length; i++)
+            M.put(I[i], i);
+        return splitTree(P, I, M, 0, 0, I.length-1);
+    }
+    
+    private TreeNode splitTree(int[] P, int[] I, Map<Integer, Integer> M, int pix, int ileft, int iright) {
+        int rval = P[pix], imid = M.get(rval);
+        TreeNode root = new TreeNode(rval);            
+        if (imid > ileft)
+            root.left = splitTree(P, I, M, pix+1, ileft, imid-1);
+        if (imid < iright)
+            root.right = splitTree(P, I, M, pix+imid-ileft+1, imid+1, iright);
+        return root;
+    }
+}
+
+C++ Code:
+
+The best result for the code below is ms / MB (beats % / %).
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& P, vector<int>& I) {
+        unordered_map<int, int> M;
+        for (int i = 0; i < I.size(); i++)
+            M[I[i]] = i;
+        return splitTree(P, I, M, 0, 0, I.size()-1);
+    }
+    
+private:
+    TreeNode* splitTree(vector<int>& P, vector<int>& I, unordered_map<int, int>& M, int pix, int ileft, int iright) {
+        int rval = P[pix], imid = M[rval];
+        TreeNode* root = new TreeNode(rval);            
+        if (imid > ileft)
+            root->left = splitTree(P, I, M, pix+1, ileft, imid-1);
+        if (imid < iright)
+            root->right = splitTree(P, I, M, pix+imid-ileft+1, imid+1, iright);
+        return root;
+    }
+};
