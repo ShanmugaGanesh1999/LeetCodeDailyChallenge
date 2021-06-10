@@ -1,0 +1,102 @@
+Javascript Code:
+
+class MyCalendar {
+    constructor() {
+        this.head = {start: -1, end: -1, next: {start: Infinity, end:Infinity}}
+    }
+    book = function(start, end) {
+        let curr = this.head, last
+        while (curr.start < start)
+            last = curr, curr = curr.next
+        if (last.end > start || curr.start < end)
+            return false
+        last.next = {start: start, end: end, next: curr}
+        return true
+    };
+}
+
+Python Code:
+
+class MyCalendar:
+    def __init__(self):
+        self.head = {'start': -1, 'end': -1, 'next': {'start': float('inf'), 'end': float('inf')}}
+    def book(self, start: int, end: int) -> bool:
+        curr = self.head
+        while curr['start'] < start:
+            last, curr = curr, curr['next']
+        if last['end'] > start or curr['start'] < end:
+            return False
+        last['next'] = {'start': start, 'end': end, 'next': curr}
+        return True
+
+Java Code:
+
+class ListNode {
+    public int start, end;
+    public ListNode next;
+    public ListNode(int s, int e, ListNode n) {
+        start = s;
+        end = e;
+        next = n;
+    }
+}
+
+class MyCalendar {
+    ListNode head;
+    public MyCalendar() {
+        ListNode tail = new ListNode(Integer.MAX_VALUE, Integer.MAX_VALUE, null);
+        head = new ListNode(-1, -1, tail);
+    }
+    
+    public boolean book(int start, int end) {
+        ListNode curr = head, last = head;
+        while (curr.start < start) {
+            last = curr;
+            curr = curr.next;
+        }
+        if (last.end > start || curr.start < end)
+            return false;
+        last.next = new ListNode(start, end, curr);
+        return true;
+    }
+}
+
+C++ Code:
+
+struct LNode {
+public:
+    int start, end;
+    LNode* next;
+    
+    LNode(int s, int e, LNode* n) {
+        start = s;
+        end = e;
+        next = n;
+    }
+};
+
+class MyCalendar {
+public:
+    MyCalendar() {
+        LNode* tail = new LNode(INT_MAX, INT_MAX, nullptr);
+        head = new LNode(-1, -1, tail);
+    }
+    
+    bool book(int start, int end) {
+        LNode* curr = head, *last = head;
+        while (curr->start < start)
+            last = curr, curr = curr->next;
+        if (last->end > start || curr->start < end)
+            return false;
+        last->next = new LNode(start, end, curr);
+        return true;
+    }
+private:
+    LNode* head;
+};
+
+/**
+ * Your MyCalendar object will be instantiated and called as such:
+ * MyCalendar* obj = new MyCalendar();
+ * bool param_1 = obj->book(start,end);
+ */
