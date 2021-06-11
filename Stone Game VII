@@ -1,0 +1,76 @@
+Javascript Code:
+
+The best result for the code below is 112ms / 37.9MB (beats 100% / 100%).
+
+var stoneGameVII = function(S) {
+    let N = S.length,
+        dpCurr = new Uint32Array(N), dpLast = new Uint32Array(N)
+    for (let i = N - 2; ~i; i--) {
+        let total = S[i], temp = dpLast
+        dpLast = dpCurr, dpCurr = temp
+        for (let j = i + 1; j < N; j++) {
+            total += S[j]
+            dpCurr[j] = Math.max(total - S[i] - dpLast[j], total - S[j] - dpCurr[j-1])
+        }
+    }
+    return dpCurr[N-1]
+};
+
+Python Code:
+
+The best result for the code below is 2764ms / 14.3MB (beats 97% / 99%).
+
+class Solution:
+    def stoneGameVII(self, S: List[int]) -> int:
+        N = len(S)
+        dpCurr, dpLast = [0] * N, [0] * N
+        for i in range(N - 2, -1, -1):
+            total = S[i]
+            dpLast, dpCurr = dpCurr, dpLast
+            for j in range(i + 1, N):
+                total += S[j]
+                dpCurr[j] = max(total - S[i] - dpLast[j], total - S[j] - dpCurr[j-1])
+        return dpCurr[-1]
+
+Java Code:
+
+The best result for the code below is 16ms / 38.2MB (beats 100% / 99%).
+
+class Solution {
+    public int stoneGameVII(int[] S) {
+        int N = S.length;
+        int[] dpCurr = new int[N], dpLast = new int[N];
+        for (int i = N - 2; i >= 0; i--) {
+            int total = S[i];
+            int[] temp = dpLast;
+            dpLast = dpCurr;
+            dpCurr = temp;
+            for (int j = i + 1; j < N; j++) {
+                total += S[j];
+                dpCurr[j] = Math.max(total - S[i] - dpLast[j], total - S[j] - dpCurr[j-1]);
+            }
+        }
+        return dpCurr[N-1];
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 124ms / 9.9MB (beats 96% / 100%).
+
+class Solution {
+public:
+    int stoneGameVII(vector<int>& S) {
+        int N = S.size();
+        vector<int> dpCurr(N), dpLast(N);
+        for (int i = N - 2; ~i; i--) {
+            int total = S[i];
+            dpLast.swap(dpCurr);
+            for (int j = i + 1; j < N; j++) {
+                total += S[j];
+                dpCurr[j] = max(total - S[i] - dpLast[j], total - S[j] - dpCurr[j-1]);
+            }
+        }
+        return dpCurr[N-1];
+    }
+};
