@@ -1,0 +1,122 @@
+class Solution:
+    def maximumUnits(self, boxTypes, truckSize):
+        boxTypes.sort(key=lambda x: -x[1])
+        ans = 0
+        for t, u in boxTypes:
+            if truckSize > t:
+                truckSize -= t
+                ans += t * u
+            else:
+                ans += truckSize * u
+                return ans
+        return ans
+        
+        
+class Solution:
+    def maximumUnits(self, boxTypes: List[List[int]], truckSize: int) -> int:
+        #using counting sort
+        mx = max(units for _, units in boxTypes)
+        arr = [0]*(mx+1)
+        #Now storing no. of boxes holding that unit
+        for boxes, units in boxTypes:
+            arr[units] += boxes
+        ans = 0
+        #Since maximum units are at end we traverse in reverse
+        for units in range(mx, 0, -1):
+            boxes = arr[units]
+            if boxes<=truckSize:
+                ans += boxes*units
+                truckSize -= boxes
+            else:
+                ans += truckSize*units
+                return ans
+        return ans
+        
+        
+Cpp:-
+
+class Solution {
+public:
+    int maximumUnits(vector<vector<int>>& boxes, int truckSize) {
+        // support variables
+        int res = 0, currBatch;
+        // sorting boxes by decreasing capacity
+        sort(begin(boxes), end(boxes), [](auto &a, auto &b){return a[1] > b[1];});
+		// carrying as many larger sized boxes as we can first
+        for (auto &el: boxes) {
+            currBatch = min(el[0], truckSize);
+            truckSize -= currBatch;
+            res += currBatch * el[1];
+            if (!truckSize) break;
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int maximumUnits(vector<vector<int>>& boxes, int truckSize) {
+        // support variables
+        int res = 0, sizeBucket[1001] = {}, maxBucket = INT_MIN, minBucket = INT_MAX;
+        // bucket sorting tthe boxes and recording the bucket range
+        for (auto &boxType: boxes) {
+            maxBucket = max(maxBucket, boxType[1]);
+            minBucket = min(minBucket, boxType[1]);
+            sizeBucket[boxType[1]] += boxType[0];
+        }
+		// carrying as many larger sized boxes as we can first
+        for (int i = maxBucket, size, currBatch; i >= minBucket; i--) {
+            size = sizeBucket[i];
+            if (!size) continue;
+            currBatch = min(size, truckSize);
+            truckSize -= currBatch;
+            res += currBatch * i;
+            if (!truckSize) break;
+        }
+        return res;
+    }
+};
+
+java:-
+
+class Solution {
+    public int maximumUnits(int[][] boxTypes, int truckSize) {
+        int[] buckets = new int[1001];
+        int units = 0;
+        
+        for (int i = 0; i < boxTypes.length; i++) {
+            if (buckets[boxTypes[i][1]] == 0) {
+                buckets[boxTypes[i][1]] = boxTypes[i][0];
+            } else {
+                buckets[boxTypes[i][1]] += boxTypes[i][0];
+            }
+        }
+        
+        for (int i = 1000; truckSize > 0 && i >= 0; --i) {
+            if (buckets[i] == 0) continue;
+
+            units += Math.min(truckSize, buckets[i])*i;
+            truckSize -= buckets[i]; 
+        }
+        
+        return units;
+    }
+};
+
+
+public int maximumUnits(int[][] boxTypes, int truckSize) {
+        Arrays.sort(boxTypes, new Comparator<int[]>() {
+            public int compare(int[] idx1, int[] idx2) {
+                return Integer.compare(idx2[1], idx1[1]);
+            }
+        });
+ 
+        int i=0, units  = 0;
+        while(i<boxTypes.length && truckSize>0) {
+                units += boxTypes[i][1]*(Math.min(truckSize, boxTypes[i][0]));
+                truckSize -= boxTypes[i][0];
+                i++;                
+        }
+        
+        return units;
+    }
