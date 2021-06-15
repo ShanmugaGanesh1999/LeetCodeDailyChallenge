@@ -1,0 +1,84 @@
+Python:-
+
+class Solution:
+    def makesquare(self, nums):
+        N = len(nums)
+        basket, rem = divmod(sum(nums), 4)
+        if rem or max(nums) > basket: return False
+        
+        @lru_cache(None)
+        def dfs(mask):
+            if mask == 0: return 0
+            for j in range(N):
+                if mask & 1<<j:
+                    neib = dfs(mask ^ 1<<j)
+                    if neib >= 0 and neib + nums[j] <= basket:
+                        return (neib + nums[j]) % basket
+            return -1
+                    
+        return dfs((1<<N) - 1) == 0
+
+C++:-
+
+class Solution {
+public:
+    bool makesquare(vector<int>& matchsticks) {
+        int sum = 0;
+        sum = accumulate(matchsticks.begin(), matchsticks.end(), sum);
+        if (matchsticks.size() < 4 || sum % 4) return false;
+        
+        vector<int>visited(matchsticks.size(), false);
+        return backtrack(matchsticks, visited, sum / 4, 0, 0, 4);
+    }
+    
+    bool backtrack(vector<int>& matchsticks,vector<int>visited, int target, int curr_sum, int i, int k) {
+        if (k == 1) // if k == 1 then we found all subsets
+            return true;
+        
+        if (curr_sum == target) // we found one subset, go on to the next one starting from curr_sum = 0
+            return backtrack(matchsticks, visited, target, 0, 0, k-1);
+        
+        for (int j = i; j < matchsticks.size(); j++) {
+            if (visited[j] || curr_sum + matchsticks[j] > target) continue; // if we visited this index already or curr_sum + matchsticks[j] > target then we can't use it
+            
+            visited[j] = true;
+            if (backtrack(matchsticks, visited, target, curr_sum + matchsticks[j], j+1, k)) return true;
+            visited[j] = false;
+        }
+        
+        return false;
+    }
+};
+
+Java:-
+
+class Solution {
+    public boolean makesquare(int[] nums) {
+        if(nums.length<4) return false;
+        
+        int sum=0;
+        for(int num : nums)
+            sum+=num;
+        if(sum%4!=0) return false;
+        return sol(nums,0,new int[4],sum/4);
+    }
+    
+    public boolean sol(int[] nums,int idx,int[] dims,int len){
+        if(idx==nums.length) return true;
+        
+        for(int i=0;i<4;i++){
+            if(dims[i]+nums[idx]<=len){
+                
+                dims[i]+=nums[idx];
+                if(sol(nums,idx+1,dims,len)) return true;
+                dims[i]-=nums[idx];
+                
+            }
+            
+            
+        }
+        return false;
+        
+    }
+    
+}
