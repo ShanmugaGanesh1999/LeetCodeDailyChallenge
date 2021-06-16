@@ -1,0 +1,100 @@
+Javascript Code:
+
+The best result for the code below is 72ms / 40.4MB (beats 96% / 25%).
+
+var generateParenthesis = function(N) {
+    let ans = [], m = 2 * N
+    
+    const dfs = (pos, open, seq) => {
+        if (pos === m) {
+            let res = new Array(m)
+            for (let i = 0; i < m; i++)
+                res[i] = seq & 1 << i ? "(" : ")"
+            ans.push(res.join(""))
+            return
+        }
+        if (open) dfs(pos+1, open-1, seq)
+        if (m - pos > open) dfs(pos+1, open+1, seq | 1 << pos)
+    }
+    
+    dfs(0, 0, 0)
+    return ans
+};
+
+Python Code:
+
+The best result for the code below is 28ms / 14.3MB (beats 96% / 96%).
+
+class Solution:
+    def generateParenthesis(self, N: int) -> List[str]:
+        ans, m = [], 2 * N
+        
+        def dfs(pos: int, opn: int, seq: int) -> None:
+            if pos == m:
+                res = [0] * m
+                for i in range(m):
+                    res[i] = "(" if seq & 1 << i else ")"
+                ans.append("".join(res))
+                return
+            if opn: dfs(pos+1, opn-1, seq)
+            if m - pos > opn: dfs(pos+1, opn+1, seq | 1 << pos)
+            
+        dfs(0, 0, 0)
+        return ans
+
+Java Code:
+
+The best result for the code below is 0ms / 38.7MB (beats 100% / 93%).
+
+class Solution {
+    public List<String> generateParenthesis(int N) {
+        ans = new ArrayList<>();
+        m = 2 * N;
+        dfs(0, 0, 0);
+        return ans;
+    }
+    
+    private List<String> ans;
+    private int m;
+    
+    private void dfs(int pos, int open, int seq) {
+        if (pos == m) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < m; i++)
+                res.append((seq & 1 << i) > 0 ? "(" : ")");
+            ans.add(res.toString());
+            return;
+        }
+        if (open > 0) dfs(pos+1, open-1, seq);
+        if (m - pos > open) dfs(pos+1, open+1, seq | 1 << pos);
+    }
+}
+
+C++ Code:
+
+The best result for the code below is 0ms / 13.7MB (beats 100% / 57%).
+
+class Solution {
+public:
+    vector<string> generateParenthesis(int N) {
+        m = 2 * N;
+        dfs(0, 0, 0);
+        return ans;
+    }
+    
+private:
+    vector<string> ans;
+    int m;
+    
+    void dfs(int pos, int open, int seq) {
+        if (pos == m) {
+            string res = "";
+            for (int i = 0; i < m; i++)
+                res += seq & 1 << i ? "(" : ")";
+            ans.push_back(res);
+            return;
+        }
+        if (open) dfs(pos+1, open-1, seq);
+        if (m - pos > open) dfs(pos+1, open+1, seq | 1 << pos);
+    }
+};
