@@ -1,0 +1,126 @@
+C++:-
+
+class BIT {
+    vector<int> bit;
+    int size;
+public:
+    BIT(int _size = 0) {
+        size = _size;
+        bit.assign(size + 1, 0);
+    }
+    int getSum(int idx) {
+        int sum = 0;
+        for (; idx > 0; idx -= idx & (-idx))
+            sum += bit[idx];
+        return sum;
+    }
+    int getSumRange(int left, int right) { // left, right inclusive
+        return getSum(right) - getSum(left - 1);
+    }
+    void addValue(int idx, int val) {
+        for (; idx <= size; idx += idx & (-idx))
+            bit[idx] += val;
+    }
+};
+
+class NumArray {
+    BIT bit;
+    vector<int> nums;
+public:
+    NumArray(vector<int>& nums) {
+        this->bit = BIT(nums.size());
+        this->nums = nums;
+        for (int i = 0; i < nums.size(); ++i)
+            bit.addValue(i+1, nums[i]);
+    }
+    void update(int index, int val) {
+        int diff = val - nums[index]; // get diff amount of `val` compared to current value
+        bit.addValue(index + 1, diff); // add this `diff` amount at index `index+1` of BIT, plus 1 because in BIT it's 1-based indexing
+        nums[index] = val; // update latest value of `nums[index]`
+    }
+    int sumRange(int left, int right) {
+        return bit.getSumRange(left+1, right+1);
+    }
+};
+
+Java:-
+
+class BIT {
+    int[] bit;
+    int size;
+    BIT(int _size) {
+        size = _size;
+        bit = new int[size + 1];
+    }
+    int getSum(int idx) {
+        int sum = 0;
+        for (; idx > 0; idx -= idx & (-idx))
+            sum += bit[idx];
+        return sum;
+    }
+    int getSumRange(int left, int right) { // left, right inclusive
+        return getSum(right) - getSum(left - 1);
+    }
+    void addValue(int idx, int val) {
+        for (; idx <= size; idx += idx & (-idx))
+            bit[idx] += val;
+    }
+};
+
+class NumArray {
+    BIT bit;
+    int[] nums;
+    public NumArray(int[] nums) {
+        this.nums = nums;
+        bit = new BIT(nums.length);
+        for (int i = 0; i < nums.length; ++i) {
+            bit.addValue(i+1, nums[i]);
+        }
+    }
+    public void update(int index, int val) {
+        int diff = val - nums[index]; // get diff amount of `val` compared to current value
+        bit.addValue(index + 1, diff); // add this `diff` amount at index `index+1` of BIT, plus 1 because in BIT it's 1-based indexing
+        nums[index] = val; // update latest value of `nums[index]`
+    }
+    public int sumRange(int left, int right) {
+        return bit.getSumRange(left+1, right+1);
+    }
+}
+
+Python:-
+
+class BIT:
+    def __init__(self, size):
+        self.bit = [0] * (size + 1)  # all operation is 1-based indexing
+        self.size = size
+
+    def getSum(self, idx):  # Get sum in range [0..idx]
+        s = 0
+        while idx > 0:
+            s += self.bit[idx]
+            idx -= idx & (-idx)
+        return s
+
+    def getSumRange(self, left, right):  # left, right inclusive
+        return self.getSum(right) - self.getSum(left - 1)
+
+    def addValue(self, idx, val):
+        while idx <= self.size:
+            self.bit[idx] += val
+            idx += idx & (-idx)
+
+class NumArray:
+
+    def __init__(self, nums: List[int]):
+        self.nums = nums
+        self.bit = BIT(len(nums))
+        for i, v in enumerate(nums):
+            self.bit.addValue(i+1, v)
+
+    def update(self, index: int, val: int) -> None:
+        diff = val - self.nums[index]  # get diff amount of `val` compared to current value
+        self.bit.addValue(index+1, diff)  # add this `diff` amount at index `index+1` of BIT, plus 1 because in BIT it's 1-based indexing
+        self.nums[index] = val # update latest value of `nums[index]`
+
+    def sumRange(self, left: int, right: int) -> int:
+        return self.bit.getSumRange(left+1, right+1)
