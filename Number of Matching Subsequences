@@ -1,0 +1,72 @@
+class Solution {
+public:
+    int numMatchingSubseq(string& s, vector<string>& words) {
+        int ans = 0;
+        vector<vector<int>> mappings(26);  // stores array of indices for each character in s
+        for(int i = 0; i < size(s); i++) mappings[s[i] - 'a'].push_back(i);
+        for(auto& word : words) {
+            bool found = true;
+            // i = index in word | prev = index in s matched for word[i-1]
+            for(int i = 0, prev = -1; found && i < size(word); i++) {
+                auto& v = mappings[word[i]-'a'];
+                auto it = upper_bound(begin(v), end(v), prev);   // check if current character exists in s with index > prev
+                if(it == end(v)) found = false;                  // doesn't exist
+                else prev = *it;                                 // update prev for next check
+            }
+            ans += found;
+        }
+        return ans;
+    }
+};
+
+
+class Solution:
+    def numMatchingSubseq(self, s: str, words: List[str]) -> int:
+        ans, mappings = 0, defaultdict(list)
+        for index, char in enumerate(s):
+            mappings[char].append(index)
+        for word in words:
+            prev, found = -1, True
+            for c in word:
+                tmp = bisect.bisect(mappings[c], prev)
+                if tmp == len(mappings[c]): 
+                    found = False
+                    break
+                else: prev = mappings[c][tmp]
+            ans += found == True
+        return ans
+        
+        
+        
+class Solution {
+    public int numMatchingSubseq(String s, String[] words) {
+        int ans = 0;
+        HashMap<Character, List<Integer>> indices = new HashMap<>();
+        for(int i = 0; i < s.length(); i++) 
+            indices.computeIfAbsent(s.charAt(i), k->new ArrayList<>()).add(i);
+
+        for(String word : words)
+            if(isSubseq(indices, word)) ans++;
+        return ans;
+    }
+    
+    private boolean isSubseq(HashMap<Character, List<Integer>> indices, String word){
+        int prev = -1;
+        for(int i = 0; i < word.length(); i++){
+            char c = word.charAt(i);
+            if(!indices.containsKey(c)) return false;
+			
+            List<Integer> positions = indices.get(c);
+            int idx = Collections.binarySearch(positions, prev+1);
+            if(idx < 0) idx = -idx -1;
+			
+            if(idx == positions.size()) return false;
+			
+            int curr = positions.get(idx);
+            if(curr < prev) return false;
+			
+            prev = curr;
+        }
+        return true;
+    } 
+}
