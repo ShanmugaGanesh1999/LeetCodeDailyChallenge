@@ -1,0 +1,128 @@
+Pyhton:-
+
+from sortedcontainers import SortedList
+
+class Solution:
+    def countSmaller(self, nums):
+        SList, ans = SortedList(), []
+        for num in nums[::-1]:
+            ind = SortedList.bisect_left(SList, num)
+            ans.append(ind)
+            SList.add(num)
+            
+        return ans[::-1]
+        
+        
+Java:-
+
+class Solution {
+    public List<Integer> countSmaller(int[] nums) {
+        List<Integer> result = new ArrayList<Integer>();
+    ArrayList<Integer> sorted = new ArrayList<Integer>();
+ 
+    for(int i=nums.length-1; i>=0; i--){
+        if(sorted.isEmpty()){
+            sorted.add(nums[i]);
+            result.add(0);
+        }else if(nums[i]>sorted.get(sorted.size()-1)){
+            sorted.add(sorted.size(), nums[i]);
+            result.add(sorted.size()-1);
+        }else{
+            int l=0; 
+            int r=sorted.size()-1;
+ 
+            while(l<r){
+                int m = l + (r-l)/2;
+ 
+                if(nums[i]>sorted.get(m)){
+                    l=m+1;
+                }else{
+                    r=m;
+                }
+            }
+ 
+            sorted.add(r, nums[i]);
+            result.add(r);
+        }    
+    }
+ 
+    Collections.reverse(result);
+ 
+    return result;
+    }
+}
+
+C++:-
+
+class Solution {
+public:
+    int bit[100001];
+    int offset=1e4+1;
+    int n;
+    
+    void update(int index){
+        for(;index<=100000;index+=index&(-index))
+            bit[index]++;
+    }
+    
+    int query(int index){
+        int count=0;
+        for(;index>0;index-=index&(-index))
+            count+=bit[index];
+        return count;
+    }
+    
+    vector<int> countSmaller(vector<int>& nums) {
+        n=nums.size();
+        vector<int> ans(n);
+        
+        for(int i=n-1;i>=0;i--){
+            ans[i]=query(nums[i]+offset-1);
+            update(nums[i]+offset);
+        }
+        
+        return ans;
+    }
+};
+
+TypeScript:-
+
+class BinaryIndexedTree {
+  bits: number[];
+  constructor(n: number) {
+    this.bits = new Array<number>(n + 1).fill(0);
+  }
+
+  add(i: number, delta: number) {
+    while (i < this.bits.length) {
+      this.bits[i] += delta;
+      i += i & -i;
+    }
+  }
+
+  prefixSums(i: number) {
+    let sum = 0;
+    while (i > 0) {
+      sum += this.bits[i];
+      i -= i & -i;
+    }
+    return sum;
+  }
+}
+
+const countSmaller = (nums: number[]): number[] => {
+  const rank = new Map<number, number>();
+  const sortedNums = [...nums];
+  sortedNums.sort((a, b) => a - b);
+  sortedNums.forEach((num, i) => rank.set(num, i + 1));
+  const binaryIndexedTree = new BinaryIndexedTree(nums.length);
+
+  const res = [] as number[];
+
+  nums.reverse().forEach((num) => {
+    res.push(binaryIndexedTree.prefixSums(rank.get(num) - 1));
+    binaryIndexedTree.add(rank.get(num), 1);
+  });
+
+  return res.reverse();
+};
