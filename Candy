@@ -1,0 +1,170 @@
+Go:- 
+
+func max(a, b int) int {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+func candy(ratings []int) int {
+    candies := len(ratings)
+    left, right := 0, 0
+    
+    for i := 1; i < len(ratings); i++ {
+        if ratings[i-1] < ratings[i]{
+            left++
+            candies += left
+            continue
+        }
+        if ratings[i-1] == ratings[i]{
+            left=0
+            continue
+        }
+        candies += right
+        right++
+        if i+1 == len(ratings) || ratings[i] <= ratings[i+1] {
+            candies += max(right-left,0)
+            left,right = 0,0
+        }
+    }
+    return candies
+}
+
+C++:-
+
+Two Array
+
+class Solution {
+public:
+    int candy(vector<int>& r) {
+        int n=r.size();
+        vector<int>v1(n,1),v2(n,1);
+        for(int i=1;i<n;i++){
+            if(r[i-1] < r[i]){
+                v1[i]=v1[i-1]+1;
+            }
+        }
+        for(int i=n-2;i>=0;i--){
+            if(r[i+1] < r[i]){
+                v2[i]=v2[i+1]+1;
+            }
+        }
+        int sum=0;
+        for(int i=0;i<r.size();i++){
+            sum+=max(v1[i],v2[i]);
+        }
+        
+        return sum;
+      }
+};
+
+One Array
+
+class Solution {
+public:
+    int candy(vector<int>& r) {
+        int n=r.size();
+        vector<int>v(n,1);
+        for(int i=1;i<n;i++){
+            if(r[i-1] < r[i]){
+                v[i]=v[i-1]+1;
+            }
+        }
+        int sum=v[n-1];
+        for(int i=n-2;i>=0;i--){
+            if(r[i+1] < r[i]){
+                v[i]=max(v[i],v[i+1]+1);
+            }
+            sum+=v[i];
+        }
+        
+        return sum;
+    }
+};
+
+
+Pyhton:-
+
+import heapq
+class Solution:
+    def candy(self, ratings):
+        res = [1]*len(ratings)
+        q = []
+        for i in range(len(ratings)):
+            heapq.heappush(q,[ratings[i],i])
+        while(len(q)>0):
+            rating,x = heapq.heappop(q)
+            if x-1>=0:
+                if ratings[x-1]<ratings[x]:
+                    res[x] = max(res[x],res[x-1]+1)
+            if x+1<len(res):
+                if ratings[x+1]<ratings[x]:
+                    res[x] = max(res[x],res[x+1]+1)
+        return sum(res)
+        
+        
+
+Java:-
+
+
+class Solution {
+    
+    public int candy(int[] ratings) {
+        
+        
+        /*  Approach :
+        
+            Initially give all the children 1 candy.
+            
+            Move from left to right -> 
+            - if any right child has more rating than left, give it more candy then left child.
+            
+            Move from right to left ->
+            - if any left child has more rating than right, give it more candy then right child.
+        
+            -> Now, in the 2nd traversal, it may be possible that left child was already having 
+               more candy than right child's candy + 1. Then, no need to update.
+        
+        */
+        
+        
+        int n = ratings.length;
+        
+        int candies[] = new int[n];
+        Arrays.fill(candies, 1);    // give all children 1 candy
+        
+        // Give right child more candy than left if having higher rating
+        
+        for (int i = 1; i < n; i++) {
+            
+            if (ratings[i] > ratings[i-1]) {
+                candies[i] = candies[i-1] + 1;
+            }
+            
+        }
+        
+        // Give left child more candy than right if having higher rating
+        
+        for (int i = n-2; i >= 0; i--) {
+            
+            // If already having more candy than right child, no need to update.
+            
+            if (ratings[i] > ratings[i+1] && (candies[i+1] + 1 > candies[i])) {
+                candies[i] = candies[i+1] + 1;   
+            }
+            
+        }
+        
+        // Count total numbers of candy required and return
+        
+        int count = 0;
+        
+        for (int i = 0; i < n; i++) {
+            count = count + candies[i];    
+        }
+        
+        return count;
+        
+    }
+}
