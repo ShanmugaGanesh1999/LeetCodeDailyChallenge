@@ -1,0 +1,48 @@
+class Solution {
+public:
+    string removeDuplicates(string s) {
+        string res = "";
+        for (char c : s) {
+            if (!res.empty() && res.back() == c) {
+                res.pop_back();
+            } else {
+                res.push_back(c);
+            }
+        }
+        return res;
+    }
+};
+
+class Solution {
+    public String removeDuplicates(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {
+                sb.deleteCharAt(sb.length() - 1);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+}
+
+class Solution:
+    def removeDuplicates(self, s: str) -> str:
+        st = []
+        for c in s:
+            if st and st[-1] == c:
+                st.pop()
+            else:
+                st.append(c)
+        return "".join(st)
+        
+        
+const  removeDuplicates = (s) =>{
+const result = [];
+  for (let i of s) {
+    i !== result[result.length-1] ? result.push(i) : result.pop();
+  }
+
+  return result.join("");
+}  
