@@ -1,0 +1,69 @@
+Pyhton:-
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def lowestCommonAncestor(self, root, p, q):
+        def dfs(node):
+            if not node: return 0
+
+            lft = dfs(node.left)
+            rgh = dfs(node.right)
+            mid = node in [p, q]
+            if lft + rgh + mid >= 2:
+                self.Found = node
+
+            return max(lft, mid, rgh)
+        
+        self.Found = None
+        dfs(root)
+        return self.Found
+        
+        
+C++:-
+
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(!root)
+            return NULL;
+        TreeNode* l = lowestCommonAncestor(root->left,p,q);
+        TreeNode* r = lowestCommonAncestor(root->right,p,q);
+        
+        if(l and r)
+            return root; // type 2
+        if(root==p or root==q) // type 1
+            return root;
+        return l?l:r;
+    }
+};
+
+Java:-
+
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null){
+            return null;
+        }
+        
+        if(root == p || root == q){
+            return root;
+        }
+        
+        TreeNode leftSubtree = lowestCommonAncestor(root.left, p, q);
+        TreeNode rightSubtree = lowestCommonAncestor(root.right, p, q);
+        
+        boolean nodeFound = leftSubtree != null && rightSubtree != null;
+        if(nodeFound){
+            return root;
+        }
+        
+        return leftSubtree == null ? rightSubtree : leftSubtree;
+        
+    }
+}
