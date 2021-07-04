@@ -1,0 +1,116 @@
+C++:-
+
+class Solution { // 28 ms ~ beat 54.50%
+public:
+    static const int a = 0, e = 1, i = 2, o = 3, u = 4, s = 5, MOD = 1e9 + 7;
+    const vector<vector<int>> mapping = {{e}, // a ->
+                                         {a, i}, // e -> 
+                                         {a, e, o, u}, // i ->
+                                         {i, u}, // o ->
+                                         {a}, // u ->
+                                         {a, e, i, u, o}}; // s ->
+    int dp[20001][6] = {};
+    int countVowelPermutation(int n, int last = s) {
+        if (n == 0) return 1;
+        if (dp[n][last]) return dp[n][last];
+        int ans = 0;
+        for (int nxt : mapping[last]) {
+            ans = (ans + countVowelPermutation(n-1, nxt)) % MOD;
+        }
+        return dp[n][last] = ans;
+    }
+};
+
+or
+
+class Solution { // 16 ms, faster than 64.81%
+public:
+    const int a = 0, e = 1, i = 2, o = 3, u = 4, MOD = 1e9 + 7;
+    int countVowelPermutation(int n) {
+        vector<long long> dp(5, 1LL), prevDP(5, 1LL); // a, e, i, o, u
+        while (n-- > 1) {
+            dp[a] = (prevDP[e] + prevDP[i] + prevDP[u]) % MOD;
+            dp[e] = (prevDP[a] + prevDP[i]) % MOD;
+            dp[i] = (prevDP[e] + prevDP[o]) % MOD;
+            dp[o] = prevDP[i];
+            dp[u] = (prevDP[i] + prevDP[o]) % MOD;
+            dp.swap(prevDP);
+        }
+        return accumulate(prevDP.begin(), prevDP.end(), 0LL) % MOD ; // Return sum of prevDP elements.
+    }
+};
+
+Python:-
+
+class Solution:  # 688 ms, beat 20.62%
+    def countVowelPermutation(self, n: int) -> int:
+        map = {
+            '.': ['a', 'e', 'i', 'o', 'u'],
+            'a': ['e'],
+            'e': ['a', 'i'],
+            'i': ['a', 'e', 'o', 'u'],
+            'o': ['i', 'u'],
+            'u': ['a']
+        }
+
+        @lru_cache(None)
+        def dp(i, last):
+            if i == n: return 1
+            ans = 0
+            for nxt in map[last]:
+                ans = (ans + dp(i + 1, nxt)) % 1_000_000_007
+            return ans
+
+        return dp(0, '.')
+        
+        
+or
+
+class Solution:  # 100 ms, faster than 94.85%
+    def countVowelPermutation(self, n: int) -> int:
+        a = e = i = o = u = 1
+        MOD = 10**9 + 7
+        for _ in range(n-1):
+            a, e, i, o, u = (e + i + u) % MOD, (a + i) % MOD, (e + o) % MOD, i, (i + o) % MOD
+        return (a + e + i + o + u) % MOD
+        
+        
+        
+Java:-
+
+class Solution {
+    public int countVowelPermutation(int n) {
+        if(n == 1){
+            return 5;
+        }
+        
+        int mod = (int) (1e9 + 7);
+    
+        // denoting the vowels by integers:
+        // a: 0, e: 1, i: 2, o: 3, u: 4
+        long dp[][] = new long[n + 1][5];
+        
+        for(int i = 0; i < 5; i++){
+            dp[0][i] = 0;
+            dp[1][i] = 1;
+        }
+        
+        int graph[][] = new int[][]{
+            {1}, {0, 2}, {0, 1, 3, 4}, {2, 4}, {0}
+        };
+        
+        for(int i = 1; i < n; i++){
+            for(int node = 0; node < 5; node++){
+                for(int neighbor: graph[node]){
+					// for length i + 1, all the permutations that satisfy the conditions can be taken, basically having a link from node to neighbor means satisfying the condition for the node "node"
+                    dp[i + 1][node] += dp[i][neighbor] % mod;
+                }
+            }
+        }
+        long ans = 0;
+        for(int i = 0; i < 5; i++){
+            ans = (ans + dp[n][i]) % mod;
+        }
+        return (int) ans;
+    }
+}
