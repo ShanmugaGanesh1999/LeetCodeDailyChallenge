@@ -1,0 +1,71 @@
+C++:-
+
+class Solution {
+public:
+    vector<vector<int>> matrixReshape(vector<vector<int>>& mat, int r, int c) {
+        int m = size(mat), n = size(mat[0]), total = m * n;
+        if(r * c != total) return mat;             // return if total elements don't match
+        vector<vector<int>> ans(r, vector<int>(c));
+        int i = 0, j = 0, new_i = 0, new_j = 0;    // i, j iterates over old matrix | new_i, new_j iterates over new matrix
+        while(total--) {
+            ans[new_i][new_j] = mat[i][j]; 
+            j++, new_j++;                          // move to next column in both matrix
+            if(j == n) j = 0, i++;                 // start from beginning of next row when you reach the end of row in old matrix
+            if(new_j == c) new_j = 0, new_i++;     // start from beginning of next row when you reach the end of row in new matrix
+        }
+        return ans;
+    }
+};
+
+or 
+
+class Solution {
+public:
+    vector<vector<int>> matrixReshape(vector<vector<int>>& mat, int r, int c) {
+        int m = size(mat), n = size(mat[0]), total = m * n;
+        if(r * c != total) return mat;   
+        vector<vector<int>> ans(r, vector<int>(c));
+        for(int i = 0; i < total; i++) 
+            ans[(i%m * n + i/m) / c][(i%m * n + i/m) % c] = mat[i % m][i / m];
+        return ans;
+    }
+};
+
+Java:-
+
+class Solution {
+    // O(m*n) O(m*n)
+public int[][] matrixReshape(int[][] mat, int r, int c) {
+
+	int m = mat.length, n = mat[0].length;
+	if (m * n != r * c)
+		return mat;
+
+	int[][] ans = new int[r][c];
+	int x = 0, y = 0;
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			ans[x][y] = mat[i][j];
+			y++;
+			if (y == c) {
+				x++;
+				y = 0;
+			}
+		}
+	}
+
+	return ans;
+}
+}
+
+Pyhton:-
+
+class Solution:
+    def matrixReshape(self, nums, r, c):
+        m, n, count = len(nums), len(nums[0]), 0
+        if m*n != r*c: return nums
+        res = [[0] * c for _ in range(r)]
+        for i, j in product(range(m), range(n)):
+            res[count//c][count%c] = nums[i][j]
+            count += 1      
+        return res
