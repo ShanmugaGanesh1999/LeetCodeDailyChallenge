@@ -1,0 +1,128 @@
+C++:-
+
+class Solution {
+public:
+    int minSetSize(vector<int>& arr) {
+        unordered_map<int, int> cnt;
+        for (int x : arr) ++cnt[x];
+        
+        vector<int> frequencies;
+        for (auto [_, freq] : cnt) frequencies.push_back(freq);
+        sort(frequencies.begin(), frequencies.end());
+        
+        int ans = 0, removed = 0, half = arr.size() / 2, i = frequencies.size() - 1;
+        while (removed < half) {
+            ans += 1;
+            removed += frequencies[i--];
+        }
+        return ans;
+    }
+};
+
+or 
+
+class Solution {
+public:
+    int minSetSize(vector<int>& arr) {
+        unordered_map<int, int> cnt;
+        for (int x : arr) ++cnt[x];
+
+        vector<int> bucket(1e5 + 1);
+        int maxFreq = 1;
+        for (auto [_, freq] : cnt) {
+            ++bucket[freq];
+            maxFreq = max(maxFreq, freq);
+        }
+
+        int ans = 0, removed = 0, half = arr.size() / 2, freq = maxFreq;
+        while (removed < half) {
+            ans += 1;
+            while (bucket[freq] == 0) --freq;
+            removed += freq;
+            --bucket[freq];
+        }
+        return ans;
+    }
+};
+
+Java:-
+
+class Solution {
+    public int minSetSize(int[] arr) {
+        HashMap<Integer, Integer> cnt = new HashMap<>();
+        for (int x : arr) cnt.put(x, cnt.getOrDefault(x, 0) + 1);
+
+        int[] frequencies = new int[cnt.values().size()];
+        int i = 0;
+        for (int freq : cnt.values()) frequencies[i++] = freq;
+        Arrays.sort(frequencies);
+
+        int ans = 0, removed = 0, half = arr.length / 2;
+        i = frequencies.length - 1;
+        while (removed < half) {
+            ans += 1;
+            removed += frequencies[i--];
+        }
+        return ans;
+    }
+}
+
+or
+
+class Solution {
+    public int minSetSize(int[] arr) {
+        HashMap<Integer, Integer> cnt = new HashMap<>();
+        for (int x : arr) cnt.put(x, cnt.getOrDefault(x, 0) + 1);
+
+        int[] bucket = new int[(int) (1e5 + 1)];
+        int maxFreq = 1;
+        for (int freq : cnt.values()) {
+            ++bucket[freq];
+            maxFreq = Math.max(maxFreq, freq);
+        }
+
+        int ans = 0, removed = 0, half = arr.length / 2, freq = maxFreq;
+        while (removed < half) {
+            ans += 1;
+            while (bucket[freq] == 0) --freq;
+            removed += freq;
+            --bucket[freq];
+        }
+        return ans;
+    }
+}
+
+Pyhton:-
+
+class Solution:
+    def minSetSize(self, arr: List[int]) -> int:
+        cnt = Counter(arr)
+        frequencies = list(cnt.values())
+        maxFreq = max(frequencies)
+        bucket = [0] * (maxFreq + 1)
+        for freq in frequencies:
+            bucket[freq] += 1
+
+        ans, removed, half = 0, 0, len(arr) // 2
+        freq = maxFreq
+        while removed < half:
+            ans += 1
+            while bucket[freq] == 0: freq -= 1
+            removed += freq
+            bucket[freq] -= 1
+        return ans
+        
+        
+or
+
+class Solution:
+    def minSetSize(self, arr: List[int]) -> int:
+        cnt = Counter(arr)
+        frequencies = list(cnt.values())
+        frequencies.sort()
+        
+        ans, removed, half = 0, 0, len(arr) // 2
+        while removed < half:
+            ans += 1
+            removed += frequencies.pop()
+        return ans
