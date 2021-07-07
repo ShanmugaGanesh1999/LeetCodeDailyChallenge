@@ -1,0 +1,59 @@
+Python:-
+
+class Solution:
+    def kthSmallest(self, matrix, k):
+        n, beg, end = len(matrix), matrix[0][0], matrix[-1][-1]
+        
+        def check(m):
+            i, j, cnt = 0, n-1, 0
+            for i in range(n):
+                while j >= 0 and matrix[i][j] > m: j -= 1
+                cnt += (j + 1)
+            return cnt
+         
+        while beg < end:
+            mid = (beg + end)//2
+            if check(mid) < k:
+                beg = mid + 1
+            else:
+                end = mid
+                
+        return beg
+        
+C++:-
+
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        
+        //This question requires direct brute-force approach....
+        
+        vector<int> v;
+        
+        //Push all elements of matrix into a vector
+        for(int i = 0; i < matrix.size(); i++){
+            for(int j = 0; j < matrix[i].size(); j++)
+                v.push_back(matrix[i][j]);
+        }
+        
+        //Sort the elements and print the k-th element...
+        sort(v.begin(), v.end());
+        return v[k - 1];
+    }
+};
+
+Java:-
+
+class Solution {
+    public int kthSmallest(int[][] M, int k) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>((a, b) -> b - a);
+        for(int[] R : M){
+            for(int a : R){
+                heap.add(a);
+                if(heap.size() > k)
+                    heap.poll();
+            }
+        }
+        return heap.peek();
+    }
+}
