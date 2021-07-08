@@ -1,0 +1,274 @@
+class Solution {
+public:
+	vector<vector<int>>dp;
+	int ans = 0;
+	int findLength(vector<int>& A, vector<int>& B) {
+		dp.resize(size(A), vector<int>(size(B), -1));
+		solve(A, B, 0, 0);
+		return ans;
+	}
+	int solve(vector<int>& A, vector<int>& B, int i, int j) {
+		if(i >= size(A) || j >= size(B)) return 0;
+		if(dp[i][j] != -1) return dp[i][j];
+		solve(A, B, i+1, j), solve(A, B, i, j+1);
+		dp[i][j] = A[i] == B[j] ? solve(A, B, i+1, j+1) + 1 : 0;  // store the result for state (i, j) for future
+		ans = max(ans, dp[i][j]);
+		return dp[i][j];
+	}
+};	
+
+or
+
+class Solution {
+public:
+	int findLength(vector<int>& A, vector<int>& B) {
+		int m = size(A), n = size(B), ans = 0, dp[m+1][n+1]; 
+		memset(dp, -1, sizeof dp);
+		for(int i = 0; i < m; i++) {
+			for(int j = 0, len = 0; j < n; j++) {
+				if(dp[i][j] == -1) {
+					while(i + len < m and j + len < n and A[i+len] == B[j+len]) len++;
+					while(len) dp[i + len][j + len] = len--;  // store the result for states (i, j) : 
+															  // we know results for all states from (i, j) - (i+len, j+len)
+				}
+				ans = max(ans, dp[i][j]);
+			}
+		}
+		return ans;
+	}
+};	
+
+
+or
+
+class Solution {
+public:
+   int findLength(vector<int>& A, vector<int>& B) {
+   	int m = size(A), n = size(B), ans = 0, dp[m+1][n+1]; 
+   	memset(dp, 0, sizeof dp);
+   	for(int i = m-1; ~i; i--) 
+   		for(int j = n-1; ~j; j--) 
+   			dp[i][j] = A[i-1] == B[j-1] ? dp[i+1][j+1] + 1 : 0,
+   			ans = max(ans, dp[i][j]);
+   		
+   	return ans;
+   }
+};	
+
+or
+
+class Solution {
+public:
+    int findLength(vector<int>& A, vector<int>& B) {
+        int m = size(A), n = size(B), ans = 0;
+		int dp[m+1][n+1]; memset(dp, 0, sizeof dp);
+        for(int i = 1; i <= m; i++) 
+            for(int j = 1; j <= n; j++) 
+                dp[i][j] = A[i-1] == B[j-1] ? dp[i-1][j-1] + 1 : 0,
+                ans = max(ans, dp[i][j]);
+            
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+   int findLength(vector<int>& A, vector<int>& B) {
+	if(size(A) < size(B)) A.swap(B);   // ensures dp length is min(M, N)
+	int m = size(A), n = size(B), ans = 0, dp[2][n+1]; 
+	memset(dp, 0, sizeof dp);
+	for(int i = m-1, cur=i&1, next=!(i&1); ~i; i--, cur ^= 1, next ^= 1) // ~i ends loop when i goes -ve, ^= 1 used to flip bit
+		for(int j = n-1; ~j; j--) 
+			dp[cur][j] = A[i] == B[j] ? dp[next][j+1] + 1 : 0,
+			ans = max(ans, dp[cur][j]);
+		
+	return ans;
+   }
+};	
+
+or
+
+class Solution {
+public:
+	int findLength(vector<int>& A, vector<int>& B) {
+		if(size(A) < size(B)) A.swap(B); 
+		int m = size(A), n = size(B), ans = 0, dp[2][n+1]; 
+		memset(dp, 0, sizeof dp);
+		for(int i = 1, cur = 1, prev{}; i <= m; i++, cur ^= 1, prev ^= 1) 
+			for(int j = 1; j <= n; j++) 
+				dp[cur][j] = A[i-1] == B[j-1] ? dp[prev][j-1] + 1 : 0,
+				ans = max(ans, dp[cur][j]);
+
+		return ans;
+	}
+};	
+
+Java:-
+
+
+class Solution {
+    public int findLength(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length, res = 0;
+        int[][] dp = new int[m][n];
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(nums1[i] == nums2[j]) {
+                    dp[i][j] = 1 + (i >= 1 && j >= 1 ? dp[i - 1][j - 1] : 0);
+                    res = Math.max(res, dp[i][j]);
+                }
+            }
+        }
+        return res;
+    }
+}
+
+
+or
+
+class Solution {
+    public int findLength(int[] nums1, int[] nums2) {
+        if(nums1.length < nums2.length) {
+            int[] temp = nums1; nums1 = nums2; nums2 = temp;
+        }
+        int m = nums1.length, n = nums2.length, res = 0;
+        int[] dp = new int[n];
+        for(int i = 0; i < m; i++) {
+            for(int j = n - 1; j >= 0; j--) {
+                dp[j] = nums1[i] == nums2[j] ? 1 + (j >= 1 ? dp[j - 1] : 0) : 0;
+                res = Math.max(res, dp[j]);
+            }
+        }
+        return res;
+    }
+}
+
+
+or
+
+class Solution {
+    public int findLength(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length, res = 0;
+        for(int i = 0; i < m; i++) {
+            for(int r = i, c = 0, dp = 0; r < m && c < n; c++, r++) {
+                dp = nums1[r] == nums2[c] ? 1 + dp : 0;
+                res = Math.max(res, dp);
+            }
+        }
+        for(int i = 1; i < n; i++) {
+            for(int r = 0, c = i, dp = 0; r < m && c < n; c++, r++) {
+                dp = nums1[r] == nums2[c] ? 1 + dp : 0;
+                res = Math.max(res, dp);
+            }
+        }
+        return res;
+    }
+}
+
+or
+
+class Solution {
+    private final int P = 1_000_000_007;
+    private List<Integer> hash(int[] nums, int len) {
+        List<Integer> list = new ArrayList<>();
+        int h = 0, pow = 1;
+        for(int i = 0; i < len - 1; i++) {
+            h = h * P + nums[i];
+            pow *= P;
+        }
+        for(int i = len - 1; i < nums.length; i++) {
+            h = h * P + nums[i];
+            list.add(h);
+            h = h - nums[i - len + 1] * pow;
+        }
+        return list;
+    }
+    private boolean feasible(int[] nums1, int[] nums2, int len) {
+        Set<Integer> set = new HashSet<>(hash(nums1, len));
+        for(int h: hash(nums2, len)) {
+            if(set.contains(h)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int findLength(int[] nums1, int[] nums2) {
+        int l = 0, r = Math.min(nums1.length, nums2.length);
+        while(l < r) {
+            int m = l + ((r - l + 1) >> 1);
+            if(feasible(nums1, nums2, m)) {
+                l = m;
+            } else {
+                r = m - 1;
+            }
+        }
+        return l;
+    }
+}
+
+Python:-
+
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        m, n = len(nums1), len(nums2)
+        dp = [[0] * (n+1) for _ in range(m+1)]
+        ans = 0
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if nums1[i-1] == nums2[j-1]:
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = 0
+                ans = max(ans, dp[i][j])
+        return ans
+
+
+or
+
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        if len(nums1) < len(nums2): 
+            return self.findLength(nums2, nums1)  # Make sure len(nums1) > len(nums2) to optimize space
+        m, n = len(nums1), len(nums2)
+        dp, prevDP = [0] * (n+1), [0] * (n+1)
+        ans = 0
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if nums1[i-1] == nums2[j-1]:
+                    dp[j] = prevDP[j-1] + 1
+                else:
+                    dp[j] = 0
+                ans = max(ans, dp[j])
+            dp, prevDP = prevDP, dp
+        return ans
+        
+or
+
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        if len(nums1) < len(nums2): 
+            return self.findLength(nums2, nums1)  # Make sure len(nums1) > len(nums2) to optimize time & space
+
+        def computeKMP(pattern):
+            n = len(pattern)
+            lps = [0] * n
+            j = 0
+            for i in range(1, n):
+                while j > 0 and pattern[i] != pattern[j]: j = lps[j - 1]
+                if pattern[i] == pattern[j]: j += 1
+                lps[i] = j
+            return lps
+
+        ans = 0
+        while len(nums2) > ans:
+            lps = computeKMP(nums2)
+            j = 0  # pattern pointer
+            for i in range(len(nums1)):
+                while j > 0 and nums1[i] != nums2[j]: j = lps[j - 1]
+                if nums1[i] == nums2[j]: j += 1
+                ans = max(ans, j)  # update longest matching between prefix of P and substring of S so far
+                if j == len(nums2):  # if P was found in S
+                    j = lps[j - 1]
+            del nums2[0]
+        return ans
