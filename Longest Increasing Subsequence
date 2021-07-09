@@ -1,0 +1,188 @@
+Java:-
+
+class Solution {
+public int lengthOfLIS(int[] arr) {
+
+      int n = arr.length;
+    
+    int[] dp = new int[n];
+    int ans = 0;
+    for(int i = 0 ; i < n ; i++){
+        int max = 0;
+        for(int j = 0 ; j < i; j++){
+            if(arr[j] < arr[i]){
+                if(dp[j] > max){
+                    max = dp[j];
+                }
+            }
+        }
+        dp[i] = max + 1;
+        if(dp[i] > ans){
+            ans = dp[i];
+        }
+    }
+    return ans;
+}
+
+}
+
+C++:-
+
+class Solution {
+public:
+    
+    //Approach 1: Time Complexity = O(n^2)
+    int lengthOfLIS(vector<int>& nums) {
+        
+        int n = nums.size();
+        int lis[n];
+        memset(lis, 0, sizeof(lis));
+        int max_1 = INT_MIN;
+        for(int i = 0; i < n; i++){
+            if(i == 0)
+                lis[i] = 1;
+            else{
+                for(int j = 0; j < i; j++){
+                    if(nums[j] < nums[i])
+                        lis[i] = max(lis[i], lis[j] + 1);
+                    else
+                        lis[i] = max(lis[i], 1);    
+                }
+            }
+            max_1 = max(max_1, lis[i]);
+        }
+        
+        //for(int i = 0; i < n; i++)
+        //    cout << lis[i] << " ";
+        //cout << "\n";
+        
+        return max_1;
+        
+    }
+};
+
+or
+
+class Solution {
+public:
+    
+    //Approach 2: Time Complexity = O(n * log(n))
+    int lengthOfLIS(vector<int>& nums) {
+        
+        int n = nums.size();
+        vector<int> v;
+        int max_1 = INT_MIN;
+        for(int i = 0; i < n; i++){
+            if(i == 0)
+                v.push_back(nums[i]);
+            else{
+                auto x = lower_bound(v.begin(), v.end(), nums[i]) - v.begin();
+                if(x >= v.size())
+                    v.push_back(nums[i]);
+                else
+                v[x] = nums[i];
+            }
+            
+            //for(int i = 0; i < v.size(); i++)
+                //cout << v[i] << " "; 
+            //cout << "\n";
+            
+        }
+        
+        //for(int i = 0; i < v.size(); i++)
+            //cout << v[i] << " "; 
+        //cout << "\n";
+        
+        return v.size();
+        
+    }
+};
+
+
+Python:-
+
+
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [1] * n
+        for i in range(n):
+            for j in range(i):
+                if nums[i] > nums[j] and dp[i] < dp[j] + 1:
+                    dp[i] = dp[j] + 1
+        return max(dp)
+        
+        
+or
+
+
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        res = []
+        for x in nums:
+            if len(res) == 0 or res[-1] < x:  # Append if top of longest subsequence < x
+                res.append(x)
+            else:
+                idx = bisect_left(res, x)  # Find the index of the smallest number >= x, replace with that number
+                res[idx] = x
+        return len(res)
+        
+        
+or
+
+
+class MaxBIT:  # One-based indexing
+    def __init__(self, size):
+        self.bit = [0] * (size + 1)
+    def get(self, idx):
+        ans = 0
+        while idx > 0:
+            ans = max(ans, self.bit[idx])
+            idx -= idx & (-idx)
+        return ans
+    def update(self, idx, val):
+        while idx < len(self.bit):
+            self.bit[idx] = max(self.bit[idx], val)
+            idx += idx & (-idx)
+
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        bit = MaxBIT(20001)
+        BASE = 10001
+        for x in nums:
+            subLongest = bit.get(BASE + x - 1)
+            bit.update(BASE + x, subLongest + 1)
+        return bit.get(20001)
+        
+        
+or
+
+
+class MaxBIT:  # One-based indexing
+    def __init__(self, size):
+        self.bit = [0] * (size + 1)
+    def get(self, idx):
+        ans = 0
+        while idx > 0:
+            ans = max(ans, self.bit[idx])
+            idx -= idx & (-idx)
+        return ans
+    def update(self, idx, val):
+        while idx < len(self.bit):
+            self.bit[idx] = max(self.bit[idx], val)
+            idx += idx & (-idx)
+
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        def compress(arr):  # For example: [1, 9999, 20, 10, 20]
+            uniqueSorted = sorted(set(arr))
+            for i in range(len(arr)): 
+                arr[i] = bisect_left(uniqueSorted, arr[i]) + 1  # Result: [1, 4, 3, 2, 3]
+            return len(uniqueSorted)
+
+        nUnique = compress(nums)
+        bit = MaxBIT(nUnique)
+        for x in nums:
+            subLongest = bit.get(x - 1)
+            bit.update(x, subLongest + 1)
+        return bit.get(nUnique)
