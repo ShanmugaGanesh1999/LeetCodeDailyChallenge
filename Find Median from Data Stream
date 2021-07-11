@@ -1,0 +1,111 @@
+Java:-
+
+class MedianFinder {
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    public MedianFinder() {
+    }
+    public void addNum(int num) {
+        if (maxHeap.isEmpty() || num <= maxHeap.peek()) {
+            maxHeap.add(num);
+            if (maxHeap.size() == minHeap.size() + 2) {
+                minHeap.add(maxHeap.poll());
+            }
+        } else {
+            minHeap.add(num);
+            if (minHeap.size() > maxHeap.size()) {
+                maxHeap.add(minHeap.poll());
+            }
+        }
+    }
+    public double findMedian() {
+        if (maxHeap.size() > minHeap.size()) return maxHeap.peek();
+        return (minHeap.peek() + maxHeap.peek()) / 2.0d;
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+ 
+
+C++:-
+
+
+class MedianFinder {
+public:
+    MedianFinder() {}
+    
+    void addNum(int num) {
+        nums.insert(num);
+        is_even = !is_even;
+        if (it == nums.end() || (is_even && (*it) <= num)) it++;
+        if (!is_even && (*it) > num) it--;
+    }
+    
+    double findMedian() {
+        return (!is_even)? *it : (*it + *prev(it)) / 2.0;
+    }
+    
+private:
+    multiset<int> nums;
+    multiset<int>::iterator it = nums.begin();
+    bool is_even = true;
+};
+
+
+Python:-
+
+
+class MedianFinder:
+
+    def __init__(self):
+        self.minHeap = []
+        self.maxHeap = []
+
+    def addNum(self, num: int) -> None:
+        if not self.maxHeap or num <= -self.maxHeap[0]:
+            heappush(self.maxHeap, -num)
+            if len(self.maxHeap) == len(self.minHeap) + 2:
+                heappush(self.minHeap, -heappop(self.maxHeap))
+        else:
+            heappush(self.minHeap, num)
+            if len(self.minHeap) > len(self.maxHeap):
+                heappush(self.maxHeap, -heappop(self.minHeap))
+
+    def findMedian(self) -> float:
+        size = len(self.minHeap) + len(self.maxHeap)
+        if size % 2 == 1:
+            return -self.maxHeap[0]
+        return (-self.maxHeap[0] + self.minHeap[0]) / 2
+        
+        
+or
+
+
+from sortedcontainers import SortedList
+class MedianFinder:
+
+    def __init__(self):
+        self.arr = SortedList()
+
+    def addNum(self, num: int) -> None:
+        self.arr.add(num)
+
+    def findMedian(self) -> float:
+        n = len(self.arr)
+        if n % 2 == 1:
+            return self.arr[n//2]
+        return (self.arr[n//2] + self.arr[n//2-1]) / 2
+       
+
+
+# Your MedianFinder object will be instantiated and called as such:
+# obj = MedianFinder()
+# obj.addNum(num)
+# param_2 = obj.findMedian()
+
+
