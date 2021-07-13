@@ -1,0 +1,115 @@
+Java:-
+
+
+class Solution {
+    public int findPeakElement(int[] nums) {
+        int start = 0;
+        int end = nums.length -1;
+        int mid;
+        
+        if(nums.length == 1){ // if there is only one element then it will be peak
+            return 0;
+        }
+        
+        while(start+1 < end){
+            mid = start + (end - start)/2;
+            if(nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1]){ // found the peak
+                return mid;
+            }else if(nums[mid] <= nums[mid-1]){
+                end = mid;
+            }else{
+                start = mid;
+            }
+        }
+        
+        return nums[start] > nums[end]? start : end; // if couldn't find absolute peak then start or end will be the peak
+    }
+}
+
+
+C++:-
+
+
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        int lo = 0, hi = nums.size()-1, mid;
+        
+        while (lo < hi) {
+            mid = lo + (hi - lo) / 2;
+            if (nums[mid] < nums[mid + 1]) 
+                lo = mid + 1;
+            else hi = mid;
+        }
+        
+        return lo;
+    }
+};
+
+
+or
+
+
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        // edge case - only one element
+        if (nums.size() == 1) return 0;
+        
+        // peak is first element
+        if (nums[0] > nums[1]) return 0;
+        
+        // peak is last element
+        if (nums.back() > nums[nums.size()-2]) return nums.size()-1;
+        
+        // iterate to find peak
+        for (int i = 0; i < nums.size(); i++) 
+            if ((nums[i] > nums[max(0, i-1)]) && (nums[i] > nums[i+1])) return i;
+        
+        return -1;
+    }
+};
+
+
+or
+
+
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        return max_element(nums.begin(), nums.end()) - nums.begin();
+    }
+};
+
+
+Python:-
+
+
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        n = len(nums)
+        left, right = 0, n - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if (mid == 0 or nums[mid-1] < nums[mid]) and (mid == n-1 or nums[mid] > nums[mid+1]):  # Found peak
+                return mid
+            if mid == 0 or nums[mid-1] < nums[mid]:  # Find peak on the right
+                left = mid + 1
+            else:  # Find peak on the left
+                right = mid - 1
+        return -1
+
+
+
+or
+
+
+     
+
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        n = len(nums)
+        for i in range(n):
+            if (i == 0 or nums[i-1] < nums[i]) and (i == n-1 or nums[i] > nums[i+1]):  # Found peak
+                return i
+        return -1
