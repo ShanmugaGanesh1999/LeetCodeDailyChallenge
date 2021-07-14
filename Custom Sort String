@@ -1,0 +1,50 @@
+Java:-
+
+
+class Solution {
+    public String customSortString(String o, String s) {
+        int[] a = new int[26];
+        for(char i : s.toCharArray()){
+            a[i-'a']++;
+        }
+        char[] ans = new char[s.length()];
+        int k = 0;
+        for(char i : o.toCharArray()){
+            while(a[i-'a'] != 0){
+                ans[k++] = i;
+                a[i-'a'] -= 1;
+            }
+        }
+        for(int i = 0;i<26;i++){
+            while(a[i] != 0){
+                ans[k++] = (char)(i+(int)'a');
+                a[i] -= 1;
+            }
+        }
+        return String.valueOf(ans);
+    }
+}
+
+
+C++:-
+
+
+class Solution {
+public:
+    string customSortString(string rank, string s) {
+        sort(s.begin(), s.end(), [&](const char& a, const char& b){
+            return rank.find(a, 0) < rank.find(b, 0);
+        });
+        return s;
+    }
+};
+
+
+
+Python:-
+
+
+class Solution:
+    def customSortString(self, order: str, s: str) -> str:
+        counter, orderSet, charSet = Counter(s), set(order), set(s)
+        return ''.join([ch*counter[ch] for ch in order] + [ch*counter[ch] for ch in charSet if ch not in orderSet])
