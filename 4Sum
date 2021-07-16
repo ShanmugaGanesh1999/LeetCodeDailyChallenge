@@ -1,0 +1,111 @@
+Python:-
+
+
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        n = len(nums)
+        seen = set()
+        ans = set()
+        for i in range(n):
+            for j in range(i+1, n):
+                for k in range(j+1, n):
+                    lastNumber = target - nums[i] - nums[j] - nums[k]
+                    if lastNumber in seen:
+                        arr = sorted([nums[i], nums[j], nums[k], lastNumber])
+                        ans.add((arr[0], arr[1], arr[2], arr[3]))
+            seen.add(nums[i])
+        return ans
+        
+        
+
+or
+        
+
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        n = len(nums)
+        ans = set()
+        for i in range(n):
+            for j in range(i+1, n):
+                l, r = j + 1, n - 1
+                remain = target - nums[i] - nums[j]
+                while l < r:
+                    if nums[l] + nums[r] == remain:
+                        ans.add((nums[i], nums[j], nums[l], nums[r]))
+                        l += 1
+                        r -= 1
+                    elif nums[l] + nums[r] > remain:
+                        r -= 1
+                    else:
+                        l += 1
+        return ans
+
+
+
+C++:-
+
+
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        vector<vector<int>> ans;
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                int l = j + 1, r = n - 1;
+                int remain = target - nums[i] - nums[j];
+                while (l < r) {
+                    if (nums[l] + nums[r] == remain) {
+                        ans.push_back({nums[i], nums[j], nums[l], nums[r]});
+                        ++l; --r;
+                        while (l < r && nums[l-1] == nums[l]) ++l; // Skip duplicate nums[l]
+                    } else if (nums[l] + nums[r] > remain) {
+                        --r;
+                    } else {
+                        ++l;
+                    }
+                }
+                while (j+1 < n && nums[j] == nums[j+1]) ++j; // Skip duplicate nums[j]
+            }
+            while (i+1 < n && nums[i] == nums[i+1]) ++i; // Skip duplicate nums[i]
+        }
+        return ans;
+    }
+};
+
+
+Java:-
+
+
+class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList();
+        int sum = 0;
+        
+        //4sum problem
+        for(int i = 0;i< nums.length;i++){
+            if(i == 0 || nums[i] != nums[i-1]){
+                //3sum problem
+                for(int j = i+1 ;j< nums.length;j++){
+                    int k = j + 1, l = nums.length-1;
+                    //2sum problem
+                    while(k < l){
+                        sum = nums[i] + nums[j] + nums[k] + nums[l];
+                        if(sum == target){
+                            res.add(Arrays.asList(nums[i],nums[j],nums[k],nums[l]));
+                            while(k < l && nums[k] == nums[k+1])k++;
+                            while(l > k && nums[l] == nums[l-1])l--;
+                            l--;k++;
+                        }else if(sum > target)l--;
+                        else k++;
+                    }
+                    while(j+1 < nums.length && nums[j] == nums[j+1])j++;
+                }
+            }
+        }
+        return res;
+    }
+}
