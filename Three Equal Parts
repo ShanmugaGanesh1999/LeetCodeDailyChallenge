@@ -1,0 +1,124 @@
+C++:-
+
+
+class Solution {
+public:
+    vector<int> threeEqualParts(vector<int>& arr) {
+        int count = 0;
+        for (auto i:arr)
+        {
+            if(i == 1)
+                count++;
+        }
+        if(count == 0)
+            return {0,2};
+        if(count%3 != 0)
+            return {-1,-1};
+        int p1 = 0;
+        int p2 = 0;
+        int p3 = 0;
+        count = count/3;
+        int temp = 0;
+        for(int i = 0;i<arr.size();i++)
+        {  if(arr[i] == 1)
+          { if(temp == 0)
+              p1 = i;
+            else if(temp == count)
+                p2 = i;
+             else if(temp == 2*count)
+                p3 = i;
+           temp++;
+          }
+        
+        }
+
+        int oldp2 = p2;
+        int oldp3 = p3;
+        while(p1<oldp2 and p2<oldp3 and p3<arr.size())
+        {
+            if(arr[p1] != arr[p2] or arr[p2] != arr[p3])
+                return {-1,-1};
+            p1++;
+            p2++;
+            p3++;
+        }
+        if(p3 == arr.size())
+        {
+            return {p1-1,p2};
+        }
+        return {-1,-1};
+    }
+};
+
+
+Java:-
+
+
+
+class Solution {
+   public int[] threeEqualParts(int[] arr) {
+        int oneCount = 0;
+        int n = arr.length;
+        for(int t : arr){
+            if(t == 1) oneCount++;
+        }
+        if(oneCount == 0) return new int[]{0,n-1};
+        if(oneCount % 3 != 0) return new int[]{-1,-1};
+        int averageOneCount = oneCount / 3;
+        int start = 0;
+        int mid = 0;
+        int end = 0;
+        int cnt = 0;
+        for(int i = 0;i<n;i++){
+            if(arr[i] == 0) continue;
+            if(cnt == 0) {
+                start = i;
+            }
+            cnt++;
+            if(cnt == averageOneCount + 1) {
+                mid = i;
+            }
+            if(cnt == 2 * averageOneCount + 1) {
+                end = i;
+            }
+        }
+        while(end < n && arr[start] == arr[mid] && arr[mid] == arr[end]){
+            start++;
+            mid++;
+            end++;
+        }
+        if(end == n) {
+            return new int[]{start-1,mid};
+        }
+        return new int[]{-1,-1};
+    }
+}
+
+
+Python:-
+
+
+
+class Solution:
+    def threeEqualParts(self, A):
+        n = len(A)
+        indexes = [i for i in range(n) if A[i] == 1]
+        m = len(indexes)
+        
+        if m == 0: return [0, 2]
+        
+        if m % 3 != 0: return [-1, -1]
+        p1, p2 = indexes[0], indexes[m//3-1]
+        p3, p4 = indexes[m//3], indexes[2*m//3-1]
+        p5, p6 = indexes[2*m//3], indexes[-1]
+        part1, part2, part3 = A[p1:p2+1], A[p3:p4+1], A[p5:p6+1]
+        
+        if part1 != part2 or part2 != part3: return [-1, -1]
+        
+        l1 = p3 - p2 - 1
+        l2 = p5 - p4 - 1
+        l3 = n - p6 - 1
+        
+        if l3 > l2 or l3 > l1: return [-1, -1]
+        
+        return [p2 + l3, p4 + l3 + 1]
