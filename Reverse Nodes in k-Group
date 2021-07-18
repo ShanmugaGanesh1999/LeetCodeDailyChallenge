@@ -1,0 +1,174 @@
+C++:-
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+    vector <int> a;
+    ListNode *temp =head;
+    while(temp)
+    {
+        a.push_back(temp->val);
+        
+        temp=temp->next;
+    }
+  
+  
+   ListNode *c =NULL;
+   ListNode *b =NULL;
+    int p= a.size()/k;
+    for(int i=0;i<p;i++)
+    {
+        reverse(a.begin()+k*i, a.begin()+k*i+k);
+    }
+
+    
+    for(int i=0;i<a.size();i++){
+   
+         if(b==NULL)
+         {
+             b=new ListNode(a[i]);
+             c=b;
+         }
+        else{ 
+            b->next=new ListNode(a[i]);
+        b=b->next;
+        }
+      
+    }
+    return c;
+    
+}
+};
+
+
+Java:-
+
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+/*
+1. First find out the length of this linked list by traversing it once. This length is needed to know when should we stop the reversing process and just append the remainder of the list.
+2. Now start traversing the list.
+    2.1 First check that if there are less than k nodes remaining and we should stop the reversing process. If yes, just append the reminder of the list to the tail of the last group and return the head.
+    2.2 If there are more than k nodes remaining, we have one or more groups ahead of us which need to be reversed.
+    2.3 Keep track of the nodes reversed in a group so far. If its less than 'k', we have more to reverse.
+    2.4 While doing the reversal, keep track of the group head and tail. We'll need it later to plug the reversed group back to the original list.
+    2.5 Once the number of nodes reversed in a group has reached 'k, plug the reversed grup back to the original list. Increment group count by 1 as we reversed a grou. Reset all pointers to null so that we can reuse them in the next group reversal. Keep note of this groups tail as we'll need it to link to the reminder of the list. Also if this is the first group to be found, make 'head' point to the beginnnig of this group as its going to become the 'head' of the original list.
+    2.6 Keep iterating by going back to step 2 above till we reach the end of the list.
+
+
+*/
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        int size = 0;
+        ListNode node = head;
+        //First find out the length of this linked list by traversing it once. This length is needed to know when should we stop the reversing process and just append the remainder of the list.
+        while(node != null) {
+            size++;
+            node = node.next;
+        }
+        
+        node = head;
+        ListNode groupHead = null;
+        ListNode groupTail = null;
+        ListNode prevGroupTail = null;
+        int group = 0;
+        int groupCount = 0;
+        while(node != null) {
+            // First check that if there are less than k nodes remaining and we should stop the reversing process. If yes, just append the reminder of the list to the tail of the last group and return the head.
+            if(size - k * groupCount >= k) {
+                //Keep track of the nodes reversed in a group so far. If its less than 'k', we have more to reverse.
+                while(group < k) {
+                    //While doing the reversal, keep track of the group head and tail. We'll need it later to plug the reversed group back to the original list.
+                    ListNode temp = node;
+                    node = node.next;
+                    temp.next = groupHead;
+                    groupHead = temp;
+                    if(groupHead.next == null) {
+                        groupTail = groupHead;
+                    }
+                    group++;
+                }
+                //Once the number of nodes reversed in a group has reached 'k, plug the reversed grup back to the original list. Increment group count by 1 as we reversed a grou. Reset all pointers to null so that we can reuse them in the next group reversal. Keep note of this groups tail as we'll need it to link to the reminder of the list. Also if this is the first group to be found, make 'head' point to the beginnnig of this group as its going to become the 'head' of the original list.
+                if(group == k) {
+                    groupCount++;
+                    group = 0;
+                    if(groupCount == 1) {
+                        head = groupHead;
+                    } else {
+                        prevGroupTail.next = groupHead;    
+                    }
+                    prevGroupTail = groupTail;
+                    groupTail = null;
+                    groupHead = null;
+                }
+            } else {
+                //when should we stop the reversing process and just append the remainder of the list.
+                prevGroupTail.next = node;
+                break;
+            }
+        }
+        return head;
+    }
+}
+
+
+Python:-
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        def reverse(start, end):
+            curr_prev = None
+            curr = start
+
+            while(curr != end):
+                curr_next = curr.next
+                curr.next = curr_prev
+                curr_prev = curr
+                curr = curr_next
+                
+            return curr_prev
+            
+        prehead = ListNode(-1)
+        prehead.next = head
+        prev = prehead
+        curr = head
+        
+        while(curr):
+            start = curr
+            for i in range(k):
+                if not curr: 
+                    return prehead.next
+                curr = curr.next
+            
+            first = reverse(start, curr)
+            prev.next = first
+            start.next = curr
+            prev = start
+        
+        return prehead.next
