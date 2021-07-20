@@ -1,0 +1,104 @@
+C++:-
+
+
+class Solution {
+    vector<int> nums;
+public:
+    Solution(vector<int> nums) {
+        this->nums = nums;
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {
+        return nums;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        vector<int> result(nums);
+        for (int i = 0;i < result.size();i++) {
+            int pos = rand()%(result.size()-i);
+            swap(result[i+pos], result[i]);
+        }
+        return result;
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(nums);
+ * vector<int> param_1 = obj->reset();
+ * vector<int> param_2 = obj->shuffle();
+ */
+ 
+ 
+ Java:-
+ 
+ 
+class Solution {
+
+    private int[] array;
+    private int[] original;
+
+    public Solution(int[] nums) 
+    {
+        array = nums;
+        original = nums.clone();
+    }
+    
+    public int[] reset() 
+    {
+        array = original;
+        original = original.clone();
+        return original;
+    }
+  
+    public int[] shuffle() {
+        Random r = new Random();
+        int i=array.length-1;
+        for(; i > 0 ; i--){
+            int j = r.nextInt(i + 1);
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+}
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(nums);
+ * int[] param_1 = obj.reset();
+ * int[] param_2 = obj.shuffle();
+ */
+
+
+Python:-
+
+
+import random
+class Solution:
+
+    def __init__(self, nums):
+        self.original = nums.copy()
+        self.random = nums.copy()
+
+    def reset(self):
+        """
+        Resets the array to its original configuration and return it.
+        """
+        self.random = self.original.copy()
+        return self.random
+
+    def shuffle(self):
+        """
+        Returns a random shuffling of the array.
+        """
+        random.shuffle(self.random)
+        return self.random
+
+
+# Your Solution object will be instantiated and called as such:
+# obj = Solution(nums)
+# param_1 = obj.reset()
+# param_2 = obj.shuffle()
