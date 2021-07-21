@@ -1,0 +1,186 @@
+C++:-
+
+
+class Solution {
+public:
+    string pushDominoes(string dominoes) {
+        #define SET(ch, arr) \
+                    if (dominoes[i] == ch) { count = 1; prev = ch; } \
+                    else if (dominoes[i] != '.') prev = dominoes[i]; \
+                    if (prev == ch && dominoes[i] == '.') arr[i] = count++;
+        
+        string res = "";
+        char prev;
+        int n = dominoes.size(), count = 1;
+        
+        vector<int> left(n, 0), right(n, 0);
+        for (int i = 0; i < n; i++) {
+            SET('R', right);
+        }
+        
+        prev = '.';
+        for (int i = n-1; i >= 0; i--) {
+            SET('L', left);
+        }
+        
+        for (int i = 0; i < n; i++) {
+            if (!left[i] && !right[i]) res += dominoes[i];
+            else if (!left[i]) res += 'R';
+            else if (!right[i]) res += 'L';
+            else if (left[i] == right[i]) res += '.';
+            else if (left[i] < right[i]) res += 'L';
+            else res += 'R';
+        }
+        
+        return res;
+    }
+};
+
+
+Java:-
+
+
+class Solution {
+    public String pushDominoes(String dominoes) {
+        HashSet<Integer> set = new HashSet<>();
+        int i =0;
+        
+        int n = dominoes.length();
+        
+        while( i < n) {
+            if(dominoes.charAt(i) != '.')
+                set.add(i);
+            i++;
+        }
+        char[] domChar = dominoes.toCharArray();
+        while(set.size() > 0){
+            
+            HashSet<Integer> nextSet = new HashSet<>();
+            HashSet<Integer> doneSet = new HashSet<>();
+            for(Integer s: set){
+                
+                if(doneSet.contains(s))
+                    continue;
+                else if(domChar[s]=='R' && set.contains(s+1) && domChar[s] != domChar[s+1])
+                    doneSet.add(s+1);
+                else if(domChar[s]=='L' && set.contains(s-1) && domChar[s] != domChar[s-1])
+                    doneSet.add(s-1);
+                else
+                if(domChar[s]=='R' && s+1 < n)
+                {
+                    
+                 if(nextSet.contains(s+1))
+                {
+                    domChar[s+1]='.';
+                    nextSet.remove(s+1);
+                }else if(domChar[s+1] !='R'){
+                    domChar[s+1]='R';
+                    nextSet.add(s+1);
+                 }
+                }else if(domChar[s]=='L' && s-1 >= 0){
+                    
+                 if(nextSet.contains(s-1))
+                {
+                    domChar[s-1]='.';
+                    nextSet.remove(s-1);
+                }else if(domChar[s-1] !='L'){
+                    domChar[s-1]='L';
+                    nextSet.add(s-1);
+                 }
+                }
+            }
+            set = nextSet;
+            
+            
+        }
+        
+        return new String(domChar);
+    }
+}
+/*
+//".L.R...LR..L.."
+ stk
+ 2
+ 10
+ 11
+ 
+ 
+ . L . R . . . L R . .  L  .  .
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+ 
+ L L . R R . L L R R L  L  .  .
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 
+ -> already contains number remove num and update to . 
+ -> num-1 or num+1 exist and both dir not equal remove both
+ -> if already down not . then dnt insert
+ 
+ 
+   L  R L R L
+ set 11 8 7 3 1                             
+ set  6 4
+ q 
+ 
+ 
+R L . L 
+0 1 2 3
+
+set 0 1 3
+    1  
+    
+    R L
+    0 1 
+set 0 1
+    1 0
+    
+    R L
+    1 0 
+
+*/
+
+
+Python:-
+
+
+class Solution:
+    def pushDominoes(self, dominoes: str) -> str:
+        res = "" #Used to store final result.
+        i=0
+        while(i<len(dominoes)):
+            #if charAt(i) is 'L' or 'R', just place append the same in res.
+            if dominoes[i]=='L' or dominoes[i]=='R':
+                res+=dominoes[i]
+                i+=1
+            else:# dominoes[i]=='.':
+                #if charAt(i) is '.' and previous is Right pushed then, we have to count the
+				#number of '.' (dots) and see what is at the other end of dot. 
+                if i>0 and dominoes[i-1]=='R':
+                    j=i
+                    while(j<len(dominoes) and dominoes[j]=='.'):
+                        j+=1
+                    countDots = (j-i) #count of number of '.'(dots)
+                    #if the other end is last index or if dominoe at other end is right pushed then
+					#there is nothing to cancel the right pushed force of first dominoes and so all
+					#'.'(dots) will be rightly pushed
+                    if j==len(dominoes) or dominoes[j]=='R':
+                        res+='R'*countDots
+                    else:#if other end is 'L' i.e, left pushed
+                    #first half will be rightly pushed and second half is leftly pushed and
+					#if count is odd, then force on middle one gets cancelled
+                        res+='R'*(countDots//2) + '.'*(countDots-2*(countDots//2)) + 'L'*(countDots//2)
+                    i=j
+                else: #if the start of string is '.'(dot) or previous is not rightly pushed
+                    j=i
+                    while(j<len(dominoes) and dominoes[j]=='.'):
+                        j+=1
+                    countDots = (j-i) #count the number of dots
+                    
+                    #if the other end is last index or if dominoe at other end is right pushed
+					#then there is no force at all on stating indexes. So, all will remains '.'
+                    if j==len(dominoes) or dominoes[j]=='R':
+                        res+='.'*countDots
+                    #if other end is left pushed, the all the starting will be pushed left
+                    else:
+                        res+='L'*countDots
+                    i=j
+        
+        return res
