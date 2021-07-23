@@ -88,3 +88,42 @@ class Solution
     }
     
 }
+
+C
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+
+int max(int a,int b)
+{
+    if(a>b)
+        return a;
+    return b;
+}
+int check(struct TreeNode*t)
+    {
+        if(!t)
+            return 0;
+        int l=check(t->left);
+        int r=check(t->right);
+        if(l==0)
+            t->left=NULL;
+        if(r==0)
+            t->right=NULL;
+        return max(l,max(r,t->val));
+    }
+struct TreeNode* pruneTree(struct TreeNode* root){
+
+
+        int r=check(root);
+        if(r==0)
+            root=NULL;
+        return root;
+}
