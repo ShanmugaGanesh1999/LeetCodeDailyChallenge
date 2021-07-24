@@ -1,0 +1,286 @@
+C++:-
+
+class Solution {
+private:
+    unordered_set<string> wordList;
+    vector<vector<string>> ans;
+    unordered_set<string> visited;
+            
+    int level = 1;
+    int minLevel = INT_MAX;
+    
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord,vector<string> &words ) {
+
+        //Putting all words in a set
+        for(auto word: words)
+            wordList.insert(word);
+        //wordList.insert(endWord); Cant insert endWord now
+            
+        //Queue of Paths
+        queue<vector<string>> q;
+        q.push({beginWord});
+        
+
+        while (!q.empty()) 
+        {
+            vector<string> path = q.front(); q.pop();
+            
+            if (path.size() > level)
+            {
+                //reach a new level
+                for (string w : visited) 
+                    wordList.erase(w);
+                
+                //visited.clear();
+                if (path.size() > minLevel)
+                    break;
+                else
+                    level = path.size();
+            }
+            
+            
+            string lastWord = path.back();
+            
+            addNeighboursToQ(lastWord,path,q,endWord);
+        }
+        
+        return ans;
+    }
+    
+    void addNeighboursToQ(string curr,vector<string> path,queue<vector<string>> &q,const string &endWord)
+    {
+            for(int i=0;i<curr.size();i++) 
+            {
+                char originalChar = curr[i];
+
+                for(int j=0;j<26;j++)
+                {
+                    curr[i] = j + 'a';
+                    
+                    if(wordList.find(curr)!=wordList.end())
+                    {
+                        //cout<<curr<<"   added"<<endl;
+                        vector<string> newpath = path;
+                        newpath.push_back(curr);
+                        
+                        visited.insert(curr);
+                        
+                        
+                        if (curr == endWord) {
+                            minLevel = level;
+                            ans.push_back(newpath);
+                        }
+                        else
+                            q.push(newpath);
+                        
+                    }
+                }
+                
+                curr[i] = originalChar;
+            }
+    }
+};
+
+
+Java:-
+
+
+class Solution {
+
+	//Node class with depth and parent pointer
+    private class Node {
+        String value;
+        Node parent;
+        int depth;
+        Node(String value, Node parent, int depth) {
+            this.value = value;
+            this.parent = parent;
+            this.depth = depth;
+        }
+    }
+    
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> wordLadders = new ArrayList<>();
+        Deque<Node> q = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+        Set<String> dict = new HashSet<>(wordList);
+		
+		//initialize root node with begin word
+        int minDepth = Integer.MAX_VALUE;
+        q.add(new Node(beginWord,null,0));
+        int level = 0;
+		
+		//do bfs traversal one level at a time
+        while(!q.isEmpty()) {
+            List<Node> temp = new ArrayList<>();
+            while(!q.isEmpty()) temp.add(q.poll());
+            level++;
+			
+			//if a path was found and minDepth was set, no need to go further
+            if(level > minDepth) break;
+			
+            for(Node curr : temp) {
+			
+                if(curr.value.equals(endWord)) {
+                    minDepth = curr.depth;
+                    wordLadders.add(wordLadder(curr));
+                }
+                visited.add(curr.value);
+				
+				//generate child nodes with parent pointer
+                for(String word : findWords(curr.value, dict)) {
+                    if(!visited.contains(word)) q.offer(new Node(word,curr,curr.depth+1));
+                }
+            }
+        }
+        return wordLadders;
+    }
+    
+	//find all words in wordList which are 1 letter away from our word
+    private List<String> findWords(String s, Set<String> dict) {
+        List<String> result = new ArrayList<>();
+        for(int i = 0; i < s.length(); i++) {
+            char[] c = s.toCharArray();
+            for(char x = 'a'; x <= 'z'; x++) {
+                c[i] = x;
+                String word = String.valueOf(c);
+                if(dict.contains(word)) {
+                    result.add(word);
+                }
+            }
+        }
+        return result;
+    }
+    
+	//generate word ladder by traversing tree branch in reverse
+    private List<String> wordLadder(Node curr) {
+        Deque<String> ladder = new ArrayDeque<>();
+        while(curr != null) {
+            ladder.offerFirst(curr.value);
+            curr = curr.parent;
+        }
+        return new ArrayList<>(ladder);
+    }
+}
+
+
+Javascript:-
+
+
+var findLadders = function(beginWord, endWord, wordList) {
+    var wordSet = new Set(wordList); //the set of available words
+    var result = [];
+    if(!wordSet.has(endWord)) return result;
+    wordSet.delete(beginWord); //avoid reusing the beginWord
+    wordSet.delete(endWord); //endWord will be used to compare, avoid reusing ut
+    
+    var steps = {[beginWord]: 1}; //key: word, value: the min steps to reach word
+    var parents = {}; //key: word, value: the parents of the word
+    var queue = [beginWord];
+    var step = 0;
+    var found = false;
+    while(queue.length && !found) {
+        ++step;
+        for(var curL = queue.length; curL > 0; curL--) {
+            var word = queue.shift();
+            for(var idx = 0; idx < beginWord.length; idx++) {
+                for(let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
+                    if(String.fromCharCode(i) === word[idx]) continue; //skip the same char
+                    var newWord = replaceAt(word, idx, String.fromCharCode(i));
+                    if(newWord === endWord) {
+                        parents[endWord] = parents[endWord] ? [...parents[endWord], word] : [word];
+                        found = true;
+                    } else {
+                        //handle the different paths that reaches at newWord
+                        if(steps.hasOwnProperty(newWord) && step < steps[newWord]) {
+                            //the newWord was visited before from the same level
+                            parents[newWord].push(word);
+                        }
+                    }
+                    if(!wordSet.has(newWord)) continue;
+                    queue.push(newWord);
+                    wordSet.delete(newWord);
+                    steps[newWord] = steps[word] + 1;
+                    if(parents[newWord]) {
+                        parents[newWord].push(word);
+                    } else {
+                        parents[newWord] = [word];
+                    }
+                    
+                }
+            }
+        }
+    }
+    if(found) {
+        getPaths(endWord, beginWord, parents, result, [endWord]);
+    }
+    return result;
+};
+
+//helper to replace a char at index
+function replaceAt(str, idx, char) {
+    return str.slice(0, idx) + char + str.slice(idx + 1);
+}
+
+//do dfs on parents, to find all the paths
+function getPaths(word, beginWord, parents, result, curPath) {
+    if(word === beginWord) {
+        result.push([...curPath].reverse());
+        return;
+    }
+    var words = parents[word];
+    for(var w of words) {
+        curPath.push(w);
+        getPaths(w, beginWord, parents, result, curPath);
+        curPath.pop();
+    }
+}
+
+
+Python:-
+
+from collections import deque,defaultdict
+class Solution:
+    def findLadders(self, b: str, e: str,wl: List[str]) -> List[List[str]]:
+        v,g,ans={},{},[]# v is for both level and visit
+        v [b],g [b]=0, []
+        for i in wl: 
+            v[i],g[i]=0,[]
+        try:g [e]
+        except:return [] #it means that the end word is not in wordlist
+        q=deque([(0,b)])
+        while q:
+            st,c=q.popleft ()
+            if c==e:
+                st+=1
+                break 
+            st+=1#step or level increased 
+            for j in range(len (c)):
+                for i in range(ord ('a'),ord ('z')+1):
+                    curr =c[:j]+chr(i)+c[j+1:]
+                    try:
+                        #to reduce the extra time of searching 
+                        if v [curr]>v[c]or v[curr]==0:
+                            v [curr]=st
+                            g[c] .append(curr)
+                            q .append((st,curr))
+                    except:pass
+            try:del v [c]# to make sure that we will not take that word again 
+            except:pass
+        path=st#path sum minimum 
+        #simple dfs 
+        def dfs (ps,e,stack,v=set ()):
+            if len(stack)==ps and stack[-1]==e:ans.append (stack [:])
+            else:
+                for i in g[stack[-1]]:
+                    if i not in v:
+                        stack .append(i)
+                        v.add (i)
+                        dfs (ps,e,stack)
+                        v.discard (stack.pop ())  
+                return 
+            
+        dfs (path,e,[b])
+        return ans
+           
