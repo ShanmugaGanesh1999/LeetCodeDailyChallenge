@@ -1,0 +1,117 @@
+C++:-
+
+
+class Solution {
+public:
+int help(int mask,int pos,int n){
+    if(pos>30 || (mask|(1LL<<pos))>n) return 1;   //  no bit from 'pos' can be set such that the number is less than 'n'
+    int cur=help(mask,pos+1,n);       //  combinations without setting 'pos' bit
+    cur+=help(mask|(1<<pos),pos+2,n); //  combinations by setting 'pos' bit  
+    return cur;
+}
+
+int findIntegers(int n)
+{
+    int mask=0;
+    return help(mask,0,n);    
+}
+};
+
+
+or
+
+
+class Solution {
+public:
+int findIntegers(int n)
+{
+    int fib[31]={0};
+    int ans=0;
+    fib[0]=1;
+    fib[1]=2;
+    for(int i=2;i<=30;i++) fib[i]=fib[i-1]/*0XXXX*/+fib[i-2]/*10XXX*/;
+    // keep on constructing number 'n' step by step from left to right
+    for(int i=30;i>=0;i--){
+        if(n&(1<<i)){
+            //  lets say i=7 currently
+            //  0(0000000) to 0(1111111)
+            ans+=fib[i];
+            //  Now search from 10(000000) to n
+            //  Again, If I find any set bit in 'n' then search space reduces like :
+            // 10000000 to 10000111 if 4th bit from right was set
+            // Again, I start searching from 10001000 to n
+            // If at any point, I get 2 consecutive 1s then, my search space reduces to 
+            // 10001100 to n which will ultimetely return 0 (any number formed by adding 1 after '11' in 10001100 is not acceptable)
+            if(n&(1<<(i+1))) return ans; 
+        }
+    }
+    return ans+1;
+}
+};
+
+
+Java:-
+
+
+class Solution {
+    public  int findIntegers(int num) {
+        if(num <= 2) return num+1;
+        int ans = 1;
+        if(num%2 == 1){
+            ans = 2;
+        }
+        int zero = 1 , one = 1;
+        for(int i = 1 ; i < 32 ; i++){
+            int pzero = zero;
+            zero = pzero + one;
+            one = pzero;
+            if((num&(1<< i)) > 0){
+                if((num&(1<<i-1)) > 0){
+                    ans = zero + pzero;
+                }else{
+                    ans = zero + ans;
+                }
+            }
+        }
+        return ans;
+    }
+}
+
+
+C:-
+
+
+int findIntegers(int num) {
+    int res = 1;
+    for (int cur = 1, prev = 1, prev_bit = 0; num; num /= 2) {
+        int bit = num & 1;
+        int next = cur + prev; // Fibonacci sequence 
+        res = bit & prev_bit ? next : res + cur * bit;
+        prev_bit = bit;
+        prev = cur;
+        cur = next;
+    }
+    return res;
+}
+
+
+Python:-
+
+
+class Solution:
+    def findIntegers(self, num):
+        if num == 1: return 2
+        s = bin(num)[2:]
+        n = len(s)
+        dp = [1, 2] + [0]*(n-2)
+        for i in range(2,n):
+            dp[i] = dp[i-1] + dp[i-2]
+
+        flag, ans = 0, 0
+        for i in range(n):
+            if s[i] == "0": continue
+            if flag == 1: break
+            if i > 0 and s[i-1] == "1": flag = 1
+            ans += dp[-i-1]
+        
+        return ans + (flag != 1)
