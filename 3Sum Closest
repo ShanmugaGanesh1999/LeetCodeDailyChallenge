@@ -1,0 +1,147 @@
+Cpp
+
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        int sum=INT_MAX, d=INT_MAX;
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<nums.size();i++)
+        {
+            int b=i+1;
+            int l=nums.size()-1;
+            int s=0;
+            while(l>b)
+            {
+                int s=nums[i]+nums[b]+nums[l];
+                if(s>target)
+                {
+                    if(d>s-target)
+                    {
+                        d=s-target;
+                        sum=s;
+                    }
+                    l--;
+                }
+                else if(s<target)
+                {
+                     if(d>target-s)
+                    {
+                        d=target-s;
+                        sum=s;
+                    }
+                    b++; 
+                }
+                else
+                    return s;
+            }
+        }
+        return sum;
+    }
+};
+
+Java
+
+class Solution {
+    public int threeSumClosest(int[] nums,int target) {
+        int sum=Integer.MAX_VALUE, d=Integer.MAX_VALUE;
+        Arrays.sort(nums);
+        for(int i=0;i<nums.length;i++)
+        {
+            int b=i+1;
+            int l=nums.length-1;
+            int s=0;
+            while(l>b)
+            {
+                 s=nums[i]+nums[b]+nums[l];
+                if(s>target)
+                {
+                    if(d>s-target)
+                    {
+                        d=s-target;
+                        sum=s;
+                    }
+                    l--;
+                }
+                else if(s<target)
+                {
+                     if(d>target-s)
+                    {
+                        d=target-s;
+                        sum=s;
+                    }
+                    b++; 
+                }
+                else
+                    return s;
+            }
+        }
+        return sum;
+    }
+}
+
+Python
+
+class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        nums.sort()
+        ans, diff, n = 0, math.inf, len(nums)
+        for i in range(n-2):
+            l, r = i + 1, n - 1
+            while l < r:
+                sum3 = nums[i] + nums[l] + nums[r]
+                if diff > abs(target - sum3):
+                    diff = abs(target - sum3)
+                    ans = sum3
+                if sum3 == target: return target
+                if sum3 > target:
+                    r -= 1  # Sum3 is greater than the target, to minimize the difference, we have to decrease our sum3
+                else:
+                    l += 1  # Sum3 is lesser than the target, to minimize the difference, we have to increase our sum3
+        return ans
+        
+or
+
+
+def threeSumClosest(self, nums: List[int], target: int) -> int:
+        
+        nums.sort()
+        
+        i = 0
+        n = len(nums)
+        output = None
+        min_dist = float('inf')
+        
+        while i < n:
+            
+            fixed = nums[i]
+            target_ = target - fixed
+            j = i + 1
+            k = n - 1
+            
+            while j < k:
+                
+                l = nums[j]
+                r = nums[k]
+                sum_ = l + r
+                
+                if sum_ == target_: return target
+                
+                if sum_ < target_:
+                    j += 1
+                    while j < n and nums[j] == l:
+                        j += 1
+                
+                else:
+                    k -= 1
+                    while k > 0 and nums[k] == r:
+                        k -= 1
+                if (abs(sum_ - target_) < min_dist):
+                    min_dist = abs(sum_ - target_)
+                    output = sum_ + fixed
+                
+            i += 1
+            while i < n and nums[i] == fixed:
+                i += 1
+                
+        return output
+        
