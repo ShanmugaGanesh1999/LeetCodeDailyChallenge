@@ -1,0 +1,81 @@
+C++:-
+
+class Solution 
+{
+    public:
+    vector<int> beautifulArray(int N) 
+    {
+        vector<int> result = {1};
+        while(result.size()<N)
+        {
+            vector<int> temp;
+            for(int i : result)
+                if(i*2-1 <= N)
+                    temp.push_back(i*2-1);
+            for(int i:result)
+                if(i*2 <= N)
+                    temp.push_back(i*2);    
+            result = temp;
+        }
+        return result;
+    }
+};
+
+Java:-
+
+class Solution {
+    public int[] beautifulArray(int N) {
+        List<Integer> pass = new ArrayList<>();
+        for(int i=1; i<N+1; i++) pass.add(i);
+        
+        List<Integer> ans = dfs(pass);
+        
+        return ans.stream().mapToInt(i -> i).toArray();
+    }
+    
+    private List<Integer> dfs(List<Integer> arr){
+        if(arr.size() < 3) return arr;
+        
+        List<Integer> odd = new ArrayList<>();
+        List<Integer> even = new ArrayList<>();
+        
+        for(int i=0; i<arr.size(); i++){
+            if(i%2 == 0) even.add(arr.get(i));
+            else odd.add(arr.get(i));
+        }
+        
+        odd = dfs(odd);
+        even = dfs(even);
+        List<Integer> tmp = new ArrayList<>();
+        tmp.addAll(odd);
+        tmp.addAll(even);
+        
+        return tmp;
+    }
+}
+
+Python:-
+
+class Solution:
+    def beautifulArray(self, N: int) -> List[int]:
+        
+        def fn(nums): 
+            """Return beautiful array by rearraning elements in nums."""
+            if len(nums) <= 1: return nums
+            return fn(nums[::2]) + fn(nums[1::2])
+        
+        return fn(list(range(1, N+1)))
+        
+or
+
+def beautifulArray(self, N: int) -> List[int]:
+        def _split(arr):
+            if len(arr) <= 2:
+                return arr
+            odd, even = [], []
+            for i, n in enumerate(arr):
+                if i % 2: even.append(n)
+                else: odd.append(n)
+            return _split(odd) + _split(even)
+
+        return _split([i for i in range(1, N + 1)])
