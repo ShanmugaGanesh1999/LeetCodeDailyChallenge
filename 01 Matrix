@@ -1,0 +1,146 @@
+Python:-
+
+class Solution:
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        m, n = len(mat), len(mat[0])
+        DIR = [0, 1, 0, -1, 0]
+
+        dist = [[-1] * n for _ in range(m)]
+        q = deque([])
+        for r in range(m):
+            for c in range(n):
+                if mat[r][c] == 0:
+                    q.append((r, c))
+                    dist[r][c] = 0
+
+        while q:
+            r, c = q.popleft()
+            for i in range(4):
+                nr, nc = r + DIR[i], c + DIR[i + 1]
+                if nr < 0 or nr == m or nc < 0 or nc == n: continue  # Skip outbound coords
+                if dist[nr][nc] == -1:
+                    dist[nr][nc] = dist[r][c] + 1
+                    q.append((nr, nc))
+        return dist
+        
+C++:-
+
+class Solution {
+public:
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        vector<vector<int>> res(mat.size(), vector<int>(mat[0].size(), 1e4));
+		
+        for (int i = 0; i < mat.size(); i++) {
+            for (int j = 0; j < mat[i].size(); j++) {
+                if (mat[i][j] == 0) {
+                    res[i][j] = 0;
+                } else {
+                    if (i > 0) {
+                        res[i][j] = min(res[i][j], 1 + res[i - 1][j]);
+                    }                
+                    if (j > 0) {
+                        res[i][j] = min(res[i][j], 1 + res[i][j - 1]);  
+                    }
+                }
+            }
+        }
+        
+        for (int i = mat.size() - 1; i >= 0; i--) {
+            for (int j = mat[i].size() - 1; j >= 0; j--) {
+                if (i + 1 < mat.size()) {
+                    res[i][j] = min(res[i][j], 1 + res[i + 1][j]);
+                }               
+                if (j + 1 < mat[i].size()) {
+                    res[i][j] = min(res[i][j], 1 + res[i][j + 1]);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        vector<vector<int>> dp(mat.size(),vector<int>(mat[0].size(),-1));
+        vector<vector<int>> offset ={{1,0},{0,1},{-1,0},{0,-1}};
+        int m=mat.size();
+        int n=mat[0].size();
+        queue<pair<int,int>> q;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(mat[i][j]==0){
+                    dp[i][j]=0;
+                    q.push({i,j});
+                }
+            }
+        }
+        while(!q.empty()){
+            pair<int,int> front=q.front();
+            q.pop();
+            for(int i=0;i<4;i++){
+                //basically it checks in all 4 directions
+                //best to use instead of 4 if conditions
+                int x=front.first+offset[i][0];
+                int y=front.second+offset[i][1];
+                //checking in down right up left directions respectively
+                if(x<0 || y<0 || x>=m || y>=n || dp[x][y]>=0) continue;
+                dp[x][y]=1+dp[front.first][front.second];
+                q.push({x,y});
+            }
+        }
+        return dp;
+    }
+};
+
+Java:-
+
+class Solution {
+
+    public class Pair {
+        int i, j;
+
+        Pair(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public int[][] updateMatrix(int[][] mat) {
+        Queue<Pair> q = new ArrayDeque<>();
+        int n = mat.length;
+        int m = mat[0].length;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 0) {
+                    q.add(new Pair(i, j));
+                }
+                else{
+                    mat[i][j] = -1;
+                }
+            }
+        }
+        int[][] dirs = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+
+        while (q.size() > 0) {
+            Pair rem = q.remove();
+            int ri = rem.i;
+            int rj = rem.j;
+
+            for (int d = 0; d < 4; d++) {
+                int newi = ri + dirs[d][0];
+                int newj = rj + dirs[d][1];
+
+                if (newi >= 0 && newj >= 0 && newi < n && newj < m && mat[newi][newj] == -1) {
+                    mat[newi][newj] = mat[ri][rj] + 1;
+                    q.add(new Pair(newi, newj));
+                }
+            }
+        }
+
+        return mat;
+    }
+}
