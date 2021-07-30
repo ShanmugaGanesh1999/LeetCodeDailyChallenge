@@ -1,0 +1,128 @@
+Java
+
+class MapSum {
+
+    Map<String, Integer> map;
+    public MapSum() {
+        map = new HashMap<String, Integer>();
+    }
+    
+    public void insert(String key, int val) {      
+            map.put(key, val);        
+    }
+    
+    public int sum(String prefix) {
+        
+        int sum = 0;
+        Set<String> keys = map.keySet();
+        for(var key : keys){
+            
+            int x = map.get(key);
+            if(key.startsWith(prefix))
+                sum += x;
+            
+        }
+        
+        return sum;
+        
+    }
+}
+
+C#
+
+public class MapSum {
+
+    IDictionary<string, int> map;
+    public MapSum() {
+        map = new Dictionary<string, int>();
+    }
+    
+    public void Insert(string key, int val) {
+        if(map.ContainsKey(key))
+            map[key] = val;
+        else
+            map.Add(key, val);
+    }
+    
+    public int Sum(string prefix) {
+        
+        int sum = 0;
+        foreach(var value in map){
+            
+            if(value.Key.StartsWith(prefix))
+                sum += value.Value;
+            
+        }
+        
+        return sum;
+        
+    }
+}
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum obj = new MapSum();
+ * obj.Insert(key,val);
+ * int param_2 = obj.Sum(prefix);
+ */
+
+C++
+
+struct TrieNode {
+    TrieNode* child[26] = {};
+    int sum = 0; // Store the sum of all strings go through this node.
+};
+
+class MapSum { // 0 ms, faster than 100.00%
+public:
+    unordered_map<string, int> map;
+    TrieNode trieRoot;
+    MapSum() { }
+    void insert(string key, int val) {
+        int diff = val - map[key];
+        TrieNode* curr = &trieRoot;
+        for (char c : key) {
+            c -= 'a';
+            if (curr->child[c] == nullptr) curr->child[c] = new TrieNode();
+            curr = curr->child[c];
+            curr->sum += diff;
+        }
+        map[key] = val;
+    }
+    int sum(string prefix) {
+        TrieNode* curr = &trieRoot;
+        for (char c : prefix) {
+            c -= 'a';
+            if (curr->child[c] == nullptr) return 0;
+            curr = curr->child[c];
+        }
+        return curr->sum;
+    }
+};
+
+Python
+
+class TrieNode:
+    def __init__(self):
+        self.child = defaultdict(TrieNode)
+        self.sum = 0  # Store the sum of all strings go through this node.
+
+class MapSum:  # 24 ms, faster than 97.01%
+    def __init__(self):
+        self.trieRoot = TrieNode()
+        self.map = defaultdict(int)
+
+    def insert(self, key: str, val: int) -> None:
+        diff = val - self.map[key]
+        curr = self.trieRoot
+        for c in key:
+            curr = curr.child[c]
+            curr.sum += diff
+        self.map[key] = val
+
+    def sum(self, prefix: str) -> int:
+        curr = self.trieRoot
+        for c in prefix:
+            if c not in curr.child: return 0
+            curr = curr.child[c]
+        return curr.sum
