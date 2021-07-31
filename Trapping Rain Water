@@ -1,0 +1,73 @@
+Python
+
+class Solution:
+    def trap(self, H):
+        left = list(accumulate(H, max))
+        right = list(accumulate(H[::-1], max))[::-1]
+        return sum(min(i, j) - k for i, j, k in zip(left, right, H))
+        
+or
+
+class Solution:
+    def trap(self, H):
+        return sum(min(i, j) - k for i, j, k in zip(accumulate(H, max), list(accumulate(H[::-1], max))[::-1], H))
+        
+C++
+
+class Solution 
+{
+    public:
+    int trap(vector<int>& arr) 
+    {
+        int n = arr.size();
+        int lmax = INT_MIN;
+        int rmax = INT_MIN;
+        int l = 0, r = n-1;
+        int result = 0;
+        while(l <= r)
+        {
+            if(arr[l] <= arr[r])
+            {
+                if(arr[l] > lmax)
+                    lmax = arr[l];
+                else
+                    result += lmax - arr[l];
+                l++;
+            }
+            else
+            {
+                if(arr[r] > rmax)
+                    rmax = arr[r];
+                else
+                    result += rmax - arr[r];
+                r--;
+            }
+        }
+        return result;
+    }
+};
+
+Java
+
+class Solution {
+    public int trap(int[] height) {
+        Stack<Integer> stack = new Stack();
+        int ans = 0;
+        for(int i = 0; i < height.length; i++) {
+            int currHeight = height[i];
+            while(!stack.isEmpty() && currHeight > height[stack.peek()]) {
+                int bottomHeight = height[stack.pop()];
+                int rightBoundIndex = i;
+                if(stack.isEmpty()) {
+                    break; // no left bar found
+                }
+                int leftBoundIndex = stack.peek();
+                int distance = rightBoundIndex - leftBoundIndex - 1;
+                int boundedHeight = Math.min(currHeight, height[leftBoundIndex]);
+                ans += distance * (boundedHeight - bottomHeight);
+            }
+            stack.add(i);
+        }
+        return ans;
+    }
+}
