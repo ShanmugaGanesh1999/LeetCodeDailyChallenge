@@ -1,0 +1,216 @@
+C++
+
+class Solution {
+public:
+    int largestIsland(vector<vector<int>>& grid) {
+        unordered_map<int, int>sizes;
+        int m = grid.size(), n = grid[0].size(), curId = 2, res = 0;
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(grid[i][j] !=1)continue;
+                queue<int>q{{i*n +j}};
+                int cnt = 0;
+                while(!q.empty()){
+                    int len = q.size();
+                    for(int k = 0; k < len; ++k){
+                        int x = q.front()/n, y = q.front() % n;q.pop();
+                        if(grid[x][y] == curId)continue;
+                        cnt++;
+                        grid[x][y] = curId;
+                        for(int l = 0; l < 4; ++l){
+                            int nx = dirs[l] +x, ny = dirs[l + 1] + y;
+                            if(nx <0 ||ny <0 ||nx >=m ||ny >=n ||grid[nx][ny] != 1)continue;
+                            q.push(nx *n +ny);
+                        }
+                    }
+                }
+                sizes[curId++] = cnt;//set the island Id to reduce the time complexity in the latter operations
+                res = max(res, cnt);
+            }
+        }
+        
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(grid[i][j] == 0){
+                    set<int>s;
+                    for(int k = 0; k < 4; ++k){
+                        int x = i + dirs[k], y = j + dirs[k + 1];
+                        if(x <0 ||x>=m ||y<0||y>=n||grid[x][y] == 0)continue;
+                        s.insert(grid[x][y]);
+                    }
+                    int sum = 1;
+                    for(auto &it:s){
+                        sum += sizes[it];
+                    }
+                    res = max(res, sum);
+                }
+            }
+        }
+        
+        return res;
+    }
+private:
+    int dirs[5] = {-1, 0, 1, 0, -1};
+};
+
+Java
+
+class Solution {
+
+public int largestIsland(int[][] grid) {
+    HashMap<Integer, Integer> idArea = new HashMap<Integer, Integer>();
+    int maxArea = 0; 
+    int id = 2;
+	
+    for(int i = 0; i < grid.length; i++) {
+        for(int j = 0; j < grid.length; j++) {
+            if(grid[i][j] == 1) {				
+                int area = findArea(grid, i, j);					
+                maxArea = Math.max(maxArea ,area);					
+                idArea.put(id, area);					
+                updateWithNewId(grid, i, j, id);					
+                id++;
+            }
+        }
+    }
+	
+    if(maxArea == 0) return 1;
+	if(maxArea == grid.length*grid.length) return maxArea;
+	
+    HashSet<Integer> hs = new HashSet<Integer>();
+	
+    for(int i = 0; i < grid.length; i++) {
+        for(int j = 0; j < grid.length; j++) {
+            if(grid[i][j] == 0) {				
+                int area = 1;					
+                if(i-1 >= 0 && grid[i-1][j] != 0) hs.add(grid[i-1][j]);
+                if(j-1 >= 0 && grid[i][j-1] != 0) hs.add(grid[i][j-1]);
+                if(i+1 < grid.length && grid[i+1][j] != 0) hs.add(grid[i+1][j]);
+                if(j+1 < grid.length && grid[i][j+1] != 0) hs.add(grid[i][j+1]);
+                for(int k : hs) area += idArea.get(k);					
+                maxArea = Math.max(maxArea, area);					
+                hs.clear();
+            }
+        }
+    }
+	
+    return maxArea;
+}
+
+int findArea(int grid[][], int i, int j) {
+    if(i < 0 || j < 0 || i >= grid.length || j >= grid.length || grid[i][j] != 1) return 0;
+    int area = 1;
+    grid[i][j] = -1;
+	
+    area += findArea(grid, i-1, j);
+    area += findArea(grid, i+1, j);
+    area += findArea(grid, i, j-1);
+    area += findArea(grid, i, j+1);
+  
+    return area;
+}
+
+void updateWithNewId(int[][] grid, int i, int j, int id) {
+    if(i < 0 || j < 0 || i >= grid.length || j >= grid.length || grid[i][j] != -1) return;
+	
+    grid[i][j] = id;
+	
+    updateWithNewId(grid, i-1, j, id);
+    updateWithNewId(grid, i+1, j, id);
+    updateWithNewId(grid, i, j-1, id);
+    updateWithNewId(grid, i, j+1, id);
+    
+}
+
+}
+
+Python
+
+class Solution:
+    def largestIsland(self, grid):
+        m, n = len(grid), len(grid[0])
+        neib_list = [[1,0],[-1,0],[0,-1],[0,1]]
+        islands, count, ans = Counter(), 2, 0
+        
+        def dfs(t, i, j):
+            if not 0 <= i < m or not 0 <= j < n or grid[i][j] != 1: return
+            islands[t] += 1
+            grid[i][j] = t
+            for x, y in neib_list: dfs(t, x+i, y+j)
+                
+        for x, y in product(range(m), range(n)):
+            if grid[x][y] == 1:
+                dfs(count, x, y)
+                count += 1
+                
+        for x, y in product(range(m), range(n)):
+            if grid[x][y] != 0: continue
+            neibs = set()
+            for dx, dy in neib_list:
+                if 0 <= x + dx < m and 0 <= y + dy < n and grid[x+dx][y+dy] != 0:
+                    neibs.add(grid[x+dx][y+dy])
+            ans = max(ans, sum(islands[i] for i in neibs) + 1)
+            
+        return ans if ans != 0 else m*n
+        
+or
+
+class UnionFind:
+    def __init__(self, n):
+        self.parent = [-1] * n
+        self.size = [0] * n
+    def isExist(self, u):
+        return self.parent[u] >= 0
+    def add(self, u):
+        if self.isExist(u): return  # Only add if not existed yet!
+        self.parent[u] = u
+        self.size[u] = 1
+    def find(self, u):
+        if self.parent[u] == u: return u
+        self.parent[u] = self.find(self.parent[u])  # Path compression
+        return self.parent[u]
+    def union(self, u, v):
+        pu, pv = self.find(u), self.find(v)
+        if pu == pv: return False
+        if self.size[pu] <= self.size[pv]:  # Merge the smaller component to the bigger component
+            self.parent[pu] = pv  # Merge u into v
+            self.size[pv] += self.size[pu]
+        else:
+            self.parent[pv] = pu  # Merge v into u
+            self.size[pu] += self.size[pv]
+        return True
+
+class Solution:
+    def largestIsland(self, grid: List[List[int]]) -> int:
+        DIR = [0, 1, 0, -1, 0]
+        m, n, ans = len(grid), len(grid[0]), 0
+        uf = UnionFind(m * n)
+
+        def landNeighbors(r, c):
+            for i in range(4):
+                nr, nc = r + DIR[i], c + DIR[i + 1]
+                neiId = nr * n + nc
+                if nr < 0 or nr == m or nc < 0 or nc == n or not uf.isExist(neiId): continue
+                yield neiId
+
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == 0: continue
+                curId = r * n + c
+                uf.add(curId)
+                for neiId in landNeighbors(r, c):
+                    uf.union(curId, neiId)
+                p = uf.find(curId)
+                ans = max(ans, uf.size[p])
+
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == 1: continue
+                neiParents = set()
+                for neiId in landNeighbors(r, c):
+                    neiParents.add(uf.find(neiId))
+                sizeFormed = 1  # Start with 1, which is matrix[r][c] when turning from 0 into 1
+                for p in neiParents:
+                    sizeFormed += uf.size[p]
+                ans = max(ans, sizeFormed)
+        return ans
