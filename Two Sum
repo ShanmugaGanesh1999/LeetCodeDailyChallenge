@@ -1,0 +1,109 @@
+C++
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<pair<int, int>> arr(n);
+        for (int i = 0; i < n; ++i) {
+            arr[i] = make_pair(nums[i], i);
+        }
+        sort(arr.begin(), arr.end()); // Sort arr in increasing order by their values.
+        int left = 0, right = n- 1;
+        while (left < right) {
+            int sum2 = arr[left].first + arr[right].first;
+            if (sum2 == target) 
+                return {arr[left].second, arr[right].second};
+            if (sum2 > target)
+                right -= 1; // Try to decrease sum2
+            else
+                left += 1; // Try to increase sum2
+        }
+        return {};
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> seen;
+        for (int i = 0; i < nums.size(); ++i) {
+            int b = nums[i], a = target - b;
+            if (seen.count(a)) return {seen[a], i}; // Found pair of (a, b), so that a + b = target
+            seen[b] = i;
+        }
+        return {};
+    }
+};
+
+Java
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> seen = new HashMap<>();
+        for (int i = 0; i < nums.length; ++i) {
+            int b = nums[i], a = target - b;
+            if (seen.containsKey(a)) return new int[]{seen.get(a), i}; // Found pair of (a, b), so that a + b = target
+            seen.put(b, i);
+        }
+        return new int[]{};
+    }
+}
+
+or
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int n = nums.length;
+        int[][] arr = new int[n][2];
+        for (int i = 0; i < n; ++i) {
+            arr[i][0] = nums[i];
+            arr[i][1] = i;
+        }
+        Arrays.sort(arr, Comparator.comparingInt(o -> o[0])); // Sort arr in increasing order by their values.
+        int left = 0, right = n - 1;
+        while (left < right) {
+            int sum2 = arr[left][0] + arr[right][0];
+            if (sum2 == target)
+                return new int[]{arr[left][1], arr[right][1]};
+            if (sum2 > target)
+                right -= 1; // Try to decrease sum2
+            else
+                left += 1; // Try to increase sum2
+        }
+        return new int[]{};
+    }
+}
+
+Python
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        seen = {}
+        for i, b in enumerate(nums):
+            # a + b = target -> a = target - b
+            a = target - b
+            if a in seen:
+                return [seen[a], i]
+            seen[b] = i
+            
+or
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        arr = []
+        for i, x in enumerate(nums):
+            arr.append([x, i])
+        arr.sort()  # Sort arr in increasing order by their values.
+        
+        left, right = 0, len(arr) - 1
+        while left < right:
+            sum2 = arr[left][0] + arr[right][0]
+            if sum2 == target:
+                return [arr[left][1], arr[right][1]]
+            elif sum2 > target:
+                right -= 1  # Try to decrease sum2
+            else:
+                left += 1  # Try to increase sum2
