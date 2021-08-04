@@ -1,0 +1,142 @@
+Java
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> ans=new ArrayList<>();
+        ArrayList<Integer> current=new ArrayList<>();
+            func(root,0,current,targetSum,ans);
+        return ans;
+    }
+    public static void func(TreeNode root,int sum,ArrayList<Integer> current,int targetSum,List<List<Integer>> ans )
+    {
+        if(root==null)
+            return;
+
+        current.add(root.val);
+         sum=sum+root.val;
+        if((sum)==targetSum&&root.left==null&&root.right==null)
+        {
+            
+            ArrayList<Integer> ad=new ArrayList<>();
+            for(Integer k: current)
+                ad.add(k);
+            ans.add(ad);
+            current.remove(current.size()-1);
+             return;
+        }
+        func(root.left,sum,current,targetSum,ans);
+        func(root.right,sum,current,targetSum,ans);
+        current.remove(current.size()-1);
+        return ;
+        
+        
+    }
+}
+
+JavaScript
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} targetSum
+ * @return {number[][]}
+ */
+var pathSum = function(root, targetSum) {
+    if(root === null) {
+        return [];
+    }
+    
+    const ans = [];
+    const sumTillNow = 0;
+    const nodesTillNow = [];
+    
+    helper(root, targetSum, sumTillNow, nodesTillNow, ans);
+    
+    return ans;
+};
+
+const helper = function(root, targetSum, sumTillNow, nodesTillNow, ans) {
+    sumTillNow += root.val;
+    nodesTillNow.push(root.val);
+    
+    // check if root is a leaf node
+    if(root.left === null && root.right === null && sumTillNow === targetSum) {
+        ans.push([...nodesTillNow]);
+    }
+    
+    root.left !== null && helper(root.left, targetSum, sumTillNow, nodesTillNow, ans);
+    
+    root.right !== null && helper(root.right, targetSum, sumTillNow, nodesTillNow, ans);
+    
+    // back track here
+    nodesTillNow.pop();
+}
+
+
+C++
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        vector<int> path;
+        dfs(root, targetSum, path);
+        return ans;
+    }
+    void dfs(TreeNode* root, int targetSum, vector<int>& path) {
+        if (root == nullptr) return;
+        path.push_back(root->val);
+        targetSum -= root->val;
+        if (root->left == nullptr && root->right == nullptr) { // Is leaf node
+            if (targetSum == 0) // Found valid path
+                ans.push_back(path);
+        } else {
+            dfs(root->left, targetSum, path);
+            dfs(root->right, targetSum, path);
+        }
+        path.pop_back(); // backtrack
+    }
+};
+
+Python
+
+class Solution:
+    def pathSum(self, root: TreeNode, targetSum: int) -> List[List[int]]:
+        def dfs(root, targetSum, path):
+            if root == None: return None
+            targetSum -= root.val
+            path.append(root.val)
+            if root.left == None and root.right == None:  # Is leaf node
+                if targetSum == 0:  # Found a valid path
+                    ans.append(path.copy())
+            else:
+                dfs(root.left, targetSum, path)
+                dfs(root.right, targetSum, path)
+            path.pop()  # backtrack
+
+        ans = []
+        dfs(root, targetSum, [])
+        return ans
+
