@@ -1,0 +1,126 @@
+C++
+
+class Solution {
+public:
+    pair<int, int> memo[501][501] = {};
+    bool stoneGame(vector<int>& piles) {
+        auto [aliceScore, leeScore] = dp(piles, 0, piles.size() - 1);
+        return aliceScore > leeScore;
+    }
+    pair<int, int> dp(vector<int>& piles, int left, int right) {
+        if (left > right) return make_pair(0, 0);
+        if (memo[left][right].first != 0) return memo[left][right];
+
+        pair<int, int> leftPick = dp(piles, left + 1, right);
+        pair<int, int> rightPick = dp(piles, left, right - 1);
+        if (piles[left] + leftPick.second > piles[right] + rightPick.second) { // If the left choice has higher score than the right choice
+            return memo[left][right] = make_pair(piles[left] + leftPick.second, leftPick.first); // then pick left
+        }
+        return memo[left][right] = make_pair(piles[right] + rightPick.second, rightPick.first); // else pick right
+    }
+};
+
+or
+
+typedef pair<int, int> pii;
+class Solution {
+public:
+    bool stoneGame(vector<int> &piles) {
+        int n = piles.size();
+        vector<vector<pii>> dp(n, vector<pii>(n));
+        for (int left = n - 1; left >= 0; --left) {
+            for (int right = left; right < n; ++right) {
+                if (left == right) { // Base case
+                    dp[left][right] = make_pair(piles[left], 0);
+                    continue;
+                }
+                pii pickLeft = dp[left + 1][right];
+                pii pickRight = dp[left][right - 1];
+                if (piles[left] + pickLeft.second > piles[right] + pickRight.second) // If the left choice has higher score than the right choice
+                    dp[left][right] = make_pair(piles[left] + pickLeft.second, pickLeft.first); // then pick left
+                else
+                    dp[left][right] = make_pair(piles[right] + pickRight.second, pickRight.first); // else pick right
+            }
+        }
+        auto[aliceScore, leeScore] = dp[0][n - 1];
+        return aliceScore > leeScore;
+    }
+};
+
+Java
+
+class Solution {
+    public boolean stoneGame(int[] piles) {
+        boolean alex=true;
+        int n=piles.length;
+        int left=0,right=n-1,alexSum=0,leeSum=0;
+        while(left<right){
+		// when alex=true its alex's turn else Lee's turn
+            if(alex){
+                if(piles[left]<piles[right]){
+                    alexSum+=piles[right];
+                    right--;
+                }
+                else{
+                    alexSum+=piles[left];
+                    left++;
+                }
+                alex=false;
+            }else{
+                if(piles[left]>piles[right]){
+                    leeSum+=piles[right];
+                    right--;
+                }
+                else{
+                    alexSum+=piles[left];
+                    left++;
+                }
+                alex=true;
+            }
+        }
+        if(alexSum<leeSum) return false;
+        return true;
+    }
+}
+
+Python
+
+class Solution:
+    def stoneGame(self, piles: List[int]) -> bool:
+        @lru_cache(None)
+        def dp(left, right):
+            if left > right: return (0, 0)
+            
+            pickLeft = dp(left+1, right)
+            pickRight = dp(left, right - 1)
+            
+            if piles[left] + pickLeft[1] > piles[right] + pickRight[1]:  # If the left choice has higher score than the right choice
+                return piles[left] + pickLeft[1], pickLeft[0]  # then pick left
+            
+            return piles[right] + pickRight[1], pickRight[0]  # else pick right
+        
+        alexScore, leeScore = dp(0, len(piles) - 1)
+        return alexScore > leeScore
+        
+or
+
+class Solution:
+    def stoneGame(self, piles: List[int]) -> bool:
+        n = len(piles)
+        dp = [[(0, 0)] * n for _ in range(n)]
+        
+        for left in range(n - 1, -1, -1):
+            for right in range(left, n):
+                if left == right:  # Base case
+                    dp[left][right] = (piles[left], 0)
+                    continue
+                    
+                pickLeft = dp[left + 1][right]
+                pickRight = dp[left][right - 1]
+                if piles[left] + pickLeft[1] > piles[right] + pickRight[1]:  # If the left choice has higher score than the right choice
+                    dp[left][right] = (piles[left] + pickLeft[1], pickLeft[0])  # then pick left
+                else:
+                    dp[left][right] = (piles[right] + pickRight[1], pickRight[0])  # else pick right
+
+        aliceScore, leeScore = dp[0][n - 1]
+        return aliceScore > leeScore
