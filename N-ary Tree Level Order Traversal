@@ -1,0 +1,162 @@
+C++
+
+class Solution { // 20 ms, faster than 86.78%
+public:
+    vector<vector<int>> levelOrder(Node* root) {
+        if (root == nullptr) return {};
+        queue<Node*> q;
+        q.push(root);
+        vector<vector<int>> ans;
+        while (!q.empty()) {
+            ans.emplace_back();
+            for (int i = q.size(); i >= 1; i--) {
+                Node* curr = q.front(); q.pop();
+                ans.back().push_back(curr->val);
+                for (Node* child : curr->children) {
+                    q.push(child);
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution { // 16 ms, faster than 98.53%
+public:
+    vector<vector<int>> ans;
+    vector<vector<int>> levelOrder(Node* root) {
+        dfs(root, 0);
+        return ans;
+    }
+    void dfs(Node* root, int level) {
+        if (root == nullptr) return;
+        if (level == ans.size()) ans.emplace_back(); // Need more level -> Add new level
+        ans[level].push_back(root->val);
+        for (Node* child : root->children)
+            dfs(child, level + 1);
+    }
+};
+
+Java
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> children;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, List<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+
+class Solution {
+    public List<List<Integer>> levelOrder(Node root) {
+
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Node levelDifferntiator = new Node(Integer.MAX_VALUE);
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        queue.add(levelDifferntiator);
+
+        List<Integer> list = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+
+            if (queue.size() == 1 && queue.peek() == levelDifferntiator) {
+                if(list.size() > 0) result.add(list);
+                break;
+            }
+            Node temp = queue.poll();
+
+            if (temp == levelDifferntiator) {
+                result.add(new ArrayList<>(list));
+                list = new ArrayList<>();
+                queue.add(levelDifferntiator);
+                continue;
+            }
+            list.add(temp.val);
+            if (temp.children != null){
+                for (Node node : temp.children) {
+                    queue.add(node);
+                }
+             }
+        }
+        return result;
+    }
+}
+
+JS
+
+var levelOrder = function(root) {
+    if(!root)return[]
+    var result = [];
+    helper(root, 0);
+    return result
+    function helper(root,level){
+        if(!result[level]){
+            result[level] = [root.val];
+        }else{
+            result[level].push(root.val)
+        }
+        if(!root.children)return
+        
+        for(let i of root.children){
+            helper(i , level + 1)
+        }
+    }
+};
+
+Python
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children
+"""
+
+class Solution:  # 48 ms, faster than 87.27
+    def levelOrder(self, root: 'Node') -> List[List[int]]:
+        if root == None: return []
+        q = deque([root])
+        ans = []
+        while q:
+            level = []
+            for _ in range(len(q)):
+                curr = q.popleft()
+                level.append(curr.val)
+                for child in curr.children:
+                    q.append(child)
+            ans.append(level)
+        return ans
+        
+or
+
+class Solution:  # 40 ms, faster than 99.45%
+    def levelOrder(self, root: 'Node') -> List[List[int]]:
+        def dfs(root, level):
+            if root == None: return
+            if level == len(ans):  # Need more level -> Add new level
+                ans.append([])
+            ans[level].append(root.val)
+            for child in root.children:
+                dfs(child, level + 1)
+              
+        ans = []
+        dfs(root, 0)
+        return ans
