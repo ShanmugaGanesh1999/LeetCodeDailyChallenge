@@ -1,0 +1,169 @@
+Python
+
+class Solution:
+    def minCut(self, s: str) -> int:
+        n = len(s)
+        
+        @lru_cache(None)
+        def isPalindrome(l, r):  # l, r inclusive
+            if l >= r: return True
+            if s[l] != s[r]: return False
+            return isPalindrome(l+1, r-1)
+        
+        @lru_cache(None)
+        def dp(i):  # s[i..n-1]
+            if i == n:
+                return 0
+            ans = math.inf
+            for j in range(i, n):
+                if (isPalindrome(i, j)):
+                    ans = min(ans, dp(j+1) + 1)
+            return ans
+        
+        return dp(0) - 1
+
+
+or
+
+class Solution:
+    def solver(self, str):
+        s = '#'
+        for char in str:   
+            s += char + '#' 
+        dp = [0 for i in range(len(s))]
+        
+        left, right = 0, 0
+        for i in range(1, len(s)): 
+            if i > right: 
+                count = 1
+                while i - count >= 0 and i + count < len(s) and s[i - count] == s[i + count]: 
+                    count += 1
+                dp[i] = count - 1
+                left, right = i, i + count - 1
+            else: 
+                origin = left - dp[left] + right - i 
+                if origin - dp[origin] > left - dp[left]: 
+                    dp[i] = dp[origin] 
+                elif origin - dp[origin] < left - dp[left]: 
+                    dp[i] = origin - left + dp[left]
+                else: 
+                    count = right + 1 - i
+                    while i - count >= 0 and i + count < len(s) and s[i - count] == s[i + count]:
+                        count += 1 
+                    dp[i] = count - 1
+                    if i + count - 1 > right: 
+                        left, right = i, i + count - 1
+        
+        return dp
+    
+    def minCut(self, s: str) -> int:
+        dp = [float('inf') for i in range(len(s) + 1)]
+        dp[0] = -1
+        str = ''
+        for i in range(len(s)):
+            str += s[i]
+            p = self.solver(str)
+
+            for j in range(1, len(p) - 1):
+                if j + p[j] == len(p) - 1:
+                    dp[i + 1] = min(dp[i + 1], 1 + dp[(j - p[j]) // 2])
+
+        return dp[len(s)]
+        
+        
+C++
+
+class Solution {
+public:
+    int minCut(string s) {
+    int n = s.length();
+    
+    vector<int> dp(n+1, 0);
+    
+	//initialize the dp array (the max cuts need for a string of length i to be palindrome is i-1)
+    for(int i=0; i<=n; i++){
+        dp[i] = i-1;
+    }
+    
+    for(int k=0; k<n; k++){
+        int i=k;
+        int j=k;
+        //expand for odd length
+        for(; i>=0 && j<n && s[i] == s[j]; i--, j++){
+		//since the substring between i and j is a palindrome, so we'll put a cut on the left side of the substring
+            dp[j+1] = min(dp[j+1], dp[i]+1);
+        }
+        
+        i=k-1;
+        j=k;
+        //expand for even length
+        for(; i>=0 && j<n && s[i] == s[j]; i--, j++){
+		//since the substring between i and j is a palindrome, so we'll put a cut on the left side of the substring
+            dp[j+1] = min(dp[j+1], dp[i]+1);
+        }
+    }
+    
+    return dp[n];
+}
+};
+
+or
+
+class Solution {
+public:
+    int minCut(string s) {
+        int n=s.size();
+        //cut[i] is the cuts needed for requiring from 0 to i
+        vector<int> cut(n,INT_MAX);
+        cut[0]=0;
+        vector<vector<bool>> dp(n,vector<bool>(n,false));
+        for(int i=0;i<n;i++){
+            dp[i][i]=true;
+            if(i!=0&&s[i]==s[i-1]) dp[i-1][i]=true;
+        } 
+        for(int k=2;k<n;k++)
+            for(int l=n-k-1;l>=0;l--){
+                if(dp[l+1][l+k-1]&&s[l]==s[l+k]) dp[l][l+k]=true;
+                else dp[l][l+k]=false;
+            }
+        for(int i=1;i<n;i++)
+            for(int j=i;j>=0;j--){
+                if(dp[j][i]&&j==0) cut[i]=0;
+                else if(dp[j][i]) cut[i]=min(cut[i],cut[j-1]+1);
+            }
+        return cut[n-1];
+    }
+};
+
+Java
+
+class Solution {
+    public int minCut(String s) {
+        if (s == null || s.length() <= 1) return 0;
+        return helper(s.toCharArray(), 0, new HashMap<>()) - 1;
+    }
+    
+    private int helper(char[] arr, int start, Map<Integer, Integer> cache) {
+        if (start >= arr.length) return 0;
+        if (cache.containsKey(start)) return cache.get(start);
+        int min = Integer.MAX_VALUE;
+        for (int i = start; i < arr.length; i++) {
+            if (isPalindrome(arr, start, i)) {
+                min = Math.min(min, 1 + helper(arr, i + 1, cache));
+            }
+        }
+        cache.put(start, min);
+        return min;
+    }
+    
+    
+    private boolean isPalindrome(char[] arr, int start, int end) {
+        if (start == end) return true;
+        while (start < end) {
+            if (arr[start] != arr[end]) return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+}
