@@ -1,0 +1,68 @@
+Java
+
+class Solution {
+    public int minFlipsMonoIncr(String S) {
+        int zeros=0;int ones=0;int minFlips=0;
+        for(int i=0;i<S.length();i++){
+            if(S.charAt(i)=='0'){
+                zeros++;
+                minFlips=Math.min(minFlips+1,ones);
+            }else{
+                ones++;
+            }
+        }
+        return minFlips;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int minFlipsMonoIncr(string s) {
+        int flips = 0, counter = 0;
+        for (auto c : s) {
+            if (c == '1') counter++;
+            else flips++;
+            
+            flips = min(flips, counter);
+        }
+        return flips;
+    }
+};
+
+JS
+
+var minFlipsMonoIncr = function(s) {
+    // dp[0] - min flips to have 0
+    // dp[1] - min flips to have 1
+    let dp = [0, 0];
+    let idx = s.length;
+    while (idx--) {
+        let val = +s[idx];
+		// after 0 we can have 0 or 1, select a way with minimum flips
+		dp[0] = val+Math.min(dp[0], dp[1]);
+		// after 1 we can have only 1; add 1 if current char is '0' 
+        dp[1] += (1-val);
+    }
+    return Math.min(dp[0], dp[1]);
+};
+
+Python
+
+class Solution:
+    def minFlipsMonoIncr(self, s: str) -> int:
+        n = len(s)
+
+        @lru_cache(None)
+        def dp(i, last):
+            if i == n: return 0  # Reach to the end
+            d = ord(s[i]) - ord('0')
+            dFlipped = 1 - d
+
+            cand = []
+            if dFlipped >= last: cand.append(dp(i + 1, dFlipped) + 1)  # Flip
+            if d >= last: cand.append(dp(i + 1, d))  # Don't flip
+            return min(cand)  # Choose min cost
+
+        return dp(0, 0)
