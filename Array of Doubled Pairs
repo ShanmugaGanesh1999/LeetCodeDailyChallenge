@@ -1,0 +1,72 @@
+C++
+
+class Solution {
+public:
+    bool canReorderDoubled(vector<int>& arr) {
+        sort(arr.begin(), arr.end());
+        unordered_map<int, int> cnt;
+        for (int x : arr) cnt[x]++;
+        
+        for (int x : arr) {
+            if (cnt[x] == 0) continue;
+            if (x < 0 && x % 2 != 0) return false; // For example: arr=[-5, -2, 1, 2], x = -5, there is no x/2 pair to match
+            int y = x > 0 ? x*2 : x/2;
+            if (cnt[y] == 0) return false; // Don't have the corresponding `y` to match with `x` -> Return IMPOSSIBLE!
+            cnt[x]--;
+            cnt[y]--;
+        }
+        return true;
+    }
+};
+
+Java
+
+class Solution {
+    public boolean canReorderDoubled(int[] arr) {
+        Arrays.sort(arr);
+        HashMap<Integer, Integer> cnt = new HashMap<>();
+        for (int x : arr) cnt.put(x, cnt.getOrDefault(x, 0) + 1);
+
+        for (int x : arr) {
+            if (cnt.get(x) == 0) continue;
+            if (x < 0 && x % 2 != 0) return false; // For example: arr=[-5, -2, 1, 2], x = -5, there is no x/2 pair to match
+            int y = x > 0 ? x*2 : x/2;
+            if (cnt.getOrDefault(y, 0) == 0) return false; // Don't have the corresponding `y` to match with `x` -> Return IMPOSSIBLE!
+            cnt.put(x, cnt.get(x) - 1);
+            cnt.put(y, cnt.get(y) - 1);
+        }
+        return true;
+    }
+}
+
+or
+
+class Solution {
+    public boolean canReorderDoubled(int[] arr) {
+	Arrays.sort(arr);
+	LinkedList<Integer> q= new LinkedList<>();
+	for(int elt:arr){
+		if(!q.isEmpty() && elt==q.getFirst()) q.removeFirst();
+		else if(elt<0){
+			if(elt%2!=0) return false;  // quit early e.g. [-5,-2]
+			q.addLast(elt/2);
+		}else q.addLast(elt*2);
+	}
+	return q.isEmpty();
+}
+}
+
+Python
+
+class Solution(object):
+    def canReorderDoubled(self, arr):
+        cnt = Counter(arr)
+        arr.sort()
+        for x in arr:
+            if cnt[x] == 0: continue
+            if x < 0 and x % 2 != 0: return False  # For example: arr=[-5, -2, 1, 2], x = -5, there is no x/2 pair to match
+            y = x * 2 if x > 0 else x // 2
+            if cnt[y] == 0: return False  # Don't have the corresponding `y` to match with `x` -> Return IMPOSSIBLE!
+            cnt[x] -= 1
+            cnt[y] -= 1
+        return True
