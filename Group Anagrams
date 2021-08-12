@@ -1,0 +1,139 @@
+C++
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector<pair<string,int>> h;
+        for(int i=0;i<strs.size();i++)
+        {
+            string s = strs[i];
+            sort(s.begin(),s.end());  //sorting all the strings so that anagrams become same strings. Makes comparision easier.
+            h.push_back(make_pair(s,i));  //keeping their indices with the strings.
+        }
+        sort(h.begin(),h.end()); //sorting the pairs vector so that all the same strings come together.
+        vector<vector<string>> ans;
+        vector<string> help;
+        for(int i=0;i<h.size();i++)  //just adding the strings which are anagrams from the original array of strings.
+        {
+            if(i>0)
+            {
+                if(h[i].first==h[i-1].first)
+                {
+                    help.push_back(strs[h[i].second]);
+                }
+                else
+                {
+                    ans.push_back(help);
+                    help.clear();
+                    help.push_back(strs[h[i].second]);
+                }
+            }
+            else
+            {
+                help.push_back(strs[h[i].second]);
+            }
+        }
+        if(help.size()>0)
+        {
+            ans.push_back(help);
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string, vector<string>> mp;
+        for(auto i: strs){
+            string temp = i;
+            sort(temp.begin(), temp.end());
+            mp[temp].push_back(i);
+        }
+        
+        vector<vector<string>> res;
+        for(auto i: mp){
+            res.push_back(i.second);
+        }
+        
+        return res;
+    }
+};
+
+Java
+
+    public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> finalLst=new ArrayList<List<String>>();
+        Map<String,List<String>> map=new HashMap<String,List<String>>();
+        for(String str:strs)
+        {
+            char[] ch=new char[26];
+            for(int i=0;i<str.length();i++)
+                ch[str.charAt(i)-'a']++;
+            String key=new String(ch);
+            if(map.containsKey(key))
+            {
+                map.get(key).add(str);
+            }else{
+                List<String> lis=new ArrayList<String>();
+                lis.add(str);
+                map.put(key,lis);
+            }
+        }
+        finalLst.addAll(map.values());
+        return finalLst;
+    }
+}
+
+Python
+
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        d = defaultdict(list)
+        for s in strs:
+            key = "".join(sorted(s))
+            d[key].append(s)
+        return d.values()
+        
+or
+
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        def getKey(s):
+            cnt = [0] * 26
+            for c in s: cnt[ord(c) - ord('a')] += 1
+            ans = []
+            for i in range(26): ans.append(cnt[i] * chr(i + ord('a')))
+            return "".join(ans)
+
+        d = defaultdict(list)
+        for s in strs:
+            d[getKey(s)].append(s)
+        return d.values()
+        
+or
+
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        def getKey(s):
+            cnt = [0] * 26
+            for c in s: cnt[ord(c) - ord('a')] += 1
+            return tuple(cnt)
+
+        d = defaultdict(list)
+        for s in strs:
+            d[getKey(s)].append(s)
+        return d.values()
+        
+or
+
+class Solution:
+    def groupAnagrams(self, strs):
+    d = defaultdict(list)
+    for s in strs:
+        key = frozenset(Counter(s).items())
+        d[key].append(s)
+    return d.values()
