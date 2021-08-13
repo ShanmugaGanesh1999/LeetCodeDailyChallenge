@@ -1,0 +1,228 @@
+In C++
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int R = matrix.size();
+        int C = matrix[0].size();
+        set<int> rows ;
+        set<int> cols ;
+        // We mark the rows and columns that are to be made zero
+        for (int i = 0; i < R; i++) 
+        {
+          for (int j = 0; j < C; j++) 
+          {
+            if (matrix[i][j] == 0) 
+            {
+                rows.insert(i);
+                cols.insert(j);
+            }
+          }
+        }
+        // Iterate over the array once again and using the rows and cols sets, update the elements.
+        for (int i = 0; i < R; i++) 
+        {
+          for (int j = 0; j < C; j++) 
+          {
+            if (rows.count(i) || cols.count(j)) 
+            {
+              matrix[i][j] = 0;
+            }
+          }
+        }
+    }
+};
+
+or
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        bool RowZero = false;
+        bool ColZero = false;
+        for (int i = 0; i < matrix[0].size(); i++) //check the first row
+        { 
+            if (matrix[0][i] == 0) 
+            {
+                RowZero = true;
+                break;
+            } 
+        }
+        for (int i = 0; i < matrix.size(); i++) //check the first column
+        { 
+            if (matrix[i][0] == 0) 
+            {
+                ColZero = true;
+                break;
+            } 
+        }
+        for (int i = 1; i < matrix.size(); i++) //check except the first row and column
+        { 
+            for (int j = 1; j < matrix[0].size(); j++) 
+            {    
+                if (matrix[i][j] == 0) 
+                {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }        
+            }
+        }
+        for (int i = 1; i < matrix.size(); i++) //process except the first row and column 
+        {
+           for (int j = 1; j < matrix[0].size(); j++)
+           {
+               if (matrix[i][0] == 0 || matrix[0][j] == 0)
+               {
+                   matrix[i][j] = 0;
+           
+               }
+           }
+        }
+        if(RowZero) //handle the first row
+        { 
+            for (int i = 0; i < matrix[0].size(); i++) 
+            {
+                matrix[0][i] = 0;
+            }
+        }
+        if (ColZero) //handle the first column
+        { 
+            for (int i = 0; i < matrix.size(); i++)
+            {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+};
+
+or
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& ar) {
+        int n = ar.size();
+        int m = ar[0].size();
+        int row = 0, col = 0;
+        for(int i = 0; i < m; i++){
+            if(ar[0][i] == 0){
+                row = 1;
+				break;
+			}
+        }
+        for(int i = 0; i < n; i++){
+            if(ar[i][0] == 0){
+                col = 1;
+				break;
+			}
+        }
+        for(int i = 1; i < n; i++){
+            for(int j = 1; j < m; j++){
+                if(ar[i][j] == 0){
+                    ar[i][0] = 0;
+                    ar[0][j] = 0;
+                }
+            }
+        }
+        for(int i = 1; i < n; i++){
+            if(ar[i][0] == 0)
+                for(int j = 0; j < m; j++)
+                    ar[i][j] = 0;
+        }
+        for(int i = 1; i < m; i++){
+            if(ar[0][i] == 0)
+                for(int j = 0; j < n; j++)
+                    ar[j][i] = 0;
+        }
+        if(row == 1){
+            for(int i = 0; i < m; i++)
+                ar[0][i] = 0;
+        }
+        if(col == 1){
+            for(int i = 0; i < n; i++)
+                ar[i][0] = 0;
+        }
+    }
+};
+
+In JAVA
+
+class Solution {
+  public void setZeroes(int[][] matrix) {
+    int R = matrix.length;
+    int C = matrix[0].length;
+    Set<Integer> rows = new HashSet<Integer>();
+    Set<Integer> cols = new HashSet<Integer>();
+
+    // We mark the rows and columns that are to be made zero
+    for (int i = 0; i < R; i++) 
+    {
+      for (int j = 0; j < C; j++) 
+      {
+        if (matrix[i][j] == 0) 
+        {
+          rows.add(i);
+          cols.add(j);
+        }
+      }
+    }
+
+    // Iterate over the array once again and using the rows and cols sets, update the elements.
+    for (int i = 0; i < R; i++) 
+    {
+      for (int j = 0; j < C; j++) 
+      {
+        if (rows.contains(i) || cols.contains(j)) 
+        {
+          matrix[i][j] = 0;
+        }
+      }
+    }
+  }
+}
+
+In Python
+
+class Solution(object):
+    def setZeroes(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: None Do not return anything, modify matrix in-place instead.
+        """
+        R = len(matrix)
+        C = len(matrix[0])
+        rows, cols = set(), set()
+
+        # We mark the rows and columns that are to be made zero
+        for i in range(R):
+            for j in range(C):
+                if matrix[i][j] == 0:
+                    rows.add(i)
+                    cols.add(j)
+
+        # Iterate over the array once again and using the rows and cols sets, update the elements
+        for i in range(R):
+            for j in range(C):
+                if i in rows or j in cols:
+                    matrix[i][j] = 0
+
+
+or
+
+class Solution:
+    def setZeroes(self, M):
+        m, n = len(M[0]), len(M)
+        r1 = any(M[0][j] == 0 for j in range(m))
+        c1 = any(M[i][0] == 0 for i in range(n))
+        for i in range(1, n):
+            for j in range(1, m):
+                if M[i][j] == 0: M[i][0] = M[0][j] = 0
+                
+        for i in range(1, n):
+            for j in range(1, m):
+                if M[i][0] * M[0][j] == 0: M[i][j] = 0
+                
+        if r1:
+            for i in range(m): M[0][i] = 0
+                
+        if c1:
+            for j in range(n): M[j][0] = 0
