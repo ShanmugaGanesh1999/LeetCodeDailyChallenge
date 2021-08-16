@@ -1,0 +1,69 @@
+C++
+
+class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+        vec = nums;
+        for (int i = 1; i < nums.size(); i++)
+            vec[i] = nums[i] + vec[i-1];
+    }
+    
+    int sumRange(int i, int j) {
+        if (i == 0) return vec[j];
+        return vec[j] - vec[i-1];
+    }
+private:
+    vector<int> vec;
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray* obj = new NumArray(nums);
+ * int param_1 = obj->sumRange(left,right);
+ */
+ 
+ or
+ 
+ class NumArray {
+public:
+    vector<int>& preSum; // store the reference to the original array
+    
+    NumArray(vector<int>& nums) : preSum(nums) {
+        for (int i = 1; i < preSum.size(); ++i)
+            preSum[i] += preSum[i-1]; 
+    }
+    
+    int sumRange(int left, int right) {
+        if (left == 0) return preSum[right];
+        return preSum[right] - preSum[left-1];
+    }
+};
+
+Java
+
+class NumArray {
+    int[] preSum;
+    public NumArray(int[] nums) {
+        preSum = nums; // pass by pointer!
+        for (int i = 1; i < preSum.length; ++i)
+            preSum[i] += preSum[i-1]; 
+    }
+    
+    public int sumRange(int left, int right) {
+        if (left == 0) return preSum[right];
+        return preSum[right] - preSum[left-1];
+    }
+}
+
+Python
+
+class NumArray:
+
+    def __init__(self, nums: List[int]):
+        self.preSum = nums  # pass by pointer!
+        for i in range(len(nums)-1):
+            self.preSum[i+1] += self.preSum[i]
+
+    def sumRange(self, left: int, right: int) -> int:
+        if left == 0: return self.preSum[right]
+        return self.preSum[right] - self.preSum[left-1]
