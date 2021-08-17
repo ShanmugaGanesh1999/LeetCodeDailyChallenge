@@ -1,0 +1,102 @@
+C++
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int ans=0;
+    void dfs(TreeNode * root, int maxi){
+        if(root){
+            if(root->val>=maxi) ans++;
+            dfs(root->left, max(maxi, root->val));
+            dfs(root->right, max(maxi, root->val));
+        }
+    }
+    int goodNodes(TreeNode* root) {
+        dfs(root,INT_MIN);
+        return ans;
+    }
+};
+
+
+or
+
+
+class Solution {
+public:
+    int goodNodes(TreeNode* root, int val = INT_MIN) {
+        return root == nullptr ? 0 : (root->val >= val) + goodNodes(root->left, max(root->val, val)) + goodNodes(root->right, max(root->val, val));
+    }
+};
+
+
+Java
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution 
+{
+    int count = 0;
+    public int goodNodes(TreeNode root) 
+    {
+        util(root , Integer.MIN_VALUE);
+        return count;
+    }
+    void util(TreeNode root , int max)
+    {
+        if(root==null)
+            return;
+        
+        if(root.val>=max)
+            count++;
+        
+        util(root.left , Math.max(max , root.val));
+        util(root.right , Math.max(max , root.val));
+    }
+}
+
+
+Python
+
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def __init__(self):
+        self.count = 0
+
+    def goodNodes(self, root):
+        for child in filter(None, [root.left, root.right]):
+            self.count += child.val >= root.val
+            child.val = max(child.val, root.val)
+            self.goodNodes(child)
+  
+        return self.count + 1
