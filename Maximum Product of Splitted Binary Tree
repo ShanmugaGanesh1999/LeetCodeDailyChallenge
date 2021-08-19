@@ -1,0 +1,126 @@
+C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    long long ans = 0, totalSum = 0;
+    int maxProduct(TreeNode* root) {
+        totalSum = dfs(root); // Firstly, get total sum of all nodes in the Binary Tree
+        dfs(root); // Then dfs in post order to calculate sum of each subtree and its complement
+        return ans % int(1e9+7);
+    }
+    int dfs(TreeNode* root) {
+        if (root == nullptr) return 0;
+        int leftSum = dfs(root->left);
+        int rightSum = dfs(root->right);
+        int currSum = leftSum + rightSum + root->val;
+        if (totalSum != 0 && currSum != totalSum)
+            ans = max(ans, (totalSum - currSum) * currSum);
+        return currSum;
+    }
+};
+
+C
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+long long int traversal(struct TreeNode * root, long long * max_val, long long total_sum)
+{
+    if(root == NULL)
+        return 0;
+    
+    long long int left  = traversal(root->left, max_val, total_sum);
+    long long int right = traversal(root->right, max_val, total_sum);
+     
+    
+    long long int product1 = ((left + root->val + (total_sum - left - right - root->val))) * right  ;    
+    long long int product2 = (right + root->val + (total_sum - right - left - root->val) ) * left;
+    
+    long long max_product = product1 >= product2 ? product1 : product2;
+    
+    if(max_product >= *max_val)
+    {
+        *max_val = max_product;
+    }
+      
+    return (left + right + root->val);
+}
+
+long long find_sum(struct TreeNode * root)
+{
+    if(root == NULL)
+        return 0;
+    
+    long long left = find_sum(root->left);
+    long long right = find_sum(root->right);
+    
+    return (left + right + root->val);
+}
+
+int maxProduct(struct TreeNode* root)
+{
+    long long max_val = INT_MIN;
+    long long total_sum = find_sum(root);
+    traversal(root, &max_val, total_sum);
+    return max_val % ((int)pow(10, 9) + 7);
+}
+
+
+Java
+
+class Solution {
+    private long max = 0;
+    public int maxProduct(TreeNode root) {
+        dfs(root, sum(root));
+        return (int)(max%1000000007L);
+    }
+    private long dfs(TreeNode node, long total){
+        if(node==null)
+            return 0;
+        
+        long currSum = dfs(node.left,total) + dfs(node.right,total) + node.val; // nodes sum of left subtree, right subtree, curr node
+        
+        max = Math.max(max, currSum*(total-currSum)); //evaluate product
+        return currSum; // for each non-null node return sum of left, right, curr nodes
+    }
+    private long sum(TreeNode node){
+        if(node==null)
+            return 0;
+        return sum(node.left) + sum(node.right) + node.val; // for each non-null node return sum of left, right, curr nodes
+    }
+}
+
+Python
+
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        def dfs(root):
+            if root == None: return 0
+            leftSum = dfs(root.left)
+            rightSum = dfs(root.right)
+            currSum = leftSum + rightSum + root.val
+            if self.totalSum != 0 and currSum != self.totalSum:
+                self.ans = max(self.ans, currSum * (self.totalSum - currSum))
+            return currSum
+
+        self.ans, self.totalSum = 0, 0
+        self.totalSum = dfs(root)  # Firstly, get total sum of all nodes in the Binary Tree
+        dfs(root)  # Then dfs in post order to calculate sum of each subtree and its complement
+        return self.ans % (10 ** 9 + 7)
