@@ -1,0 +1,154 @@
+C++
+
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+	vector<unordered_set<int>> rows(9, unordered_set<int>());
+	vector<unordered_set<int>> columns(9, unordered_set<int>());
+	vector<unordered_set<int>> boxes(9, unordered_set<int>());
+
+	for (int i = 0; i < 9; ++i) {
+	  for (int j = 0; j < 9; ++j) {
+		if (board[i][j] == '.')
+            continue;
+
+		int num = board[i][j] - '0';
+		if (rows[i].count(num))
+		    return false;
+		if (columns[j].count(num))
+		    return false;
+          
+        int box_index = (i / 3) * 3 + j / 3; // Formula to Locate a box
+		if (boxes[box_index].count(num)) // Finding the count of "num" in set "boxes" at "box_index"
+		    return false;
+		rows[i].insert(num);
+		columns[j].insert(num);
+		boxes[box_index].insert(num);
+      }
+    }
+	return true;
+}
+};
+
+or
+
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+    vector<int> row(9, 0);
+    vector<int> col(9, 0);
+    vector<int> boxes(9, 0);
+    for (int i = 0; i < 9; i++)
+        for (int j = 0; j < 9; j++) {
+            if (board[i][j] != '.') 
+            {
+                int bit = 1 << (board[i][j] - '0');
+                int index = i/3 * 3 + j / 3 ;
+                if(row[i]&bit || col[j]&bit || boxes[index]&bit)
+                    return false;
+                row[i] |= bit ;
+                col[j] |= bit ;
+                boxes[index] |= bit ;
+         }
+     }
+     return true;
+  }
+};
+
+Java
+
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        int N = 9;
+        HashSet<Character>[] rowSet = new HashSet[N];
+        HashSet<Character>[] colSet = new HashSet[N];
+        HashSet<Character>[] squareSet = new HashSet[N];
+        for (int r = 0; r < N; r++) {
+            rowSet[r] = new HashSet<>();
+            colSet[r] = new HashSet<>();
+            squareSet[r] = new HashSet<>();
+        }
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                char val = board[r][c];
+                if (val == '.') continue;
+                int sPos = (r / 3) * 3 + c / 3;
+                if (rowSet[r].contains(val) || colSet[c].contains(val) || squareSet[sPos].contains(val))
+                    return false;
+                rowSet[r].add(val);
+                colSet[c].add(val);
+                squareSet[sPos].add(val);
+            }
+        }
+        return true;
+    }
+}
+
+or
+
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        int N = 9;
+        int[] rows = new int[N], cols = new int[N], squares = new int[N];
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                if (board[r][c] == '.') continue;
+                int val = board[r][c] - '0';
+                int sPos = (r / 3) * 3 + (c / 3);
+                if (getBit(rows[r], val) == 1 || getBit(cols[c], val) == 1 || getBit(squares[sPos], val) == 1)
+                    return false;
+                rows[r] |= 1 << val;
+                cols[c] |= 1 << val;
+                squares[sPos] |= 1 << val;
+            }
+        }
+        return true;
+    }
+    int getBit(int x, int k) {
+        return (x >> k) & 1;
+    }
+}
+
+Python
+
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        N = 9
+        rowSet = [set() for _ in range(N)]
+        colSet = [set() for _ in range(N)]
+        squareSet = [set() for _ in range(N)]
+
+        for r in range(N):
+            for c in range(N):
+                if board[r][c] == ".": continue
+                sr, sc = r // 3, c // 3
+                sPos = sr * 3 + sc
+                if board[r][c] in rowSet[r] or board[r][c] in colSet[c] or board[r][c] in squareSet[sPos]:
+                    return False
+                rowSet[r].add(board[r][c])
+                colSet[c].add(board[r][c])
+                squareSet[sPos].add(board[r][c])
+
+        return True
+        
+or
+
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        def getBit(x, k):
+            return (x >> k) & 1
+        
+        N = 9
+        rows, cols, squares = [0] * N, [0] * N, [0] * N
+        for r in range(N):
+            for c in range(N):
+                if board[r][c] == ".": continue
+                val = int(board[r][c])
+                sr, sc = r // 3, c // 3
+                sPos = sr * 3 + sc
+                if getBit(rows[r], val) or getBit(cols[c], val) or getBit(squares[sPos], val):
+                    return False
+                rows[r] |= 1 << val
+                cols[c] |= 1 << val
+                squares[sPos] |= 1 << val
+        return True
