@@ -1,0 +1,245 @@
+Java
+
+class Solution {
+    private static final int MODULUS = (int)1e9 + 7;
+    
+    public int rectangleArea(int[][] rectangles) {
+        var minHeap = new PriorityQueue<Event>(
+            Comparator.comparingInt(event -> event.x)
+        );
+        
+        for (int[] rectangle : rectangles) {
+            minHeap.offer(new Event(rectangle, Event.Type.IN));
+            minHeap.offer(new Event(rectangle, Event.Type.OUT));
+        }
+        
+        var segTree = new SegmentTree();
+        
+        int last = 0;
+        long total = 0;
+        while (!minHeap.isEmpty()) {
+            int x = minHeap.peek().x;
+            total = (total + (long)(x - last) * segTree.query()) % MODULUS;
+            last = x;
+            while (!minHeap.isEmpty() && x == minHeap.peek().x) {
+                var event = minHeap.poll();
+                segTree.update(
+                    event.rectangle[1],
+                    event.rectangle[3] - 1,
+                    event.type == Event.Type.IN ? 1 : -1
+                );
+            }
+        }
+        
+        return (int)total;
+    }
+    
+    private static class Event {
+        int[] rectangle;
+        int x;
+        Type type;
+        
+        public enum Type {
+            IN, OUT
+        }
+        
+        public Event(int[] rectangle, Type type) {
+            this.rectangle = rectangle;
+            this.type = type;
+            x = type == Type.IN ? rectangle[0] : rectangle[2];
+        }
+    }
+}
+
+class SegmentTree {
+    private static final int MIN = 0;
+    private static final int MAX = (int)1e9;
+    
+    static private class Node {
+        int lowerBound;
+        int upperBound;
+        int maxOverlap;
+        int minOverlap;
+        int pending;
+        Node left;
+        Node right;
+        
+        public Node(int lower, int upper) {
+            lowerBound = lower;
+            upperBound = upper;
+            maxOverlap = 0;
+            minOverlap = 0;
+            pending = 0;
+        }
+        
+        private void update(int lower, int upper, int val) {
+            if (lower == lowerBound && upper == upperBound) {
+                pending += val;
+                maxOverlap += val;
+                minOverlap += val;
+                return;
+            }
+            if (lower > upper) {
+                return;
+            }
+            
+            propagate();
+            
+            int mid = (lowerBound + upperBound) / 2;
+            left.update(lower, Math.min(upper, mid), val);
+            right.update(Math.max(lower, mid + 1), upper, val);
+            
+            minOverlap = Math.min(left.minOverlap, right.minOverlap);
+            maxOverlap = Math.max(left.maxOverlap, right.maxOverlap);
+        }
+        
+        private int query(int lower, int upper) {
+            if (maxOverlap == 0 || lower > upper) {
+                return 0;
+            }
+            if (minOverlap > 0) {
+                return upper - lower + 1;
+            }
+            
+            propagate();
+            
+            int mid = (lowerBound + upperBound) / 2;
+            return left.query(lower, Math.min(upper, mid)) + right.query(Math.max(lower, mid + 1), upper);
+        }
+        
+        private void propagate() {
+            int mid = (lowerBound + upperBound) / 2;
+            if (left == null) {
+                left = new Node(lowerBound, mid);
+            }
+            if (right == null) {
+                right = new Node(mid + 1, upperBound);
+            }
+            
+            left.update(left.lowerBound, left.upperBound, pending);
+            right.update(right.lowerBound, right.upperBound, pending);
+            pending = 0;
+        }
+    }
+    
+    private Node root;
+    
+    public SegmentTree() {
+        root = new Node(MIN, MAX);
+    }
+    
+    public void update(int lower, int upper, int val) {
+        root.update(lower, upper, val);
+    }
+    
+    public int query() {
+        return root.query(MIN, MAX);
+    }
+}
+
+or
+
+
+class Solution {
+      public int rectangleArea(int[][] rectangles) {
+          int n = rectangles.length;
+          Set<Integer> coorx = new HashSet<>();
+          Set<Integer> coory = new HashSet<>();
+          for (int[] rec : rectangles) {
+              coorx.add(rec[0]); coorx.add(rec[2]);
+              coory.add(rec[1]); coory.add(rec[3]);
+          }
+          
+          Integer[] compressx = coorx.toArray(new Integer[0]);
+          Arrays.sort(compressx);
+          Integer[] compressy = coory.toArray(new Integer[0]);
+          Arrays.sort(compressy);
+          
+          Map<Integer, Integer> mapx = new HashMap<>();
+          for(int i = 0; i < compressx.length; i++) {
+              mapx.put(compressx[i], i);
+          }
+          Map<Integer, Integer> mapy = new HashMap<>();
+          for(int i = 0; i < compressy.length; i++) {
+              mapy.put(compressy[i], i);
+          }
+          
+          boolean[][] grid = new boolean[compressx.length][compressy.length];
+          for (int[] rec: rectangles) {
+              for (int x = mapx.get(rec[0]); x < mapx.get(rec[2]); x++) {
+                  for (int y = mapy.get(rec[1]); y < mapy.get(rec[3]); y++) {
+                      grid[x][y] = true;
+                  }
+              }
+          }
+          
+          long res = 0L;
+          for (int i = 0; i < grid.length; i++) {
+              for (int j = 0; j < grid[0].length; j++) {
+                  if (grid[i][j]) {
+                      res += (long)(compressx[i + 1] - compressx[i]) * (compressy[j + 1] - compressy[j]);
+                  }
+              }
+          }
+          res %= 1000000007;
+          return (int)res;
+      }
+  }
+  
+  C++
+  
+  class Solution {
+public:
+    int rectangleArea(vector<vector<int>>& rectangles) {
+        vector<vector<int>> line; 
+        for (auto& rectangle : rectangles) {
+            int x1 = rectangle[0], y1 = rectangle[1], x2 = rectangle[2], y2 = rectangle[3]; 
+            line.push_back({y1, x1, x2, 1}); 
+            line.push_back({y2, x1, x2, 0}); 
+        }
+        
+        sort(line.begin(), line.end()); 
+        
+        long ans = 0, val = 0; 
+        int yy = 0, prev = 0; 
+        multiset<vector<int>> segments; 
+        for (auto& elem : line) {
+            int y = elem[0], x1 = elem[1], x2 = elem[2], tf = elem[3]; 
+            ans = (ans + val * (y - yy)) % 1'000'000'007;
+            yy = y; 
+            if (tf) segments.insert({x1, x2}); 
+            else segments.erase(segments.find({x1, x2})); 
+            val = prev = 0;
+            for (auto& seg : segments) {
+                x1 = seg[0];
+                x2 = seg[1]; 
+                val += max(0, x2 - max(x1, prev)); 
+                prev = max(prev, x2); 
+            }
+        }
+        return ans; 
+    }
+};
+
+Python
+
+class Solution:
+    def rectangleArea(self, rectangles: List[List[int]]) -> int:
+        line = []
+        for x1, y1, x2, y2 in rectangles: 
+            line.append((y1, x1, x2, 1))
+            line.append((y2, x1, x2, 0))
+        
+        ans = yy = val = 0
+        seg = []
+        for y, x1, x2, tf in sorted(line): 
+            ans += val * (y - yy)
+            yy = y 
+            if tf: insort(seg, (x1, x2))
+            else: seg.remove((x1, x2))
+            val = 0 
+            prev = -inf 
+            for x1, x2 in seg: 
+                val += max(0, x2 - max(x1, prev))
+                prev = max(prev, x2)
+        return ans % 1_000_000_007
