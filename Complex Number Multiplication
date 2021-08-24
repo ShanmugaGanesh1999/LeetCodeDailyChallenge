@@ -1,0 +1,101 @@
+In C++
+
+class Solution {
+public:
+    string complexNumberMultiply(string a, string b) {
+        pair<int, int> av = solve(a);
+        pair<int, int> bv = solve(b);
+        int re = av.first * bv.first - av.second * bv.second;
+        int im = av.first * bv.second + av.second * bv.first;
+        return to_string(re) + "+" + to_string(im) + "i" ; // Real + i*(Imaginary)
+    }
+    pair<int, int> solve(const string& a) {
+        int plus = find(a.begin(), a.end(), '+') - a.begin(); // Find Where the plus sign is
+        int i = find(a.begin(), a.end(), 'i') - a.begin(); // Find where the imaginary part is
+        int real = stoi(a.substr(0, plus)); // Real Part (string to int)
+        int img = stoi(a.substr(plus + 1, i - plus)); // Imaginary Part (string to int)
+        return {real, img};
+    }
+};
+
+In Python3
+
+class Solution:
+    def solve(self, num):
+        f1 = num.find("+", 0 ,len(num))        
+        return int(num[0:f1]), int(num[f1+1:len(num)-1])
+    
+    def complexNumberMultiply(self, num1: str, num2: str) -> str:
+        a, b = self.solve(num1) #Getting the values for first pair
+        x, y = self.solve(num2) #Getting the values for second pair
+        return str(x*a - b*y)+"+"+str(a*y + b*x)+"i"
+
+(Using the function Split)
+In JAVA
+
+class Solution {
+    public String complexNumberMultiply(String a, String b) {
+        String x[] = a.split("\\+|i") ;
+        String y[] = b.split("\\+|i") ;
+        int x1 = Integer.parseInt(x[0]) ;
+        int y1 = Integer.parseInt(x[1]) ;
+        int x2 = Integer.parseInt(y[0]) ;
+        int y2 = Integer.parseInt(y[1]) ;
+        return (x1*x2 - y1*y2) + "+" + (x1*y2 + y1*x2) + "i";
+    }
+}
+
+In Python3
+
+class Solution:
+    def complexNumberMultiply(self, a: str, b: str) -> str:
+        x1, y1 = a[:-1].split('+')
+        x1 = int(x1)
+        y1 = int(y1)
+
+        x2, y2 = b[:-1].split('+')
+        x2 = int(x2)
+        y2 = int(y2)
+
+        return str(x1*x2 - y1*y2)+"+"+str(x1*y2 + y1*x2)+"i"
+
+C++
+
+class Solution {
+public:
+    complex<double> parse(string num) {
+        int i = num.find('+');
+        double real = stod(num.substr(0, i));
+        double imaginary = stod(num.substr(i+1, num.size()-i-2));
+        complex<double> res(real, imaginary);
+        return res;
+    }
+    
+    string complexNumberMultiply(string num1, string num2) {
+        complex<double> a = parse(num1), b = parse(num2);
+        complex<double> res = a * b;        
+        
+        return to_string((int)real(res)) + "+" + to_string((int)imag(res)) + "i";
+    }
+};
+
+or
+
+class Solution {
+public:
+    pair<int, int> parse(string num) {
+        int i = num.find('+');
+        double real = stoi(num.substr(0, i));
+        double imaginary = stoi(num.substr(i+1, num.size()-i-2));
+        pair<int, int> res(real, imaginary);
+        return res;
+    }
+    
+    string complexNumberMultiply(string num1, string num2) {
+        pair<int, int> a = parse(num1), b = parse(num2);
+        int real_a = a.first, imag_a = a.second;
+        int real_b = b.first, imag_b = b.second;
+        
+        return to_string(real_a * real_b - imag_a * imag_b) + '+' + to_string(real_a * imag_b  + real_b * imag_a)+'i' ;
+    }
+};
