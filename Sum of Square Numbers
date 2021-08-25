@@ -1,0 +1,160 @@
+In C++
+
+class Solution {
+public:
+    bool judgeSquareSum(int c) {
+        for(long long int a = 0 ; a <= sqrt(c) ; a++)
+        {
+            double b = sqrt(c - a * a);
+            if(b == (int)b)
+            {
+                return true ;
+            }
+        }
+        return false ;
+    }
+};
+
+In JAVA
+
+public class Solution {
+    public boolean judgeSquareSum(int c) {
+        for (long a = 0; a * a <= c; a++) 
+        {
+            double b = Math.sqrt(c - a * a);
+            if (b == (int) b)
+                return true;
+        }
+        return false;
+    }
+}
+
+In Python3
+
+class Solution:
+    def judgeSquareSum(self, c: int) -> bool:
+        for a in range(floor(math.sqrt(c))+1):
+            b = sqrt(c - a*a)
+            if b.is_integer():
+                return True
+        return False
+
+BINARY SEARCH
+Between 0 and sqrt(c) we look for values that satisfies the condition
+
+SOLUTION
+In C++
+
+class Solution {
+public:
+    bool judgeSquareSum(int c) {
+        if(c < 3)
+            return true ;
+        long long int a = 0 , b = sqrt(c) ;
+        while(a <= b)
+        {
+            if(a*a + b*b == c)
+            {
+                return true ;
+            }
+            else if(a*a + b*b < c)
+            {
+                a++ ;
+            }
+            else
+            {
+                b-- ;
+            }
+        }
+        return false ;
+    }
+};
+
+In Python
+
+class Solution(object):
+    def judgeSquareSum(self, c):
+        """
+        :type c: int
+        :rtype: bool
+        """
+        if c < 3: 
+            return True
+        a = 0
+        b = int(math.sqrt(c))
+        while a <= b:
+            val = a*a + b*b
+            if val == c:
+                return True
+            elif val < c:
+                a += 1
+            else:
+                b -= 1
+        return False
+
+In JAVA
+
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        if(c < 3)
+        {
+            return true;
+        }
+        int a = 0 , b = (int)Math.sqrt(c);
+        while(a <= b)
+        {
+            if((a*a + b*b)==c)
+            {
+                return true;
+            }
+            else if((a*a + b*b)<c)
+            {
+                a++;
+            }
+            else
+            {
+                b--;
+            }
+        }
+        return false;
+    }
+}
+
+In Python
+
+class Solution:
+    def judgeSquareSum(self, c: int) -> bool:
+        for a in range(int(sqrt(c))+1):
+            b = sqrt(c - a*a)
+            if b == int(b):
+                return True
+        return False
+
+or
+
+class Solution:
+    def judgeSquareSum(self, c: int) -> bool:
+        squareSet = set()
+        for x in range(int(math.sqrt(c)) + 1):
+            squareSet.add(x * x)
+
+        for aSquare in squareSet:
+            bSquare = c - aSquare
+            if bSquare in squareSet:
+                return True
+        return False
+
+or
+
+class Solution:
+    def judgeSquareSum(self, c: int) -> bool:
+        left = 0
+        right = int(sqrt(c))
+        while left <= right:
+            cur = left * left + right * right
+            if cur == c: return True
+            if cur < c:
+                left += 1
+            else:
+                right -= 1
+        return False
