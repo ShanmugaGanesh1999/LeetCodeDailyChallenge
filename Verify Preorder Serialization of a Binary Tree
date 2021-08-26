@@ -1,0 +1,55 @@
+C++
+
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        stringstream ss(preorder);
+        string curr;
+        int nodes = 1;
+        while (getline(ss, curr, ',')) {
+            nodes--;
+            if (nodes < 0) return false;
+            if (curr != "#") nodes += 2;
+        }
+        return nodes == 0;
+    }
+};
+
+Java
+
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        String[] nodes = preorder.split(",");
+        int slots = 1;
+        for(String node: nodes) {
+            if (slots <= 0) return false;
+            if (node.equals("#")) slots--;
+            else slots++;
+        }
+        return slots == 0;
+    }
+}
+
+Python
+
+class Solution:
+    def isValidSerialization(self, preorder: str) -> bool:
+        nodes = preorder.split(',')
+        slots = 1
+        for node in nodes:
+            if slots <= 0: return False
+            slots += -1 if node == '#' else 1
+        return slots == 0
+
+or
+
+class Solution:
+    def isValidSerialization(self, preorder):
+        stack = []
+        for elem in preorder.split(","):
+            stack.append(elem)
+            while len(stack) > 2 and stack[-2:] == ["#"]*2 and stack[-3] != "#":
+                stack.pop(-3)
+                stack.pop(-2)
+            
+        return stack == ["#"]
