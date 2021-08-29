@@ -1,0 +1,112 @@
+C++
+
+class Solution {
+public:
+    int minPatches(vector<int>& nums, int n) {
+		int i = 0, additions = 0; // initially no additions
+		long miss = 1;			  // initially we cannot make any number ie we can make in numbers in [1,1)
+		const int L = nums.size();
+		while (miss <= n && i < L)
+		{
+			if (nums[i] <= miss)
+				miss += nums[i++];
+			else
+			{
+				// it is like we added the number miss before i. now we can make not only [1,miss) but also [miss,miss) by using miss and the previous present elements
+				miss <<= 1;
+				additions++;
+			}
+		}// once i>=L, do need to check it again and again. Save that time.
+		while (miss <= n)
+		{
+			miss <<= 1;
+			additions++;
+		}
+		return additions;
+    }
+};
+
+Java
+
+ public class Solution {
+ public int minPatches(int[] nums, int n) {
+ int count = 0, i = 0;
+ for (long covered=0; covered < n; ) {
+ if ((i<nums.length && nums[i]>covered+1) || i>=nums.length) { // at this moment, we need (covered+1), patch it.
+ covered += covered+1;
+ ++count;
+ } else { covered += nums[i++]; }
+ }
+ return count;
+ }
+}
+
+or
+
+public class Solution {
+public int minPatches(int[] nums, int n) {
+int cnt;
+int patches = 0;
+long nextToMaxSum = 1;
+
+    for(cnt = 0; cnt<nums.length && nextToMaxSum-1<n; ){
+        if(nextToMaxSum < nums[ cnt ]){ 
+            nextToMaxSum = nextToMaxSum << 1;
+            patches++;
+        } else {
+            nextToMaxSum += nums[ cnt++ ];
+        }
+    }
+    
+    while(nextToMaxSum-1 < n){
+        nextToMaxSum = nextToMaxSum << 1;
+        patches++;
+    }
+    
+    return patches;
+}
+
+}
+
+Python
+
+class Solution:
+    def merge(self, intervals):
+        intervals.sort(key=lambda x: x[0])
+        merged = []
+        
+        for interval in intervals:
+            if not merged or merged[-1][1] < interval[0] - 1:
+                merged.append(interval)
+            else:
+                merged[-1][1] = max(merged[-1][1], interval[1])
+
+        return merged
+
+
+    def minPatches(self, nums, n):
+        ints, patches = [[0,0]], 0
+        for num in nums:
+            ints = self.merge(ints + [[i+num, j+num] for i,j in ints])
+
+        while ints[0][1] < n:
+            ints = self.merge(ints + [[i+ints[0][1]+1, j+ints[0][1]+1] for i,j in ints])
+            patches += 1
+
+        return patches
+        
+or
+
+class Solution:
+    def minPatches(self, nums, n):
+        reach, ans, idx = 0, 0, 0
+        
+        while reach < n:
+            if idx < len(nums) and nums[idx] <= reach + 1:
+                reach += nums[idx]
+                idx += 1
+            else:
+                ans += 1
+                reach = 2*reach + 1       
+                
+        return ans
