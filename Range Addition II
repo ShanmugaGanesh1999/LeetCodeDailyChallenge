@@ -1,0 +1,66 @@
+C:
+
+int maxCount(int m, int n, int** ops, int opsSize, int* opsColSize){
+        int min_row = m;
+        int min_col = n;
+        for (int i=0; i<opsSize; i++){
+            if (ops[i][0]<min_row) min_row=ops[i][0];
+            if (ops[i][1]<min_col) min_col=ops[i][1];
+        }        
+        return min_row*min_col;
+}
+
+Python:
+
+class Solution:
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        min_row = m
+        min_col = n
+        for i in range(len(ops)):
+            min_row=min(min_row, ops[i][0])
+            min_col=min(min_col, ops[i][1])
+        return min_row*min_col
+
+
+In C++
+
+class Solution {
+public:
+    int maxCount(int m, int n, vector<vector<int>>& ops) {
+        int xMin = m ;
+        int yMin = n ;
+        for(auto& op:ops)
+        {
+            xMin = min(op[0] , xMin) ;
+            yMin = min(op[1] , yMin) ;
+        }
+        return xMin*yMin;
+    }
+};
+
+In JAVA
+
+class Solution {
+    public int maxCount(int m, int n, int[][] ops) {
+        int xmin = m , ymin = n ;
+        for(int op[]:ops){
+            xmin = Math.min(xmin,op[0]);
+            ymin = Math.min(ymin,op[1]);
+        }
+        return xmin*ymin;
+    }
+}
+
+In Python3
+
+class Solution:
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        xmin = m
+        ymin = n
+        for i in ops:
+            if i[0] < xmin:
+                xmin=i[0]
+            if i[1] < ymin:
+                ymin=i[1]
+        return xmin*ymin
+
