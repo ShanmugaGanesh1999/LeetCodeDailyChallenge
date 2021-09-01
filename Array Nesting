@@ -1,0 +1,91 @@
+C++
+
+class Solution {
+public:
+    int arrayNesting(vector<int>& nums) {
+        int n = nums.size();
+        int max_1 = INT_MIN;
+        for(int i = 0; i < n; i++){
+            int sz = 0;
+            int ind = i;
+            while(1){
+                if(nums[ind] == ind){
+                    sz = 1;
+                    break;
+                }
+                else if(nums[ind] < 0)
+                    break;
+                sz++;
+                nums[ind] *= -1;
+                ind = abs(nums[ind]);
+            }
+            max_1 = max(max_1, sz);
+        }
+        return max_1;
+    }
+};
+
+Java
+
+class Solution {
+    public int arrayNesting(int[] nums) {
+        int longest = Integer.MIN_VALUE;
+        Set<Integer> visited = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (visited.contains(nums[i])) continue;
+            int start = nums[i], count = 0;
+            do {
+                count++;
+                start = nums[start];
+                visited.add(start);
+            } while (nums[i] != start);
+            longest = Math.max(count, longest);
+        }
+        
+        return longest;
+    }
+}
+
+Javascript
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var arrayNesting = function(nums) {
+    const VISITED = -1;
+    let result = 1;
+    
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== VISITED) {
+            let k = i;
+            let count = 0;
+
+            do {
+                count++;
+                [nums[k], k] = [VISITED, nums[k]];
+            }
+            while (nums[k] !== nums[i]);
+
+            result = Math.max(count, result);
+        }
+    }
+    
+    return result;
+};
+
+
+Python
+
+class Solution:
+    def arrayNesting(self, nums):
+        n = len(nums)
+        visited = [0]*n
+        for i in range(n):
+            start, depth = i, 1
+            while not visited[start]:
+                visited[start] = depth
+                start = nums[start]
+                depth += 1
+                
+        return max(visited)    
