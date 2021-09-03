@@ -1,0 +1,255 @@
+JS
+
+var outerTrees = function (trees) {
+  trees.sort((b, a) => (a[0] === b[0] ? a[1] - b[1] : a[0] - b[0]));
+
+  let stack = [];
+
+  const checkDistance = (arr, newCoor) =>
+    (arr[1][1] - arr[0][1]) * (newCoor[0] - arr[1][0]) <
+    (arr[1][0] - arr[0][0]) * (newCoor[1] - arr[1][1]);
+
+  for (let each of trees) {
+    while (stack.length >= 2 && checkDistance(stack.slice(-2), each))
+      stack.pop();
+    stack.push(each);
+  }
+
+  for (let i = trees.length - 1; i >= 0; i--) {
+    while (stack.length >= 2 && checkDistance(stack.slice(-2), trees[i]))
+      stack.pop();
+    stack.push(trees[i]);
+  }
+    
+  return [...new Set(stack.map(JSON.stringify))].map(JSON.parse);
+};
+
+C++
+
+class Solution {
+public:
+    
+    typedef vector<int> v;
+    typedef set<v> s;
+    typedef vector<v> vv;
+
+    //0 - Collinear
+    //1 - Clock Wise
+    //2 - Counter Clock Wise
+    int orientation(v a,v b,v c)
+    {
+        int ans = (b[1]-a[1])*(c[0]-b[0]) - (b[0]-a[0])*(c[1]-b[1]);
+
+        if(ans==0)
+            return ans;
+
+        return ans>0?1:2;
+    }
+
+    //0 - Both are in same direction
+    //1 - b is closer to a
+    //2 - c is closer to a
+    int distance(v a,v b,v c)
+    {
+        int dist1 = (b[0]-a[0])*(b[0]-a[0]) + (b[1]-a[1])*(b[1]-a[1]);
+        int dist2 = (c[0]-a[0])*(c[0]-a[0]) + (c[1]-a[1])*(c[1]-a[1]);
+
+        if(dist1==dist2)
+            return 0;
+        else if(dist2>dist1)
+            return 1;
+        return 2;
+    }
+
+    vv jarvisMarch(vv vect)
+    {
+        int n = vect.size();
+
+        v start = vect[0];
+
+        for(auto point:vect)
+            if(start[0]>point[0])
+                start = point;
+
+        v curr = start;
+        s res;
+        res.insert(start);
+        vv collinear;
+
+        while(true)
+        {
+            v next = vect[0];
+
+            for(int i=1;i<n;i++)
+            {
+                if(vect[i]==curr)
+                    continue;
+
+                int val = orientation(curr,next,vect[i]);
+
+                if(val==1)
+                {
+                    next = vect[i];
+                    collinear.clear();
+                }
+                else if(val==0)
+                {
+                    if(distance(curr,next,vect[i])==1)
+                    {
+                        collinear.push_back(next);
+                        next = vect[i];
+                    }
+                    else
+                    {
+                        collinear.push_back(vect[i]);
+                    }
+                }
+            }
+
+            for(auto x:collinear)
+                res.insert(x);
+
+            if(next==start)
+                break;
+
+            res.insert(next);
+            curr = next;
+        }
+
+        vv ans;
+
+        copy(res.begin(), res.end(), back_inserter(ans));
+
+        return ans;
+    }
+    
+    vv outerTrees(vv& trees) {
+       return jarvisMarch(trees); 
+    }
+};
+
+Java
+
+class Solution {
+    // Monotone chain convex hull
+    // Time O(NlogN)  Space O(N)
+    public int[][] outerTrees(int[][] points) {
+        // sort the point of P by x-coor (case tie, sort by y-coor)
+        Arrays.sort(points, (p,q) -> q[0] == p[0]? q[1] - p[1] : q[0] - p[0]);
+        
+        // hold the vertices of upper and lower hulls 
+        Stack<int[]> hull = new Stack<>();
+        int n = points.length;
+        
+        // A. Build Lower layer of hulls
+        for (int i = 0; i < n; i++) {
+            // sequence of last two points of Lower hulls 
+            // and the point P[i] does not make a counter-clockwise turn
+            while (hull.size() >= 2  &&
+             orientation(hull.get(hull.size()-2), hull.get(hull.size() - 1), points[i]) > 0) {
+                hull.pop();             // remove q on (p,q,r)
+            }
+            hull.push(points[i]);
+        }
+        hull.pop();     
+       
+        // B. Build uper layer of hulls
+        for (int i = n - 1; i >= 0; i--) {
+            while (hull.size() >= 2 &&
+             orientation(hull.get(hull.size() - 2), hull.get(hull.size() -1), points[i]) > 0) {
+                hull.pop();
+            } 
+            hull.push(points[i]);
+        }
+        // Remove last point of list (it's same as first point of  other list).
+        // remove redundant elements from the stack
+        HashSet<int[]> set = new HashSet<>(hull);
+        return set.toArray(new int[set.size()][]);
+    }
+    public int orientation(int[] p, int[] q, int[] r) {
+        return (q[1] - p[1]) * (r[0] - q[0])  - (q[0] - p[0])*(r[1] - q[1]);
+        
+        //            q()
+        //          /     \   
+        //        /         \
+        //     p()            \        
+        //                     r()
+        //
+        // (q[1] - p[1]) / (q[0] - p[0])   vs  (r[1] - q[1]) / (r[0] - q[0])
+    }
+}
+
+/**
+https://algorithmist.com/wiki/Monotone_chain_convex_hull
+
+Input: a list P of points in the plane.
+
+Sort the points of P by x-coordinate (in case of a tie, sort by y-coordinate).
+
+Initialize U and L as empty lists.
+The lists will hold the vertices of upper and lower hulls respectively.
+
+for i = 1, 2, ..., n:
+    while L contains at least two points and the sequence of last two points
+            of L and the point P[i] does not make a counter-clockwise turn:
+        remove the last point from L
+    append P[i] to L
+
+for i = n, n-1, ..., 1:
+    while U contains at least two points and the sequence of last two points
+            of U and the point P[i] does not make a counter-clockwise turn:
+        remove the last point from U
+    append P[i] to U
+
+Remove the last point of each list (it's the same as the first point of the other list).
+Concatenate L and U to obtain the convex hull of P.
+Points in the result will be listed in counter-clockwise order.
+
+**/
+
+Python
+
+class Solution(object):
+    def outerTrees(self, points):
+        #start with the leftmost point on the map
+        leftmost = [float('inf'), float('inf')]
+        for x,y in points:
+            if x < leftmost[0]:
+                leftmost = [x,y]
+        #set this leftmost point as a starter
+        current = leftmost
+        
+        res = set()
+        res.add((leftmost[0],leftmost[1]))
+        while True:
+            target = points[0]
+            linenodes = []
+            for node in points:
+                if node != current:
+                    val = self.crossproduct(current,target,node)
+                    if val > 0: #node is on the left of target
+                        target = node 
+                        linenodes = []
+                    elif val == 0: #node is inline with the target
+                        if ((node[0]-current[0])**2+((node[1]-current[1])**2)) < ((target[0]-current[0])**2+((target[1]-current[1])**2)):
+                            linenodes.append(node) 
+                        else:
+                            linenodes.append(target)
+                            target = node
+                    else: #node is on the right of target, we don't care
+                        continue 
+            for linenode in linenodes:
+                res.add((linenode[0],linenode[1]))
+            if target == leftmost: #we encounter the start point, let's break 
+                break
+            res.add((target[0],target[1]))
+
+            current = target
+        return [[x,y] for x,y in res]
+    
+    def crossproduct(self,origin, target, node):
+        x1 = origin[0] - target[0]
+        y1 = origin[1] - target[1]
+        x2 = origin[0] - node[0]
+        y2 = origin[1] - node[1]
+        return y2*x1 - y1*x2
