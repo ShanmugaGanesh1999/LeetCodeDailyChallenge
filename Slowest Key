@@ -1,0 +1,89 @@
+C++
+
+class Solution {
+public:
+    char slowestKey(vector<int>& a, string s) {
+        int n = a.size();
+        char ans = s[0];
+        int maxi = a[0];
+        for(int i = 1;i < n; i++){
+            int curr = a[i]-a[i-1];
+            if(curr > maxi){
+                maxi = curr;
+                ans = s[i];
+            }else if(curr == maxi && ans < s[i]){
+				ans=s[i];
+			}
+        }
+        return ans;
+    }
+};
+
+Java
+
+class Solution {
+    class CMap {
+        int time;
+        char c;
+        public CMap(int time, char c) {
+            this.time = time;
+            this.c = c;
+        }
+    }
+    
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        PriorityQueue<CMap> pq = new PriorityQueue<CMap>((a,b) -> a.time == b.time ? b.c - a.c : b.time - a.time);
+        pq.add(new CMap(releaseTimes[0], keysPressed.charAt(0)));
+        
+        for(int i=1; i<keysPressed.length(); i++) {
+            pq.add(new CMap(releaseTimes[i]-releaseTimes[i-1], keysPressed.charAt(i)));
+        }
+        
+        return pq.poll().c;
+    }
+}
+
+or
+
+class Solution {
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        int slowest = releaseTimes[0];
+        char c = keysPressed.charAt(0);
+        
+        for(int i=1; i<keysPressed.length(); i++) {
+            int time = releaseTimes[i] - releaseTimes[i-1];
+            char chr = keysPressed.charAt(i);
+            
+            if(time > slowest) {
+                slowest = time;
+                c = chr;
+            } else if(time == slowest && chr > c) {
+                c = chr;
+            }
+        }
+        
+        return c;
+    }
+}
+
+Python
+
+class Solution:
+    def slowestKey(self, releaseTimes: List[int], keysPressed: str) -> str:
+        ansKey = keysPressed[0]
+        ansDuration = releaseTimes[0]
+        for i in range(1, len(keysPressed)):
+            c = keysPressed[i]
+            duration = releaseTimes[i] - releaseTimes[i-1]
+            if duration > ansDuration or duration == ansDuration and c > ansKey:
+                ansKey = c
+                ansDuration = duration
+        return ansKey
+        
+or
+
+class Solution:
+    def slowestKey(self, T, K):
+        return max((t2 - t1, k) for t1, t2, k in zip([0] + T, T, K))[1]
+        
+        
