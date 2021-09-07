@@ -1,0 +1,95 @@
+Java
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode p=head,q=null,r=null;
+        
+        while(p!=null){
+            r=q;
+            q=p;
+            p=p.next;
+            q.next=r;
+        }
+        return q;
+    }
+}
+
+C++
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode *cur = head, *prev = nullptr, *next;
+        for (; cur;) {
+            next = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = next;
+        }
+        return prev;
+    }
+};
+
+or
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        function<ListNode*(ListNode*, ListNode*)> f = [&] (auto l, auto p) {
+            if (!l) return p;
+            auto t = l->next;
+            l->next = p;
+            return f(t, l);
+        };
+        return f(head, nullptr);
+    }
+};
+
+or
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        function<ListNode*(ListNode*, ListNode*)> f = [&] (auto l, auto p) {
+            if (!l) return p;
+            auto ans = f(l->next, l);
+            l->next = p;
+            return ans;
+        };
+        return f(head, nullptr);
+    }
+};
+
+Python
+
+class Solution:
+    def reverseList(self, head):
+        curr = None
+        nxt = head
+        while nxt:
+            tmp = nxt.next
+            nxt.next = curr
+            curr = nxt
+            nxt = tmp
+            
+        return curr
