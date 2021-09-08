@@ -1,0 +1,58 @@
+C++
+
+class Solution {
+public:
+    string shiftingLetters(string s, vector<int>& shifts) {
+        int shiftTimes = 0;
+        for (int i = s.size() - 1; i >= 0; --i) {
+            shiftTimes = (shiftTimes + shifts[i]) % 26;
+            s[i] = (s[i] - 'a' + shiftTimes) % 26 + 'a';
+        }
+        return s;
+    }
+};
+
+or
+
+class Solution {
+public:
+    string shiftingLetters(string s, vector<int>& shifts) {
+        long long shift=0;
+        for(int i=s.size()-1;i>=0;i--){
+            s[i]=((s[i]-'a')+(shift+shifts[i]) % 26) % 26 +'a';
+            shift+=shifts[i];
+        }
+        return s;
+    }
+};
+
+Python 3
+
+class Solution:
+    def shiftingLetters(self, s: str, shifts: List[int]) -> str:
+        n = len(s)
+        for i in range(n-2, -1, -1):
+            shifts[i] += shifts[i+1]
+            
+        ans = []
+        for i, c in enumerate(s):
+            idx = (ord(c) - ord('a') + shifts[i]) % 26
+            ans.append(chr(idx + ord('a')))
+        return "".join(ans)
+
+Java
+
+class Solution {
+    public String shiftingLetters(String s, int[] shifts) {
+        // calculate the total shifts
+		for(int i=shifts.length-1; i>0; --i){
+            shifts[i-1] += shifts[i];
+            shifts[i-1] %= 26;
+        }
+        char[] charArr = s.toCharArray();
+        for(int i=0; i<s.length(); ++i){
+            charArr[i] = (char)('a'+(charArr[i]-'a' + shifts[i])%26);
+        }
+        return String.valueOf(charArr);
+    }
+}
