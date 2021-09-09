@@ -1,0 +1,207 @@
+C++
+
+class Solution {
+public:
+    void fillDP(vector<vector<int>>& dp, vector<vector<int>>& mat, int n) {
+        int down, right, up, left;
+        
+        for (int i = 0; i < n; i++) {
+            down = 0, right = 0;
+            
+            for (int j = 0; j < n; j++) {
+                right = mat[i][j] ? right+1 : 0;
+                dp[i][j] = min(dp[i][j], right);
+                
+                down = mat[j][i] ? down+1 : 0;
+                dp[j][i] = min(dp[j][i], down);
+            }
+        }
+        
+        for (int i = 0; i < n; i++) {
+            up = 0, left = 0;
+            for (int j = n-1; j >= 0; j--) {
+                left = mat[i][j] ? left+1 : 0;
+                dp[i][j] = min(dp[i][j], left);
+                
+                up = mat[j][i] ? up+1 : 0;
+                dp[j][i] = min(dp[j][i], up);
+            }
+        }
+    }
+    
+    int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {
+        vector<vector<int>> dp(n, vector<int>(n, INT_MAX));
+        vector<vector<int>> mat(n, vector<int>(n, 1));
+        
+        for (auto mine : mines)
+            mat[mine[0]][mine[1]] = 0;
+        
+        fillDP(dp, mat, n);
+        
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                res = max(res, dp[i][j]);
+            }
+        }
+        return res;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {
+
+    vector<vector<int>> mat(n, vector<int>(n, 1));
+    for(auto it : mines)
+    {
+        int x = it[0] ;
+        int y = it[1] ;
+        mat[x][y] = 0;
+    }
+
+    vector<vector<int>> lef, rig, top, bot;
+    lef = rig = top = bot = mat;
+
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            int x = n - i - 1;
+            int y = n - j - 1;
+            if( (i>0)   && top[i][j] ) top[i][j] += top[i-1][j];
+            if( (j>0)   && lef[i][j] ) lef[i][j] += lef[i][j-1];
+            if( (x<n-1) && bot[x][y] ) bot[x][y] += bot[x+1][y];
+            if( (y<n-1) && rig[x][y] ) rig[x][y] += rig[x][y+1];
+        }
+    }
+
+    int ans = 0;
+    for(int i=0;i<n;i++)
+        for(int j=0;j<n;j++)
+            ans = max(ans, min({lef[i][j], rig[i][j], top[i][j], bot[i][j]}));
+
+    return ans;
+}
+};
+
+Java
+
+class Solution {
+    public int orderOfLargestPlusSign(int n, int[][] mines) {
+        int[][] grid = buildGrid(n, mines);
+        
+        
+        // left to right grid
+        
+        int[][] ltr = new int[n][n];
+        
+        for(int i=0;i<n;i++){
+            int presum = 0;
+            for(int j=0;j<n;j++){
+                if(grid[i][j]==0){
+                    presum = 0;
+                }else{
+                    presum = presum + grid[i][j];
+                }
+                
+                ltr[i][j] = presum;
+            }
+        }
+        
+        // right to left grid
+        
+        int[][] rtl = new int[n][n];
+        
+        for(int i=0;i<n;i++){
+            int presum = 0;
+            for(int j=n-1;j>=0;j--){
+                if(grid[i][j]==0){
+                    presum = 0;
+                }else{
+                    presum = presum + grid[i][j];
+                }
+                
+                rtl[i][j] = presum;
+            }
+        }
+        
+        
+        // top to buttom
+        
+        int[][] ttb = new int[n][n];
+        
+        for(int col = 0; col<n;col++){
+            int presum = 0;
+            for(int row = 0;row<n;row++){
+                if(grid[row][col]==0){
+                    presum = 0;
+                }
+                else{
+                    presum = presum + grid[row][col];
+                }
+                
+                ttb[row][col] = presum;
+            }
+        }
+        
+        
+        // buttom to top
+        
+        int[][] btt = new int[n][n];
+        
+        for(int col = 0; col<n;col++){
+            int presum = 0;
+            for(int row = n-1;row>=0;row--){
+                if(grid[row][col]==0){
+                    presum = 0;
+                }
+                else{
+                    presum = presum + grid[row][col];
+                }
+                
+                btt[row][col] = presum;
+            }
+        }
+        
+        int ans = 0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                int min = Math.min(Math.min(ltr[i][j], rtl[i][j]), Math.min(ttb[i][j], btt[i][j]));
+                ans = Math.max(ans, min);   
+            }
+        }
+        return ans;
+    }
+    
+    public int[][] buildGrid(int n, int[][] mines){
+        int[][] arr = new int[n][n];
+        
+        for(int[] row : arr){
+            Arrays.fill(row, 1);
+        }
+        
+        for(int[] mine : mines){
+            arr[mine[0]][mine[1]] = 0;
+        }
+        
+        return arr;
+    }
+}
+
+Python
+
+class Solution:
+    def orderOfLargestPlusSign(self, N, mines):
+        grid = {tuple([x+1, y+1]) for x, y in mines}
+        dp = [[[0] * 4 for _ in range(N+2)] for _ in range(N+2)]
+        
+        for dx, dy, dr in [(-1,0,0),(1,0,1),(0,-1,2),(0,1,3)]:
+            for x in range(1,N+1)[::(-dx>=0)*2-1]:
+                for y in range(1,N+1)[::(-dy>=0)*2-1]:
+                    if (y, x) not in grid:
+                        dp[y][x][dr] = dp[y+dy][x+dx][dr] + 1
+                                                
+        return max(min(q) for p in dp for q in p) 
