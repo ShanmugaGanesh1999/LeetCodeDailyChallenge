@@ -1,0 +1,182 @@
+C++
+
+class Solution {
+public:
+   int calculate(string s) {
+       stack<pair<int,int>> st; // pair(prev_calc_value , sign before next bracket () )
+       
+       long long int sum = 0;
+       int sign = +1;
+       
+       for(int i = 0 ; i < s.size() ; ++i)
+       {
+           char ch = s[i];
+           
+           if(isdigit(ch))
+           {
+               long long int num = 0;
+               while(i < s.size() and isdigit(s[i]))
+               {
+                   num = (num * 10) + s[i] - '0';
+                   i++;
+               }
+               i--; // as for loop also increase i , so if we don't decrease i here a sign will be skipped
+               sum += (num * sign);
+               sign = +1; // reseting sign
+           }
+           else if(ch == '(')
+           {
+               // Saving current state of (sum , sign) in stack
+               st.push(make_pair(sum , sign));
+               
+               // Reseting sum and sign for inner bracket calculation
+               sum = 0; 
+               sign = +1;
+           }
+           else if(ch == ')')
+           {
+               sum = st.top().first + (st.top().second * sum);
+               st.pop();
+           }
+           else if(ch == '-')
+           {
+               // toggle sign
+               sign = (-1 * sign);
+           }
+       }
+       return sum;
+   }
+};
+
+or
+
+class Solution {
+public:
+    
+    int getInt(int &id, string &s){
+        int ans = 0;
+        while(id<s.size() and isdigit(s[id])){
+            ans = ans*10 + (s[id]-'0');
+            id++;
+        }
+        
+        return ans;
+    }
+    
+    int calc(int &id, string &s){
+        if(id==s.size()) return 0;
+            
+        int ans = 0;
+        int sign = 1;
+        
+        while(id<s.size()){
+            if(s[id]=='('){ ans += sign*calc(++id, s); sign=1;}
+            else if(s[id]==')'){ id++; return ans;}
+            else if(isdigit(s[id])){ ans += sign*getInt(id, s); sign=1;}
+            else if(s[id]=='-'){id++;sign*=-1;}
+            else id++;
+        }
+        
+        return ans;
+    }
+    
+    int calculate(string s) {
+        int i = 0;
+        return calc(i, s);    
+    }
+};
+
+Java
+
+class Solution {
+    public int calculate(String s) {
+        int sum=0;
+        int sign=1;
+        Stack<Integer> stack=new Stack();
+        for(int i=0;i<s.length();i++){
+            char c=s.charAt(i);
+            if(Character.isDigit(c)){
+                int val=0;
+                while(i<s.length() && Character.isDigit(s.charAt(i))){
+                    val=val*10+s.charAt(i)-'0';
+                    i++;
+                }
+                i--;
+                val=val*sign;
+                sum+=val;
+                sign=1; //reset the sign
+            }
+            else if(c=='('){
+                stack.push(sum);
+                stack.push(sign);
+                sum=0;
+                sign=1;
+            }else if(c==')'){
+                sum*=stack.pop();
+                sum+=stack.pop();
+            }else if(c=='-'){
+                sign*=-1;
+            }
+        }
+        return sum;
+    }
+}
+
+Python
+
+class Solution:
+    def calculate(self, s):
+        def update(op, v):
+            if op == "+": stack.append(v)
+            if op == "-": stack.append(-v)
+            if op == "*": stack.append(stack.pop() * v)           #for BC II and BC III
+            if op == "/": stack.append(int(stack.pop() / v))      #for BC II and BC III
+    
+        it, num, stack, sign = 0, 0, [], "+"
+        
+        while it < len(s):
+            if s[it].isdigit():
+                num = num * 10 + int(s[it])
+            elif s[it] in "+-*/":
+                update(sign, num)
+                num, sign = 0, s[it]
+            elif s[it] == "(":                                        # For BC I and BC III
+                num, j = self.calculate(s[it + 1:])
+                it = it + j
+            elif s[it] == ")":                                        # For BC I and BC III
+                update(sign, num)
+                return sum(stack), it + 1
+            it += 1
+        update(sign, num)
+        return sum(stack)
+        
+or
+
+class Solution:
+    def calculate(self, s):    
+        def calc(it):
+            def update(op, v):
+                if op == "+": stack.append(v)
+                if op == "-": stack.append(-v)
+                if op == "*": stack.append(stack.pop() * v)
+                if op == "/": stack.append(int(stack.pop() / v))
+        
+            num, stack, sign = 0, [], "+"
+            
+            while it < len(s):
+                if s[it].isdigit():
+                    num = num * 10 + int(s[it])
+                elif s[it] in "+-*/":
+                    update(sign, num)
+                    num, sign = 0, s[it]
+                elif s[it] == "(":
+                    num, j = calc(it + 1)
+                    it = j - 1
+                elif s[it] == ")":
+                    update(sign, num)
+                    return sum(stack), it + 1
+                it += 1
+            update(sign, num)
+            return sum(stack)
+
+        return calc(0)
