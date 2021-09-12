@@ -1,0 +1,169 @@
+C++
+
+class Solution {
+public:
+    int reachableNodes(vector<vector<int>>& edges, int M, int N) {
+        vector<int> dist(N, INT_MAX);
+        unordered_map<int, unordered_map<int, int>> g;
+        for(auto& e:edges) g[e[0]][e[1]] = g[e[1]][e[0]] = e[2] + 1;
+        auto cmp = [](const pair<int, int>& a, const pair<int, int>& b){ return a.second > b.second; };
+        
+        priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> pq(cmp);
+        pq.push({0,0});
+        dist[0] = 0;
+        while(!pq.empty()){
+            auto u = pq.top().first; pq.pop();
+            if( dist[u] >= M ) break;
+            for(auto n_w: g[u]){
+                int v = n_w.first, w = n_w.second;
+                if( dist[u] + w < dist[v]){
+                    dist[v] = w + dist[u];
+                    pq.push({v, dist[v]});
+                }
+            }
+        }
+        
+        
+        int res = 0;
+        for(int i = 0; i < N; i++) if(dist[i] <= M) res++;
+        /** the smart part **/
+        for(auto& e: edges){
+            //couting the reachable nodes lying on edge e from node e[0] 
+            int a = dist[e[0]] >= M ? 0: min(M-dist[e[0]], e[2]);
+            //couting the reachable nodes lying on edge e from node e[1] 
+            int b = dist[e[1]] >= M ? 0: min(M-dist[e[1]], e[2]);
+            res += min(a + b, e[2]);
+        }
+        /******************/
+        return res;
+        
+    }
+};
+
+Js
+
+const initializeGraph = (n) => { let G = []; for (let i = 0; i < n; i++) { G.push([]); } return G; };
+const addEdgeWithCostToG = (G, Edges) => { for (const [u, v, cost] of Edges) { G[u].push([v, cost]); G[v].push([u, cost]); } };
+
+const reachableNodes = (edges, maxMoves, n) => {
+    let g = initializeGraph(n);
+    addEdgeWithCostToG(g, edges);
+    return dijkstra(g, n, edges, maxMoves);
+};
+
+const MIN = Number.MIN_SAFE_INTEGER;
+const dijkstra = (g, n, edges, maxMoves) => {
+    let pq = new MaxPriorityQueue({ priority: x => x[0] });
+    let blood = Array(n).fill(MIN); // for each node, save maximum moves left to reach each node
+    pq.enqueue([maxMoves, 0]);
+    let res = 0;
+    while (pq.size()) {
+        let [hp, cur] = pq.dequeue().element;
+        if (blood[cur] != MIN) continue;
+        blood[cur] = hp;
+        res++;
+        for (const [next_node, cost] of g[cur]) {
+            let next_hp = hp - cost - 1; // cut the cost for move to adjacent child
+            if (next_hp < 0 || blood[next_node] != MIN) continue;
+            pq.enqueue([next_hp, next_node]);
+        }
+    }
+    for (const [u, v, cost] of edges) {
+        let uv = blood[u] == MIN ? 0 : blood[u];
+        let vu = blood[v] == MIN ? 0 : blood[v];
+        res += Math.min(cost, uv + vu);
+    }
+    return res;
+};
+
+Java
+
+class Solution {
+    class Node {
+        int to,val;
+        public Node(int to,int val){
+            this.to = to;
+            this.val = val;
+        }
+    }
+    public int reachableNodes(int[][] edges, int maxMoves, int n) {  
+        int[] dis = new int[n];
+        
+        List<Node>[] vec = new List[n];
+        
+        for(int i=0;i<n;i++){
+            vec[i] = new ArrayList<>();
+            dis[i] = 123456789;
+        }
+        
+        
+        for(int[] arr:edges){
+            vec[arr[0]].add(new Node(arr[1],arr[2]+1));
+            vec[arr[1]].add(new Node(arr[0],arr[2]+1));
+        }
+        int tot = 0;
+        Queue<Integer> Q = new LinkedList<>();
+        Q.offer(0);
+        dis[0] = 0;
+       
+        //find shortest distance from source 0
+        while(!Q.isEmpty()){
+            int id = Q.poll();
+            
+            for(Node x:vec[id]){
+                if(dis[x.to]>dis[id]+x.val){
+                    dis[x.to] = dis[id] + x.val;
+                    Q.offer(x.to);
+                }
+            }
+        }
+        
+        // checking if current nodes are reachable with maxMoves
+        for(int i=0;i<n;i++){
+            if(dis[i]<=maxMoves) tot++;
+        }
+        
+       //checking if newly created nodes can be reachable fwith maxMoves
+        for(int[] arr : edges){
+            int left = Math.max(0,maxMoves-dis[arr[0]]);
+            int right = Math.max(0,maxMoves-dis[arr[1]]);
+            
+            tot += Math.min(arr[2],left+right);
+            
+        }
+        
+        return tot;
+        
+    }
+}
+
+Python
+
+class Solution:
+    def reachableNodes(self, edges, M, N):
+        G = defaultdict(set)
+        dist = [float('inf')] * N
+        dist[0] = 0
+        
+        for i, j, w in edges:
+            G[i].add((j, w + 1))
+            G[j].add((i, w + 1))
+            
+        heap = [(0, 0)]
+
+        while heap:
+            min_dist, idx = heappop(heap)
+            for neibh, weight in G[idx]:
+                cand = min_dist + weight
+                if cand < dist[neibh]:
+                    dist[neibh] = cand
+                    heappush(heap, (cand, neibh)) 
+                    
+        ans = sum(dist[i] <= M for i in range(N))
+ 
+        for i, j, w in edges:
+            w1, w2 = M - dist[i], M - dist[j]
+            ans += (max(0, w1) + max(0, w2))
+            if w1 >= 0 and w2 >= 0: ans -= max(w1 + w2 - w, 0)
+                
+        return ans
