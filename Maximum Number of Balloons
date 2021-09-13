@@ -1,0 +1,78 @@
+Python
+
+from collections import Counter
+
+class Solution:
+    def maxNumberOfBalloons(self, text: str) -> int:
+        score = Counter(text)
+        return min(score['b']//1, score['a']//1, score['l']//2, score['o']//2, score['n']//1)
+        
+C++
+
+class Solution {
+public:
+    int maxNumberOfBalloons(string text) {
+	int b = 0;
+	int a = 0;
+	int l = 0;
+	int o = 0;
+	int n = 0;
+
+	for (auto c: text) {
+		switch (c) {
+			case 'b':
+				b++;
+				break;
+			case 'a':
+				a++;
+				break;
+			case 'l':
+				l++;
+				break;
+			case 'o':
+				o++;
+				break;
+			case 'n':
+				n++;
+				break;
+		}
+	}
+
+	int balloons = b;
+	balloons = min(balloons, a);
+	balloons = min(balloons, l / 2);
+	balloons = min(balloons, o / 2);
+	balloons = min(balloons, n);
+
+	return balloons;
+}
+};
+
+Java
+
+class Solution {
+    
+    private int min(int a, int b) {
+        return a < b ? a : b;    
+    }
+    
+    public int maxNumberOfBalloons(String text) {
+        Map<Character, Integer> map = new HashMap<>();
+        
+        for (char ch : text.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+        
+        int b = map.getOrDefault('b', 0);
+        int a = map.getOrDefault('a', 0);
+        int l = map.getOrDefault('l', 0) / 2;
+        int o = map.getOrDefault('o', 0) / 2;
+        int n = map.getOrDefault('n', 0);
+        
+        if (b > 0 && a > 0 && l > 0 && o > 0 && n > 0) {
+            return min(n, min(o, min(min(b, a), l)));
+        }
+        
+        return 0;
+    }
+}
