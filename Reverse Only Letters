@@ -1,0 +1,128 @@
+C++
+
+class Solution {
+public:
+    string reverseOnlyLetters(string s) {
+        int l = 0, r = s.size() - 1;
+        while (l < r) {
+            while (l < r && !isalpha(s[l])) ++l; // Skip non-alpha characters
+            while (l < r && !isalpha(s[r])) --r; // Skip non-alpha characters
+            swap(s[l++], s[r--]);
+        }
+        return s;
+    }
+};
+
+or
+
+class Solution {
+public:
+    string reverseOnlyLetters(string s) {
+        stack<char> letterStack;
+        for (char c : s) 
+            if (isalpha(c))
+                letterStack.push(c);
+            
+        for (char &c : s) {
+            if (isalpha(c)) {
+                c = letterStack.top();
+                letterStack.pop();
+            }
+        }
+        return s;
+    }
+};
+
+Java
+
+class Solution {
+    public String reverseOnlyLetters(String s) {
+        char[] charArr = s.toCharArray();
+        
+        int left = 0;
+        int right = s.length()-1;
+        
+        while(left<right){
+            if(Character.isLetter(charArr[left]) && Character.isLetter(charArr[right])){
+                char temp = charArr[left];
+                charArr[left] = charArr[right];
+                charArr[right] = temp;
+                left++;
+                right--;
+            }
+            
+            if(!Character.isLetter(charArr[left])){
+                left++;
+            }
+            
+            if(!Character.isLetter(charArr[right])){
+                right--;
+            }
+            
+        }
+        return String.valueOf(charArr);
+    }
+}
+
+Js
+
+var reverseOnlyLetters = function(s) {
+    let start = 0
+    let end = s.length;
+    let sArr = s.split('');
+    while(start < end){
+        if(isLetter(s[start]) && isLetter(s[end])){
+            let tmp = sArr[start];
+            sArr[start] = sArr[end];
+            sArr[end] = tmp;
+            start++;
+            end--;
+        } else {
+            if(isLetter(s[start])){
+                end--;
+            } else {
+                start++;
+            }
+        }
+    }
+    return sArr.join('');
+};
+let isLetter = (c) => {
+    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
+}
+
+Python
+
+class Solution:
+    def reverseOnlyLetters(self, s: str) -> str:
+
+        size = len(s)
+        
+        # convert into array of characters
+        array = [*s]
+        
+        # two pointers, initialized with boundary index
+        left, right = 0, size-1
+        
+        #  swap english letter with two-pointers
+        while left < right:
+            
+            # keep moving until we meet english letter on left hand side
+            if not array[left].isalpha():
+                left += 1
+                continue
+            
+            # keep moving until we meet english letter on right hand side
+            if not array[right].isalpha():
+                right -= 1
+                continue
+            
+            # swap english letters
+            array[left], array[right] = array[right], array[left]
+            
+            # update index of two pointer
+            left, right = left+1, right-1
+        
+        
+        # convert to string and output
+        return "".join(array)
