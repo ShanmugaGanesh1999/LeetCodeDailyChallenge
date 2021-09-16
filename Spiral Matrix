@@ -1,0 +1,181 @@
+C++
+
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        //Store the vector which we gonna return at the end
+	
+    vector<int>result;
+    
+    int m=matrix.size();
+    int n=matrix[0].size();
+    
+	//Declare four required variables which store the start and end values (boundary values) in each traversal of rows and columns
+	
+    int row_start=0,row_end=m-1,col_start=0,col_end=n-1;
+    
+	// Just put a boundary check
+	
+    while(row_start<=row_end && col_start<=col_end){
+       
+	   // Now see the given figure in the question and try to compare the code with that
+	   
+	   
+	   // First traverse the first row and all columns and store their values in result vector
+	   
+        for(int col=col_start;col<=col_end;col++){
+            result.push_back(matrix[row_start][col]);
+        }
+        
+		// Now increment the value of first row (i.e row_start as we are not interested in further traversal of it)
+		
+        row_start++;
+        
+		// Then traverse the last column and all the rows from top to bottom to store their values
+		
+        for(int row=row_start;row<=row_end;row++){
+            result.push_back(matrix[row][col_end]);
+        }
+        
+		// Now decrement the value of last column after its traversal 
+        col_end--;
+        
+		
+		// Then traverse the last row and columns (from col_end to col_start) and store the values
+		
+        for(int col=col_end;col>=col_start;col--){
+            result.push_back(matrix[row_end][col]);
+        }
+        
+        row_end--;
+        
+		//The traverse the first column and rows(from row_end to row_start) and store their values
+		
+        for(int row=row_end;row>=row_start;row--){
+            result.push_back(matrix[row][col_start]);
+        }
+        
+        col_start++;
+        
+    }
+    
+    int range=(m*n);
+    
+    int sz=result.size();
+    
+int excess=(sz-range);
+    
+    while(excess--){
+        result.pop_back();
+    }
+    
+    return result;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int r, c;
+    bool OutRange(int i, int j) {
+        if (i < 0 || i >= r || j < 0 || j >= c)
+            return true;
+        return false;
+    }
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        std::vector<std::vector<int>>dir = {
+            {0,1},
+            {1,0},
+            {0,-1},
+            {-1,0}
+        };
+        std::vector<int>ans;
+        int n = matrix[0].size() * matrix.size();
+         r = matrix.size(), c = matrix[0].size();
+         int i = 0, j = 0;
+         int dirNum = 0;
+        while (ans.size() != n) {
+                if(matrix[i][j]!=101)
+            ans.push_back(matrix[i][j]);
+            //marking as visited
+            matrix[i][j] = 101;
+            int x = i + dir[dirNum][0], y = j + dir[dirNum][1];
+            if (OutRange(x, y) || matrix[x][y] == 101) {
+                //turning direction
+                dirNum = (dirNum + 1) % 4;
+                i=i + dir[dirNum][0];
+                j=j + dir[dirNum][1];
+            }
+            else
+                i = x, j = y;
+
+        }
+        return ans;
+    }
+};
+
+Java
+
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        ArrayList<Integer> ans = new ArrayList<>();
+    
+    int minr = 0;
+    int minc = 0;
+    int maxr = matrix.length-1;
+    int maxc = matrix[0].length-1;
+    
+    int count = 1;
+    int total = matrix.length*matrix[0].length;
+    
+    while(count<=total){
+        
+        //upper wall traversal
+        for(int i=minc;i<=maxc && count<=total;i++){
+            ans.add(matrix[minr][i]);
+            count++;
+        }
+        minr++;
+        
+        //right wall traversal
+        for(int i=minr;i<=maxr && count<=total;i++){
+            ans.add(matrix[i][maxc]);
+            count++;
+        }
+        maxc--;
+        
+        //bottom wall traversal
+        for(int i=maxc;i>=minc && count<=total;i--){
+            ans.add(matrix[maxr][i]);
+            count++;
+        }
+        maxr--;
+        
+        //left wall traversal
+        for(int i=maxr;i>=minr && count<=total;i--){
+            ans.add(matrix[i][minc]);
+            count++;
+        }
+        minc++;
+    }
+    return ans;
+    }
+}
+
+Python
+
+class Solution:
+    def spiralOrder(self, matrix):
+        n, m = len(matrix[0]), len(matrix)
+        x, y, dx, dy = 0, 0, 1, 0
+        ans = []
+        for _ in range(m*n):
+            if not 0 <= x+dx < n or not 0 <= y+dy < m or matrix[y+dy][x+dx] == "*":
+                dx, dy = -dy, dx
+                
+            ans.append(matrix[y][x])
+            matrix[y][x] = "*"
+            x, y = x + dx, y + dy
+        
+        return ans
