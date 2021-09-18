@@ -1,0 +1,200 @@
+C++
+
+class Solution {
+public:
+    vector<string> expressions;
+    vector<string> addOperators(string num, int target) {
+        dfs(num , target , 0 , "" , 0 , 0);
+        return expressions;
+    }
+    void dfs(string &num , int target , int index , string path , long int res , long int prev)
+    {
+        if(index == num.size() and res == target)
+        {
+            expressions.push_back(path);
+            return;
+        }
+        
+        long int number = 0;
+        string sub_string = "";
+        
+        for(int i = index ; i < num.size() ; ++i)
+        {
+            sub_string += num[i];
+            number = (number * 10) + num[i] - '0';
+            
+            if(sub_string.size() > 1 and sub_string[0] == '0') // skipping numbers with leading 0's
+                break;
+            
+            if(index == 0) // first number of expression is picked without operator
+            {
+                dfs(num , target , i + 1 , sub_string , number, number);
+            }
+            else
+            {
+                // (1) + operation inserted
+                dfs(num , target , i + 1 , path  + "+" + sub_string , res  + number , number);
+                    
+                // (2) - operation inserted
+                dfs(num , target , i + 1 , path + "-" + sub_string , res  - number , -number);
+                
+                // (3) * operation inserted
+                dfs(num , target , i + 1 , path + "*" + sub_string , (res - prev)  + (prev * number) , prev * number);
+            }
+        }
+            
+    }
+    
+};
+
+JavaScript
+
+var addOperators = function(num, target) {
+    const res = [];
+    backtracking(num, target, 0, 0, "", 0, 0, res);
+    return res;
+};
+
+var backtracking = function(num, target, index, sum, expression, currNumToAdd, prevExp, res) {
+	if(index > num.length) {
+        return;
+    }
+    // If we are at end of num AND the final value == target expected AND no currNumToAdd is left unprocessed
+    if(index === num.length && sum === target && currNumToAdd === 0) {
+        res.push(expression.slice(1));
+        return;
+    }
+    const newNumToAdd = currNumToAdd*10 + (+num[index]);
+    // To avoid cases where we have 1 + 05 or 1 * 05 since 05 won't be a
+    // valid operand. Hence this check. we only create number with more than 1 digit if (newNumToAdd > 0)
+    if(newNumToAdd > 0) {
+        backtracking(num, target, index+1, sum, expression, newNumToAdd, prevExp, res);
+    }
+    // ADDITION
+    backtracking(num, target, index+1, sum + newNumToAdd, expression+"+"+newNumToAdd, 0, +newNumToAdd, res);
+    // to avoid SUBTRACTION/MULTIPLICATION on first numToAdd when expression is empty(we asume we can only add)
+    if(expression.length > 0) {
+        // SUBTRACTION
+        backtracking(num, target, index+1, sum - newNumToAdd, expression+"-"+newNumToAdd, 0, -newNumToAdd, res);
+        // MULTIPLICATION
+        const multSum = sum - prevExp + (prevExp * newNumToAdd);
+        backtracking(num, target, index+1, multSum, expression+"*"+newNumToAdd, 0, (prevExp * newNumToAdd), res);
+    }
+    return;
+}
+
+Java
+
+class Solution {
+    List<String> sol;
+ public List<String> addOperators(String num, int target) {
+    sol = new ArrayList<>();
+
+     if(Long.parseLong(num) > Integer.MAX_VALUE) return sol;
+    
+    recursion(num, target, 0, new StringBuilder());
+    return sol;
+}
+
+
+public void recursion(String num, int target, int start, StringBuilder sb) {        
+    if(start == num.length()) {
+        // calculate opeartaion from String 
+        if(Integer.compare(calculate(sb.toString()), target) == 0) sol.add(sb.toString());
+        return;
+    }
+      
+    for(int i = start; i < num.length(); i++) {
+        
+        if(i-start> 0 && num.charAt(start) == '0') continue;  // number like: "05", "00".. 
+        
+        if(start == 0 ) {
+            sb.append(num.substring(start,i+1)+""); // First number, example:  -> (1) + 2 + 3
+            recursion(num, target, i + 1, sb);
+            
+        } else{
+            // Addition (add the "x" and number)
+            sb.append("+");
+            sb.append(num.substring(start,i+1)+"");
+            recursion(num, target, i + 1, sb);
+
+            // Substraction (change "+" to "-")
+            sb.replace(sb.length()-2-(i-start),sb.length()-1-(i-start), "-");
+            recursion(num, target, i + 1, sb);
+
+            //Multiplication (change "-" to "*")
+            sb.replace(sb.length()-2-(i-start),sb.length()-1-(i-start), "*");
+            recursion(num, target, i + 1, sb);
+        }
+        //delete the added elements to backtrack
+        if(sb.length()-2-(i-start) >= 0) sb.delete(sb.length()-2-(i-start),sb.length());
+        else sb.delete(0, sb.length());
+    }
+    
+}
+
+
+
+public int calculate(String expression) {
+    Stack<Integer> stack = new Stack<>();
+    
+    boolean isMultiplication = false;
+    int pointer = 0;
+    int sign = 1;
+    int number = 0;
+    
+    while(pointer < expression.length()) {
+
+        if(expression.charAt(pointer) == '*') {
+            isMultiplication = true;
+            pointer++;
+        }
+        if(expression.charAt(pointer) == '-') {
+            sign = -1;
+            pointer++;
+        } 
+        if(expression.charAt(pointer) == '+') {
+            sign = 1;
+            pointer++;
+        } 
+        while(pointer < expression.length() && expression.charAt(pointer) >= '0' 
+              && expression.charAt(pointer) <= '9') {
+            number = number * 10 + Integer.parseInt(expression.charAt(pointer) + "");
+            pointer++;
+        }
+        if(isMultiplication) {
+            number *= stack.pop();
+            isMultiplication = false;
+        } 
+        stack.add(number*sign);
+        number = 0;
+        sign = 1;
+    }
+    
+    int result = 0;
+    for(int x: stack) result += x;
+    return result;
+    }
+}
+
+Python
+
+class Solution:
+    def addOperators(self, num, target):
+        def dfs(idx, path, value, last):            
+            if idx == n and value == target:
+                ans.append(path)
+            
+            for i in range(idx + 1, n + 1):
+                tmp = int(num[idx: i])
+                if i == idx + 1 or (i > idx + 1 and num[idx] != "0"):
+                    if last is None :
+                        dfs(i, num[idx: i], tmp, tmp)
+                    else:
+                        dfs(i, path + '+' + num[idx: i], value + tmp, tmp)
+                        dfs(i, path + '-' + num[idx: i], value - tmp, -tmp)
+                        dfs(i, path + '*' + num[idx: i], value - last + last*tmp, last*tmp)
+        
+        ans, n = [], len(num)
+        dfs(0, "", 0, None)
+        return ans
