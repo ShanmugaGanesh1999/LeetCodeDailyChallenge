@@ -46,9 +46,16 @@ int numDistinct(string s, string t) {
 Python
 
 class Solution:
-    def numDistinct(self, s, t):
-        @lru_cache(None)
-        def dp(i, j):
-            if i == -1: return j == -1
-            if j == -1: return j == -1
-            return dp(i-1, j) + (s[i] == t[j]) * dp(i-1, j-1)
+    def numDistinct(self, s: str, t: str) -> int:
+        
+        @cache
+        def sub(i, j):
+			# As long as s has more characters left and t hasn't been exhausted
+            if i<len(s)-len(t)+j and j<len(t):
+				# If character t[j] exists in the remaining characters of s, count both types of solutions
+                return sub(i+1, j+1)+sub(i+1, j) if (i:= s.find(t[j], i))!=-1 else 0
+            else:
+				# this is a solution if t was exhausted or remaining characters are a match
+                return int(j==len(t) or s[i:]==t[j:])
+            
+        return sub(0, 0)
