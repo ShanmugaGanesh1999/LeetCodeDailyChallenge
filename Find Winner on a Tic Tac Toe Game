@@ -1,0 +1,203 @@
+Java
+
+class Solution {
+    public String tictactoe(int[][] moves) {
+        int[][] matrix = new int[3][3];
+        int score1 = 0, score2 = 0;
+        for(int i = 0; i < moves.length; i++) {
+            if(matrix[moves[i][0]][moves[i][1]] != 0) {
+                break;
+            }
+            
+            if(i % 2 == 0) {
+                matrix[moves[i][0]][moves[i][1]] = 2;
+            } else {
+                matrix[moves[i][0]][moves[i][1]] = 1;
+            }
+        }
+        
+        boolean isA = (matrix[0][0] == 2 && matrix[0][1] == 2 && matrix[0][2] == 2)
+            || (matrix[1][0] == 2 && matrix[1][1] == 2 && matrix[1][2] == 2)
+            || (matrix[2][0] == 2 && matrix[2][1] == 2 && matrix[2][2] == 2)
+            
+            
+            || (matrix[0][0] == 2 && matrix[1][0] == 2 && matrix[2][0] == 2)
+            || (matrix[0][1] == 2 && matrix[1][1] == 2 && matrix[2][1] == 2)
+            || (matrix[0][2] == 2 && matrix[1][2] == 2 && matrix[2][2] == 2)
+            
+            
+            || (matrix[0][0] == 2 && matrix[1][1] == 2 && matrix[2][2] == 2)
+            || (matrix[0][2] == 2 && matrix[1][1] == 2 && matrix[2][0] == 2);
+        if(isA) return "A";
+        
+        boolean isB = (matrix[0][0] == 1 && matrix[0][1] == 1 && matrix[0][2] == 1)
+            || (matrix[1][0] == 1 && matrix[1][1] == 1 && matrix[1][2] == 1)
+            || (matrix[2][0] == 1 && matrix[2][1] == 1 && matrix[2][2] == 1)
+            
+            || (matrix[0][0] == 1 && matrix[1][0] == 1 && matrix[2][0] == 1)
+            || (matrix[0][1] == 1 && matrix[1][1] == 1 && matrix[2][1] == 1)
+            || (matrix[0][2] == 1 && matrix[1][2] == 1 && matrix[2][2] == 1)
+            
+            || (matrix[0][0] == 1 && matrix[1][1] == 1 && matrix[2][2] == 1)
+            || (matrix[0][2] == 1 && matrix[1][1] == 1 && matrix[2][0] == 1);
+        
+        if(isB) return "B";
+        
+        return moves.length >= 9 ? "Draw" : "Pending";
+    }
+}
+
+C++
+
+class Solution {
+public:
+    // [[1,0],[1,2],[2,0],[0,0],[0,2]]
+    bool checkrow(vector<int> &v,map<vector<int>,char> &map)
+    {
+        char c=map[v];
+        int cnt=0;
+        for(int i=0;i<3;i++)
+        {
+            if(map[{v[0],i}]==c) cnt++;
+        }
+        return cnt==3?true:false;
+    }
+    bool checkcol(vector<int> &v,map<vector<int>,char> &map)
+    {
+        char c=map[v];
+        int cnt=0;
+        for(int i=0;i<3;i++)
+        {
+            if(map[{i,v[1]}]==c) cnt++;
+        }
+        return cnt==3?true:false;
+    }
+    bool checkdiag(vector<int> &v,map<vector<int>,char> &map)
+    {
+        char c=map[v];
+        int cnt=0;
+        if(v[0]==1&&v[1]==1)
+        {
+            int cnt1=0;
+            for(int i=0;i<3;i++)
+            {
+                if(map[{i,i}]==c) cnt++;
+            } 
+            if(map[{0,2}]==c&&map[{2,0}]==c) cnt1=3;
+            cnt=cnt>cnt1?cnt:cnt1;
+        }
+        else if(v[0]==v[1])
+        {
+            for(int i=0;i<3;i++)
+            {
+                if(map[{i,i}]==c) cnt++;
+            }
+        }
+        else if((v[0]==0&&v[1]==2)||(v[0]==2&&v[1]==0))
+        {
+            if(map[{0,2}]==c&&map[{2,0}]==c&&map[{1,1}]==c) cnt=3;
+        }
+        return cnt==3?true:false;
+    }
+    string tictactoe(vector<vector<int>>& moves) {
+//         [[1,0],[1,2],[2,0],[0,0],[0,2]]
+        map<vector<int>,char> map;
+        int idx=0;
+        for(auto x:moves)
+        {
+            if(idx%2==0)
+            {
+                map[x]='A';
+                idx++;
+            }
+            else
+            {
+                map[x]='B';
+                idx++;
+            }
+        }
+        bool A=false,B=false;
+        for(int i=0;i<moves.size();i++)
+        {
+            if(i%2==0)
+            {
+                if(checkcol(moves[i],map))
+                {
+                    A=true;
+                    break;
+                }
+                if(checkrow(moves[i],map))
+                {
+                    A=true;
+                    break;
+                }
+                if(checkdiag(moves[i],map))
+                {
+                    A=true;
+                    break;
+                }
+            }
+            else
+            {
+                if(checkcol(moves[i],map))
+                {
+                    B=true;
+                    break;
+                }
+                if(checkrow(moves[i],map))
+                {
+                    B=true;
+                    break;
+                }
+                if(checkdiag(moves[i],map))
+                {
+                    B=true;
+                    break;
+                }
+            }
+        }
+        if(A) return "A";
+        else if(B) return "B";
+        else if(moves.size()==9) return "Draw";
+        else return "Pending";
+            
+    }
+};
+
+Python
+
+class Solution:
+    def tictactoe(self, moves):
+        rows, cols, diag, anti = [0]*3, [0]*3, 0, 0
+        
+        for turn, (x, y) in enumerate(moves):
+            player = (turn % 2) * 2 - 1
+            rows[x] += player
+            cols[y] += player
+            if x == y: diag += player
+            if x + y == 2: anti += player
+                
+            if any(abs(cand) == 3 for cand in [rows[x], cols[y], diag, anti]):
+                return "B" if player == 1 else "A"
+            
+        return "Draw" if len(moves) == 9 else "Pending"
+
+or
+
+class Solution:
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        N = 3
+        rows, cols = [0] * N, [0] * N
+        mainDiag = antiDiag = 0
+
+        player = 1
+        for r, c in moves:
+            rows[r] += player
+            cols[c] += player
+            if r == c: mainDiag += player
+            if r + c == N - 1: antiDiag += player
+            if abs(rows[r]) == N or abs(cols[c]) == N or abs(mainDiag) == N or abs(antiDiag) == N:
+                return "A" if player == 1 else "B"
+            player = -player
+
+        return "Draw" if len(moves) == N * N else "Pending"
