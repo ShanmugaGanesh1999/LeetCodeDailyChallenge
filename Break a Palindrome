@@ -1,0 +1,77 @@
+Java
+
+class Solution {
+    public String breakPalindrome(String palindrome) {
+        int n = palindrome.length();
+        if(n == 1){
+            return "";
+        }
+        char[] ch = palindrome.toCharArray();
+        int index = -1;
+        for(int i = 0; i < n/2; i++){
+            if(ch[i]!='a'){
+                index = i;
+                ch[i] = 'a';
+                break;
+            }
+        }
+        if(index == -1){
+            ch[n-1] = 'b';
+        }
+        return new String(ch);
+    }
+}
+
+C++
+
+class Solution {
+public:
+    
+    // If size of string is 1 => It is always plaindrome => return empty string
+    
+    // int useA(string palindrome) => This method returns first useful index ( where character can be replaced 
+    //                                to break palindrome ) which is not 'a'. In case all useful index are 'a',
+    //                                it will return -1.
+    
+    // If useful index is present such that is not 'a', then replace it with 'a'. 
+    // If above is not possible => all useful characters are 'a' => replace last character with 'b'.
+    
+    int useA( string palindrome )
+    {
+        int n = palindrome.size();
+        
+        for( int i = 0; i < n; i++ )
+        {
+            if( palindrome[i] != 'a' )
+            {
+                if( n%2 == 1 && i == n/2 ) continue;
+                else return i;
+            }
+        }
+        return -1;
+    }
+    
+    string breakPalindrome(string palindrome) {
+        
+        int n = palindrome.size(),i=0;
+        
+        if( n == 1 ) return "";
+        
+        int indx = useA(palindrome);
+        
+        if( indx != -1 ) palindrome[indx] = 'a';
+        else palindrome[n-1] = 'b';
+        
+        return palindrome;
+     
+    }
+};
+
+Python
+
+class Solution:
+    def breakPalindrome(self, pal):
+        n = len(pal)
+        for i in range(n//2):
+            if pal[i] != "a": return pal[:i] + "a" + pal[i+1:]
+        return pal[:-1] + "b" if n > 1 else ""
