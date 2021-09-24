@@ -1,0 +1,106 @@
+Java
+
+class Solution {
+    public int tribonacci(int n) {
+     // for n , there is constraint that n can not eceeds to 37
+        
+//         int[] T = new int[38];
+        
+//         T[0] = 0;
+//         T[1] = 1;
+//         T[2] = 1;
+        
+//         if(n==0)
+//             return 0;
+        
+//         if(n==1 || n==2)
+//             return 1;
+        
+//         for(int i=3;i<=n;i++){
+//             T[i] = T[i-1] + T[i-2] + T[i-3];
+//         }
+//         return T[n];
+        
+        // without using extra space
+        
+        int n0 = 0;
+        int n1 = 1;
+        int n2 = 1;
+        int result = 0;
+        
+        if(n<1) return 0;
+        if(n==1 || n==2) return 1;
+        for(int i=3;i<=n;i++){
+            result = n0 + n1 + n2;
+            
+            n0 = n1;
+            n1 = n2;
+            n2 = result;
+            
+        }
+        return result;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    long long int tribonacci(int n) {
+        vector<long long>dp(38,0);   //dp vector to hold nth value (38 =37+1)
+        dp[0]=0, dp[1]=1,dp[2]=1;    // base case
+        if(n<3) return dp[n];
+        for(int i=3;i<=n;i++)
+            dp[i]=(dp[i-1]+dp[i-2]+dp[i-3]);
+        return dp[n];
+    }
+};
+
+or
+
+class Solution {
+public:
+    int tribonacci(int n) {
+    int dp[3]={0,1,1};
+    for(int i=3;i<=n;i++){
+        dp[i%3]+=dp[(i+1)%3]+dp[(i+2)%3];
+    }
+    return dp[n%3];
+}
+};
+
+Python
+
+class Solution:
+    def tribonacci(self, n: int) -> int:
+        if n == 0: return 0
+        t0 = 0
+        t1 = 1
+        t2 = 1
+        for i in range(n-2):
+            tn = t0 + t1 + t2
+            t0 = t1
+            t1 = t2
+            t2 = tn
+        return t2
+        
+or
+
+import numpy as np
+class Solution:
+    def fastPow(self, matrix, pow):  # return matrix ^ pow
+        if pow == 1: return matrix
+        halfPow = self.fastPow(matrix, pow // 2)
+        res = np.dot(halfPow, halfPow)  # res = halfPow * halfPow
+        if pow & 1:
+            res = np.dot(res, matrix)  # res *= matrix
+        return res
+
+    def tribonacci(self, n: int) -> int:
+        if n == 0: return 0
+        mat = np.matrix([[0, 1, 0], [0, 0, 1], [1, 1, 1]])
+        matrixPow = self.fastPow(mat, n)
+        
+        base = np.matrix([[0], [1], [1]])
+        res = np.dot(matrixPow, base)
+        return res.item((0, 0))
