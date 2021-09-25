@@ -1,0 +1,143 @@
+Java
+
+class Solution {
+    public int shortestPath(int[][] grid, int k) {
+        if(k == 0 && grid[0][0] == 1){
+            return -1;
+        }
+        
+        final int[][] delta = new int[][] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+        
+        int rows = grid.length;
+        int columns = grid[0].length;
+        int i, size, level;
+        int x, y, eliminatedTillNow;
+        int[] location;
+        
+        // to check if a location (x, y) has been visited after eliminating m number of obstacles
+        // if so, then visited[x][y][m] will be true
+		// if this part is understood then this problem is very easy
+        boolean[][][] visited = new boolean[rows][columns][k + 1];
+        
+        Queue<int[]> queue = new LinkedList<int[]>();
+        queue.offer(new int[] { 0, 0, 0 });
+        visited[0][0][0] = true;
+        level = 0;
+        
+        while(!queue.isEmpty()){
+            size = queue.size();
+            for(i = 0; i < size; i++){
+                location = queue.poll();
+                if(location[0] == rows - 1 && location[1] == columns - 1){
+                    return level;
+                }
+                
+                eliminatedTillNow = location[2];
+                
+                for(int[] direction : delta){
+                    x = location[0] + direction[0];
+                    y = location[1] + direction[1];
+                    
+                    if(x >= 0 && x < rows && y >= 0 && y < columns){
+                        if(grid[x][y] == 1){
+                            if((eliminatedTillNow < k) && !visited[x][y][eliminatedTillNow + 1]){ 
+                                // attempt obstacle elimination if possible 
+								// i.e. we have eliminated less than k obstacles till this point of time
+                                queue.offer(new int[] { x, y, eliminatedTillNow + 1 });
+                                visited[x][y][eliminatedTillNow + 1] = true;
+                            }
+                        }else{
+                            if(!visited[x][y][eliminatedTillNow]){
+                                queue.offer(new int[] { x, y, eliminatedTillNow });
+                                visited[x][y][eliminatedTillNow] = true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            ++level;
+        }
+        
+        return -1;
+    }
+}
+
+C++
+
+class Solution {
+	public:
+	
+     int shortestPath(vector<vector<int>>& grid, int k) {
+		int m = grid.size();
+		int n = grid[0].size();
+		// This vector stores the number of obstacles that we can still remove after walking through that cell
+	vector<vector<int>> visited(m, vector<int>(n, -1));
+    queue<vector<int>> q;
+    // x, y, currentLength, remaining k
+    q.push({0,0,0,k});
+    while(!q.empty()){
+        
+        auto t = q.front();
+        q.pop();
+        
+        int x = t[0], y = t[1];
+        
+        // Invalid cases being dealt here since it's easier to write one condition instead of 4 while pushing.
+        if(x<0 || x>=m || y<0 || y>=n)
+            continue;
+        
+        // If you've reached the end, great, return the currentLength!
+        if(x == m-1 && y == n-1)
+            return t[2]; //currentLength of the path
+         
+        // If we hit an obstacle & we don't have any Ks remaining, continue
+        // If we still have Ks to spend, we spend 1.
+        if(grid[x][y] == 1){
+            if(t[3] > 0)
+                t[3]--;
+            else
+                continue;
+        }
+        
+        // If this cell is already visited with a K value lesser than this one, we would want to save Ks for future use, so we continue
+        // This is the most important condition and part of the solution!
+        if(visited[x][y]!=-1 && visited[x][y] >= t[3]){
+            continue;
+        }
+        
+        // We store the currentRemaining K after spending K (if required) into the visited matrix.
+        visited[x][y] = t[3];
+            
+        // Push the adjacent nodes in the queue.
+        q.push({x+1, y, t[2]+1, t[3]});
+        q.push({x-1, y, t[2]+1, t[3]});
+        q.push({x, y+1, t[2]+1, t[3]});
+        q.push({x, y-1, t[2]+1, t[3]});
+    }
+    
+    return -1;
+   }
+};
+
+Python
+
+class Solution:
+    def shortestPath(self, grid, k):
+        m, n = len(grid), len(grid[0])
+        Q, v = deque([(0, 0, 0, k)]), set()
+        
+        if k >= m + n - 2: return m + n - 2
+        
+        while Q:
+            steps, x, y, k = Q.popleft()
+            if (x, y) == (n-1, m-1): return steps
+            
+            for dx, dy in (x, y-1), (x, y+1), (x-1, y), (x+1, y):
+                if 0 <= dx < n and 0 <= dy < m and k - grid[dy][dx] >= 0:
+                    new = (dx, dy, k - grid[dy][dx])
+                    if new not in v:
+                        v.add(new)
+                        Q.append((steps + 1,) + new)
+            
+        return -1
