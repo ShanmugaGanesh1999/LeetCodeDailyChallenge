@@ -1,0 +1,116 @@
+C++
+
+class Solution {
+public:
+    int numUniqueEmails(vector<string>& emails) {
+    set<string>s;
+    for(auto i:emails){
+        string d=i;
+        string temp;
+    
+        int x=0;
+        for(x;d[x]!='@';x++){
+            if(d[x]=='+'){
+                break;
+                
+            }
+            
+            if(d[x]!='.'){
+                temp.push_back(d[x]);
+                
+            }
+        }
+        while(d[x]!='@'){
+            x++;
+        }
+        for(x;x<d.size();x++){
+            temp.push_back(d[x]);
+        }
+     
+        cout<<temp<<endl;
+        s.insert(temp);
+    }
+    return s.size();
+    
+}
+};
+
+Js
+
+var numUniqueEmails = function(emails) {
+    let set  = new Set();
+    let result = 0
+    for(let i of emails){
+        let arr = i.split("@");
+        let localName = '';
+        for(let k of arr[0]){
+            if(k == '+'){
+                break;
+            }else if(k === '.'){
+                continue;
+            }else{
+                localName += k
+            }
+        }
+        localName +='@' + arr[1];
+        if(!set.has(localName)){
+            set.add(localName)
+            result++;
+        }
+    }
+    return result
+};
+
+Python
+
+class Solution:
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        """
+            To solve this problem, we just need to loop through the emails and sanitize it as specified in the problem above.
+            We can use a set to find out the number of unique emails after we have cleaned it up.
+            
+            Time: O(nm) - we iterate through n emails with worst case m chars. The m chars is from having to call split(), replace(), and index() will at worst case go through all m chars.
+            Space: O(nm) - our set holds worst case all n strings with m chars if they are not unique.
+        """
+        
+        # Replace '.' with ''
+        # Replace everything substring '+' and use a set
+        email_set = set()
+        for email in emails:
+            name, domain = email.split('@')
+            name = name.replace('.', '')
+            
+            if '+' in name:
+                name = name[:name.index('+')]
+                
+            email_set.add(name + '@' + domain)
+        
+        return len(email_set)
+        
+or
+
+class Solution:
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        def normalize(localName):
+            parts = localName.split("+")
+            return parts[0].replace(".", "")
+        
+        uniqueEmails = set()
+        for email in emails:
+            localName, domainName = email.split("@")
+            uniqueEmails.add(normalize(localName) + "@" + domainName)
+            
+        return len(uniqueEmails)
+        
+or
+
+class Solution:
+    def numUniqueEmails(self, emails):
+        d = Counter()
+        for mail in emails:
+            local, domain = mail.split("@")
+            local = local.replace(".", "")
+            if "+" in local: local = local[:local.index("+")]
+            d[local + "@" + domain] += 1
+            
+        return len(d)
