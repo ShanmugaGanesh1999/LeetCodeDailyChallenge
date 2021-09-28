@@ -1,0 +1,58 @@
+C++
+
+class Solution {
+public:
+	vector<int> sortArrayByParityII(vector<int>& nums) {
+		int n = nums.size();
+		int i = 0, j = 1;
+		while(i < n && j < n){
+			if(nums[i] % 2 == 0){
+				i += 2;
+			}
+			else if(nums[j] % 2 == 1){
+				j += 2;
+			}
+			else{
+				swap(nums[i], nums[j]);
+			}
+		}
+		return nums;
+	}
+};
+
+Java
+
+class Solution {
+    public int[] sortArrayByParityII(int[] nums) {
+        int p1=0, p2=1;
+        while (p1<nums.length && p2<nums.length){
+            if (nums[p1]%2!=0 && nums[p2]%2==0){
+				//Both elements are placed in the wrong positions
+                //Let's swap them without using additional variables
+				
+                nums[p2]=nums[p2]+nums[p1];
+                nums[p1]=nums[p2]-nums[p1];
+                nums[p2]=nums[p2]-nums[p1];
+            }
+            if (nums[p1]%2==0)
+                p1+=2;
+            if (nums[p2]%2!=0)
+                p2+=2;                
+        }
+        return nums;
+    }
+}
+
+Python
+
+class Solution:
+    def sortArrayByParityII(self, nums):
+        i, j, n = 0, 1, len(nums)
+        while j < n and i < n:
+            if nums[i] % 2 == 0:
+                i += 2
+            elif nums[j] % 2 == 1:
+                j += 2
+            else:
+                nums[i], nums[j] = nums[j], nums[i]
+        return nums
