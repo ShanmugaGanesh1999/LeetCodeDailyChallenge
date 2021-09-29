@@ -1,0 +1,147 @@
+Java
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode[] splitListToParts(ListNode head, int k) {
+        ListNode[] split = new ListNode[k];
+        int cnt=0;
+        for(ListNode node=head;node!=null;node=node.next)cnt++;        
+        int len=cnt/k,rem=cnt%k;
+        ListNode node=head, prev=null;
+        for(int i=0; node!= null && i<k;i++,rem--) {
+            split[i]=node;
+            for(int j=0;j<len+(rem>0?1:0);j++) {                
+                prev=node;
+                node=node.next;
+            }
+            prev.next=null;
+        }
+        return split;
+    }
+}
+
+C++
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* head, int k) {
+        
+        int size = 0;
+        
+        ListNode* curr = head;
+        
+        vector<ListNode*> res;
+        
+        while(curr){
+            size++;
+            curr=curr->next;
+        }
+        
+        int tsize = size/k;
+        int mod = size%k;
+        
+        curr = head;
+        
+        while(curr && res.size()<=k){
+            int currsize;
+            if(mod == 0)
+                currsize = tsize;
+            else{
+                currsize = tsize+1;
+                mod--;
+            }
+            
+            res.push_back(curr);
+            
+            while(curr->next && --currsize){
+                curr = curr->next;
+            }
+            
+            ListNode* next = curr->next;
+            curr->next = NULL;
+            curr = next;
+        }
+
+        while(res.size()<k)
+            res.push_back(NULL);
+
+        return res;
+
+    }
+};
+
+Python
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        def getLength(head):
+            cnt = 0
+            while head != None:
+                cnt += 1
+                head = head.next
+            return cnt
+
+        listSize = getLength(head)
+        partSize, remainSize = listSize // k, listSize % k
+        ans = []
+        while head != None:
+            curPartSize = partSize
+            if remainSize > 0:
+                remainSize -= 1
+                curPartSize += 1
+
+            ans.append(head)
+            for _ in range(curPartSize - 1):  # Skip curPartSize-1 times
+                head = head.next
+
+            if head == None: break
+            head.next, head = None, head.next  # Split the current part, and go next
+
+        while len(ans) < k: ans.append(None)  # Fill to get enough k parts
+        return ans
+        
+or
+
+class Solution:
+    def splitListToParts(self, root, k):
+        cur = root
+        N = 0
+        while cur:
+            cur = cur.next
+            N += 1
+        d, r = divmod(N, k)
+
+        ans = []
+        cur = root
+        for i in range(k):
+            head = cur
+            for j in range(d + (i < r) - 1):
+                if cur: cur = cur.next
+            if cur:
+                cur.next, cur = None, cur.next
+            ans.append(head)
+        return ans
