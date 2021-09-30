@@ -1,0 +1,115 @@
+C++
+
+/*Idea:
+First, we sum up the nums to see if it's possible.
+If sum doesn't divide by k - return false.
+Then, we use typical backtracking to find all possible subsets with each sum = sum / k.
+Vector visited will help us check if we used each number exactly once.
+In Backtrack function:
+k is counting the number of subsets with sum = target. Therefor, if k == 1 we have k subsets and we return true.
+If curr_sum == target - we finished filling the current subset - call backtrack again with k = k-1 and curr_sum = 0 for the next subset.
+Then, we loop through all numbers.
+If we got to a number that we used already - visited[j], or curr_sum + nums[j] > target - continue.
+Now, we want to use the current number, so we set visited[j] = true, call backtrack with that number.
+If we got a true from backtrack, we're done - return true.
+Otherwise - change back visited[j] to false and try the next number.*/
+
+class Solution {
+public:
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        int sum = 0;
+        sum = accumulate(nums.begin(), nums.end(), sum);
+        if (nums.size() < k || sum % k) return false;
+        
+        vector<int> visited(nums.size(), false);
+        return backtrack(nums, visited, sum / k, 0, 0, k);
+    }
+    
+    bool backtrack(vector<int>& nums,vector<int>visited, int target, int curr_sum, int i, int k) {
+        if (k == 1) 
+            return true;
+        
+        if (curr_sum == target) 
+            return backtrack(nums, visited, target, 0, 0, k-1);
+        
+        for (int j = i; j < nums.size(); j++) {
+            if (visited[j] || curr_sum + nums[j] > target) continue;
+            
+            visited[j] = true;
+            if (backtrack(nums, visited, target, curr_sum + nums[j], j+1, k)) return true;
+            visited[j] = false;
+        }
+        
+        return false;
+    }
+};
+
+
+Java
+
+class Solution {
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        int sum = 0;
+        for(int num : nums){
+            sum+=num;
+        }
+        
+        if((sum%k)!=0) return false;
+        
+        int subsetSum[] = new int[k];
+        return canPartitionKSubsets(nums,0,subsetSum,k,sum);
+    }
+    
+    private boolean canPartitionKSubsets(int nums[] , int idx , int subsetSum[] , int k , int sum){
+        if(idx==nums.length){
+            int sumObtained = subsetSum[0];
+            for(int subsetIdx = 1;subsetIdx<k;subsetIdx++){
+                if(subsetSum[subsetIdx]!=sumObtained) return false;
+            }
+            return true;
+        }
+        
+        for(int subsetIdx=0;subsetIdx<k;subsetIdx++){
+            if(subsetSum[subsetIdx]>(sum/k)) return false;
+        }
+        
+        for(int subsetIdx=0;subsetIdx<k;subsetIdx++){
+            if(subsetSum[subsetIdx]==0){
+                subsetSum[subsetIdx] = nums[idx];
+                boolean canPartition = canPartitionKSubsets(nums,idx+1,subsetSum,k,sum);
+                if(canPartition) return true;
+                subsetSum[subsetIdx] = 0;
+                break;
+            }else{
+                subsetSum[subsetIdx]+= nums[idx];
+                boolean canPartition = canPartitionKSubsets(nums,idx+1,subsetSum,k,sum);
+                if(canPartition) return true;
+                subsetSum[subsetIdx]-= nums[idx];
+            }
+        }
+        
+        return false;
+    }
+}
+
+Python
+
+class Solution:
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        subsetSum = sum(nums) // k
+        if max(nums) > subsetSum: return False  # Prune since we can't divide `nums` into subsets where each sums is equal to `subsetSum`
+        n = len(nums)
+
+        @lru_cache(None)
+        def dp(mask):
+            if mask == 0: return 0
+            for i in range(n):
+                if (mask >> i) & 1:
+                    newMask = mask ^ (1 << i)
+                    remain = dp(newMask)
+                    if remain == -1: continue  # Skip case can't divide by using `newMask`
+                    if remain + nums[i] <= subsetSum:
+                        return (remain + nums[i]) % subsetSum
+            return -1
+
+        return dp((1 << n) - 1) == 0
