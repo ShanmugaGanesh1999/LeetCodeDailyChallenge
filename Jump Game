@@ -1,0 +1,37 @@
+Java
+
+class Solution {
+    public boolean canJump(int[] nums) {
+        int maxPath = 0;
+        for (int i = 0; i < nums.length - 1; ++i) {
+            maxPath = Math.max(maxPath, i + nums[i]);
+            if (maxPath < i + 1) {
+                return false;
+            } else if (maxPath >= nums.length - 1) {
+                return true;
+            }
+        }
+        return true;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    bool canJump(vector<int>& a) {
+        int i,n=a.size(),maxi=0;
+        if(n==1) return 1;
+        for(i=0;i<n;i++){
+            if(maxi>=i) maxi=max(maxi, i+a[i]);
+        }
+        return maxi>=(n-1);
+    }
+};
+
+Python
+
+class Solution:
+    def canJump(self, nums):
+        t = list(accumulate([i + num for i, num in enumerate(nums)], max))
+        return all(i != t[i] for i in range(len(t) - 1))
