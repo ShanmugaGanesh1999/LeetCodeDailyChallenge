@@ -1,0 +1,110 @@
+Java
+
+class Solution {
+    
+    //Declare instance variable for dp array
+    int dp[];
+    
+    private int  recur(int n)
+    {
+        //If n is already encountered then return directly its value, this is what memoization is!
+        if(dp[n]>0)
+            return dp[n];
+        
+        //Base condition!!
+        if(n<=1)
+            return 1;
+        
+        //Store in dp array for n distict ways for both 1 and 2 steps 
+        dp[n]=recur(n-1);
+        dp[n]+=recur(n-2);
+        
+        //Return it!!!
+        return dp[n];
+    }
+    
+    public int climbStairs(int n) {
+        
+        // Assign default values for dp array
+        dp=new int[n+1];
+        
+        // This recursion gives the distinct ways to climb!
+        return recur(n);
+    }
+}
+
+or
+
+class Solution {
+    
+    public int climbStairs(int n) {
+        
+        int dp[]=new int[n+1];
+        
+        //Assign starting elements -> 1,1
+        dp[0]=1;dp[1]=1;
+        
+        //Run loop till n and store sum of last two elements in dp[i]
+        for(int i=2;i<=n;i++)
+            dp[i]=dp[i-1]+dp[i-2];
+        
+        return dp[n];
+    }
+}
+
+or
+
+class Solution {
+    
+    public int climbStairs(int n) {
+        
+        int dp[]=new int[2];
+        
+        //Assign starting elements -> 1,1
+        dp[0]=1;dp[1]=1;
+        
+        //Run loop till n and store sum of last two elements in dp[i%2]
+        for(int i=2;i<=n;i++)
+            dp[i%2]=dp[0]+dp[1];
+        
+        return dp[n%2];
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int climbStairs(int n) {
+    
+        vector<int>dp(n+1,0);  // making a vector of size n+1(coz i am including number of ways for 0th stair as well)
+        dp[0]=1;   // number of ways to reach 0th stair is 1 only)
+        for(int i=1;i<=n;i++){   // iterating over every n(every stair)
+            for(int j=1;j<=2;j++){  // iterating over two of the previous stairs
+                if(i-j>=0){  // checking if the stair after iterating back is +ve or not, coz i can't have -ve stair(-ve index)
+                    dp[i]+=dp[i-j];  //  adding the ways of previous stairs to get the number of ways for my current stair
+                }
+            }
+        }
+        return dp[n]; // finally returning the number of ways for the nth stair
+        
+}
+};
+
+Python
+
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        steps = [0, 1, 2]
+        for i in range(3, n+1 ):
+            steps.append(steps[i-1] + steps[i-2])
+        return steps[n]
+        
+or
+
+class Solution:
+    @lru_cache
+    def climbStairs(self, n: int) -> int:
+        if n < 3:
+            return n
+        return self.climbStairs(n-1 ) + self.climbStairs(n-2)
