@@ -1,0 +1,74 @@
+C++
+
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int> res;
+        int n = nums.size();
+        
+        for (int i = 0; i < n;i++) {
+            int num = nums[i] % n;;
+            
+            if (num == 0) num = nums[i] <= n ? nums[i] : nums[i] - n;
+
+            if (nums[num-1] > n) res.push_back(num);
+            else nums[num-1] += n;
+        }
+        
+        return res;
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int> res;
+        int n = nums.size();
+        
+        for (int i = 0; i < n;i++) {
+            int num = abs(nums[i]);
+
+            if (nums[num-1] < 0) res.push_back(num);
+            else nums[num-1] *= -1;
+        }
+        
+        return res;
+    }
+};
+
+Java
+
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        final List<Integer> duplicates = new ArrayList<Integer>();
+        for(int i = 0; i < nums.length; i++) {
+            final int n = Math.abs(nums[i]);
+            if(nums[n - 1] < 0) {
+                duplicates.add(n);
+            } else {
+                nums[n - 1] *= -1;
+            }
+        }
+        return duplicates;
+    }
+}
+
+Python
+
+class Solution:
+    def findDuplicates(self, nums: List[int]) -> List[int]:
+        output = []
+        """
+            Since we have to solve this problem in constant space complexity so the only way is to use the space of given array and manipulate it.
+            Since the elements in the array are in range [1..n], we can consider the elements as idexes also and to be precise (element - 1) as it is a 0-indexed array.
+            Since we can't use any extra space so let us mark the elements encountered in the given array only. This can be done by multiplying the element with -1.
+            Now for each element, we will treat it as the index and check whether the value present at that index is visited or not. If it is visited then it is a duplicate else we mark that element as visited(multiply by -1).
+        """
+        for num in nums:
+            if nums[abs(num) - 1] < 0:
+                output.append(abs(num))
+            else:
+                nums[abs(num) - 1] *= -1
+        return output
