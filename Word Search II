@@ -1,0 +1,294 @@
+Java
+
+class Solution {
+    
+    public class TrieNode {
+        TrieNode[] next;
+        String word;
+        int refCnt;
+        public TrieNode() {
+            this.next = new TrieNode[26];   
+        }
+    }
+    int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
+    
+    TrieNode root;
+    
+    public List<String> findWords(char[][] board, String[] words) {
+        root = new TrieNode();
+        for (String word: words) {
+            buildTree(word);
+        }
+        List<String> res = new ArrayList<>();
+        int n = board.length;
+        int m = board[0].length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (root.next[board[i][j] - 'a'] != null && root.next[board[i][j] - 'a'].refCnt > 0) {
+                    dfs(board, i, j, root, res);
+                }
+            }
+        }
+        return res;
+    }
+    
+    private void dfs(char[][] board, int i, int j, TrieNode cur, List<String> res) {
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] == '@'  || cur.next[board[i][j] - 'a'] == null || cur.next[board[i][j] - 'a'].refCnt == 0) {
+            return;
+        }
+        cur = cur.next[board[i][j] - 'a'];
+        if (cur != null && cur.word != null) {
+            res.add(cur.word);
+            subtract(cur.word);
+            cur.word = null;
+        }
+
+        char temp = board[i][j];
+        board[i][j] = '@';
+        for (int[] dir: dirs) {
+            int x = i + dir[0];
+            int y = j + dir[1];
+            dfs(board, x, y, cur, res);
+        }
+        board[i][j] = temp;
+    }
+    
+    private void buildTree(String word) {
+        TrieNode cur = root;
+        for (int i = 0; i < word.length(); i++) {
+            if (cur.next[word.charAt(i) - 'a'] == null) {
+                cur.next[word.charAt(i) - 'a'] = new TrieNode();
+            }
+            cur.next[word.charAt(i) - 'a'].refCnt += 1;
+            cur = cur.next[word.charAt(i) - 'a'];
+        }
+        cur.word = word;
+    }
+    
+    private void subtract(String word) {
+        TrieNode cur = root;
+        for (int i = 0; i < word.length(); i++) {
+            if (cur == null) {
+                return;
+            }
+            if (cur.next[word.charAt(i) - 'a'] == null) {
+                return;
+            }
+            cur.next[word.charAt(i) - 'a'].refCnt -= 1;
+            if (cur.next[word.charAt(i) - 'a'].refCnt == 0) {
+                cur.next[word.charAt(i) - 'a'] = null;
+            }
+            cur = cur.next[word.charAt(i) - 'a'];
+        }
+        if (cur != null && cur.refCnt == 0) {
+            cur = null;
+        }
+    }
+}
+
+C++
+
+class Trie  
+   {
+     public:
+     Trie* child[26];
+     bool is_last ;
+     string word ;
+      Trie()
+      {
+          
+          this->is_last  = false;
+          for(int i=0;i<26;i++)
+          {
+              this->child[i] =  NULL;
+          }
+          this->word  ="";
+      }
+    void insert(string word)
+     {
+          Trie* root = this;
+         for(int i=0;i<word.length();i++)
+         {
+             int index =  word[i]-'a';
+             if(root->child[index]==NULL)
+             {
+                 root->child[index] = new Trie();
+             }
+             root = root->child[index];
+         }
+         root->is_last = true;
+        root->word  = word;
+     }
+    
+};
+
+class Solution { 
+ 
+public:
+    
+    void funnn(vector<vector<char>>& board, Trie* root, int i,int j, unordered_set<string>& ans)
+    {
+        if(root==NULL)
+            return;
+        if(root->is_last !=0)
+        {
+            ans.insert(root->word);
+            
+        }
+        char kk = board[i][j];
+        board[i][j]='-';
+        for(int l=0;l<26;l++)
+        {
+            if(root->child[l]!=NULL)
+            {
+                char cc  = 'a' + l;
+                if(i+1<board.size() && i+1>=0 && j>=0 && j<board[0].size()&& board[i+1][j] == cc)
+                   {
+                     funnn(board,root->child[l],i+1,j,ans); 
+                    }
+                if(i-1<board.size() && i-1>=0 && j>=0 && j<board[0].size()&& board[i-1][j] == cc)
+                   {
+                     funnn(board,root->child[l],i-1,j,ans); 
+                    }
+                 if(i<board.size() && i>=0 && j+1>=0 && j+1<board[0].size()&& board[i][j+1] == cc)
+                  {
+                    funnn(board,root->child[l],i,j+1,ans); 
+                  }
+                  if(i<board.size() && i>=0 && j-1>=0 && j-1<board[0].size()&& board[i][j-1] == cc)
+                   {
+                     funnn(board,root->child[l],i,j-1,ans); 
+                   }            
+            }
+        }
+        board[i][j] = kk;
+    }
+
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) 
+    {
+        unordered_set<string>ans;
+        Trie t;
+        for(auto it: words)
+        {
+            t.insert(it);  
+        }    
+        for(int i=0;i<26;i++)
+        {
+            if(t.child[i]!=0)
+            {      
+                char aa = 'a' + i;
+                Trie* ptr  = t.child[i];
+                if(ptr!=0)
+                {
+                for(int k=0;k<board.size();k++)
+                {
+                    for(int j=0;j<board[0].size();j++)
+                    {
+                        if(board[k][j]==aa)
+                        {
+                            funnn(board, ptr, k,j, ans);
+                        }      
+                    }
+                 }
+                }   
+            }
+        }
+
+        vector<string>lll ;
+        unordered_set<string>::iterator itr;
+       for (itr = ans.begin(); itr != ans.end(); itr++)
+        {
+           lll.push_back(*itr);
+        }
+        return lll;
+    }
+};
+
+Python
+
+class TrieNode(object):
+        def __init__(self, char):
+            self.char = char
+            self.isWord = False
+            self.children = {}
+
+        def addNode(self, char, node):
+            self.children[char] = node
+
+class Trie:
+
+    def __init__(self):
+        self.root = TrieNode('0')
+
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for c in word:
+            if c not in cur.children:
+                child = TrieNode(c)
+                cur.addNode(c, child)
+            cur = cur.children[c]
+        cur.isWord = True
+
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for c in word:
+            if c not in cur.children:
+                return False
+            cur = cur.children[c]
+        return cur.isWord
+
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for c in prefix:
+            if c not in cur.children:
+                return False
+            cur = cur.children[c]
+        return True
+    
+    def eraseWord(self, ind, word, cur):
+        if ind == len(word):
+            cur.isWord = False
+            if len(cur.children) == 0:
+                return True
+            return False
+        
+        canErase = self.eraseWord(ind+1, word, cur.children[word[ind]])
+        if canErase:
+            cur.children.pop(word[ind])
+        
+        return len(cur.children) == 0
+            
+        
+    
+class Solution:
+    
+    def getWords(self, x, y, cur, board, vis, word):
+        
+        if cur.isWord:
+            w = "".join(word)
+            self.wordsPresent.append(w)
+            self.trieOb.eraseWord(0, word, self.trieOb.root)
+            
+        vis[x][y] = 1
+        for nx, ny in [(x+1, y), (x-1, y), (x, y+1), (x, y-1)]:
+            if nx >= 0 and nx < self.m and ny >= 0 and ny < self.n and vis[nx][ny] == 0:
+                nxc = board[nx][ny]
+                if nxc in cur.children:
+                    word.append(nxc)
+                    self.getWords(nx, ny, cur.children[nxc], board, vis, word)
+                    word.pop()
+        vis[x][y] = 0
+        
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        self.m, self.n = len(board), len(board[0])
+        self.trieOb = Trie()
+        for w in words:
+            self.trieOb.insert(w)
+        
+        self.wordsPresent = []
+        vis = [[0 for _ in range(self.n)] for _ in range(self.m)]
+        for x in range(self.m):
+            for y in range(self.n):
+                c = board[x][y]
+                if c in self.trieOb.root.children:
+                    self.getWords(x, y, self.trieOb.root.children[c], board, vis, [c])
+        return self.wordsPresent
