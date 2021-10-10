@@ -1,0 +1,53 @@
+C++
+
+class Solution {
+public:
+    int rangeBitwiseAnd(int left, int right) {
+        int shift_count = 0;
+        while (left != right) {
+            // since left is not the same as right, the least significant digits must vary thus cleared.
+            shift_count++;
+            left /= 2;
+            right /= 2;
+        }
+        return left << shift_count;
+    }
+};
+
+Java
+
+// 1.  keep track, either these two number num1 and num2 are same or not, if not same right shift both
+//      by 1, to delete LSB(less significant bit). also maintain the count variable to maintain a counter that
+// 	 for how many times you have right shifted those numbers to check how many MSB are common
+// 	 to them
+
+// 2.  now you have bits that are common to both numbers so their & opertion  will be same as number
+//     so to make the & operation for each number in the range just append the 0 last of any number
+// 	(num1 or num2) by  count number of times, because count number of bits have been flipped in
+// 	the range num1 and  num2, and this final result will give you the & operation result from num1 to
+// 	num2 range
+
+class Solution {
+    public int rangeBitwiseAnd(int left, int right) {
+        
+        int count = 0;
+        while(left!=right){
+            left>>=1;
+            right>>=1;
+            count = count + 1;
+        }
+        
+        return left<<=count;
+    }
+}
+
+Python
+
+class Solution:
+    def rangeBitwiseAnd(self, left: int, right: int) -> int:
+        count=0
+        while(left<right):
+            left=left>>1
+            right=right>>1
+            count=count+1
+        return left<<count
