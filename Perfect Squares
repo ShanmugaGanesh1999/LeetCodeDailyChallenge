@@ -1,0 +1,118 @@
+C++
+
+class Solution {
+public:
+    int numSquares(int n) {
+        //vector for updating the dp array/values
+        vector<int> dp(n+1,INT_MAX);
+        //base case
+        dp[0]=0;
+        int count = 1;
+        while(count*count <= n) {
+        int sq = count*count;
+        for(int i = sq; i < n+1; i++) {
+            dp[i] = min(dp[i-sq] + 1,dp[i]);
+        }
+        count++;
+    }
+    return dp[n];
+    }
+};
+
+Java
+
+class Solution {
+    public int numSquares(int n) {
+        int dp[] = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        
+        dp[0] = 0;
+        
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i], 1 + dp[i - j * j]);
+            }
+        }
+        
+        return dp[n];
+    }
+}
+
+or
+
+class Solution {
+    public int numSquares(int n) {
+	    // Compute all the squares which is less than or equal to n
+        List<Integer> squares = new ArrayList<>();
+        for(int j = 1; j * j <= n; j++) {
+            squares.add(j * j);
+        }
+        
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(0);
+        Set<Integer> set = new HashSet<>();
+        
+        int count = 1, N = squares.size();
+        while(queue.size() > 0) {
+            int size = queue.size();
+            while(size-- > 0) {
+                int num = queue.remove();
+                for(int i = N - 1; i >= 0; i--) {
+                    int newNum = num + squares.get(i);
+                    if(newNum == n)
+                        return count;
+                    if(!set.contains(newNum)) {
+                        set.add(newNum);
+                        queue.add(newNum);
+                    }
+                }
+            }
+            count++;
+        }
+        return -1;
+    }
+}
+
+Python
+
+class Solution:
+    def numSquares(self, n: int) -> int:
+        dp = [n] * (n + 1)
+        dp[0] = 0
+        for i in range(1, n + 1):
+            for s in range(1, i + 1):
+                square = s * s
+                if i - square < 0:
+                    break
+                if 1 + dp[i - square] < dp[i]:
+                    dp[i] = 1 + dp[i - square]
+        return dp[n]
+        
+or
+
+class Solution:
+    def numSquares(self, n: int) -> int:
+        squres = [x*x for x in range(1, int(n**0.5)+1)]
+        dp = [n]*(n+1)
+        dp[0] = 0
+        for i in range(1,n+1):
+            for s in squres:
+                if s>i: 
+                    break
+                dp[i] = min(dp[i], dp[i-s] + 1)
+        return dp[n]
+        
+or
+
+class Solution:
+    def numSquares(self, n: int) -> int:
+        squres = [x*x for x in range(1,int(n**0.5)+1)]
+        dp = [n]*(n+1)
+        dp[0] = 0
+        for i in range(1,n+1):
+            for s in squres:
+                if s>i: 
+                    break
+                if 1 + dp[i - s] < dp[i]:
+                    dp[i] = 1 + dp[i - s]
+        return dp[n]
