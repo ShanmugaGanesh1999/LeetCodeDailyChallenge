@@ -1,0 +1,66 @@
+Java
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        return helper(prices, 0, false, new HashMap<>());
+    }
+    
+    private int helper(int[] prices, int idx, boolean holdingStock, Map<String, Integer> cache) {
+        if (idx >= prices.length) return 0;
+        String key = holdingStock + " " + idx;
+        if (cache.containsKey(key)) return cache.get(key);
+        int res;
+        if (holdingStock) {
+            // either sell or keep
+            int keep = helper(prices, idx + 1, true, cache);
+            int sell = prices[idx] + helper(prices, idx + 2, false, cache);
+            res = Math.max(keep, sell);
+        } else {
+            // either buy or wait
+            int wait = helper(prices, idx + 1, false, cache);
+            int buy =  helper(prices, idx + 1, true, cache) - prices[idx];
+            res = Math.max(wait, buy);
+        }
+        
+        cache.put(key, res);
+        return res;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int buy = -prices[0]-1;
+        int sell[2] = {0};
+        
+        for(auto v: prices) {
+            int prev = buy;  /* Saves buy before updating it */
+            
+            buy = max(sell[0] - v, buy);    
+            sell[0] = max(prev + v, sell[1]); /* Either sell using the stocks we had prior to buying at the current step or do nothing */
+			
+            swap(sell[0], sell[1]);
+        }
+        
+        return max(sell[1], buy);        
+    }
+};
+
+Python
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        
+        #dp[day][0] = max profit could have if we don't own stock at end of day
+        #dp[day][1] = max profit could have if we own stock at end of day
+        #dp[day][2] = max profit could have if we are in cooldown at end of day
+        dp = [[0 for _ in range(3)] for _ in range(len(prices))]
+        dp[0][1] -= prices[0]
+        for i in range(1, len(prices)):
+            dp[i][0] = max(dp[i-1][0], dp[i-1][2])
+            dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
+            dp[i][2] = dp[i-1][1] + prices[i]
+
+        return max(dp[-1])
