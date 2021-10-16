@@ -1,0 +1,76 @@
+Java
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int N = prices.length;
+        
+        int T[][] = new int[3][N];
+        
+        for(int i = 1; i < 3; i++) {
+            for(int j = 1; j < N; j++) {
+                for(int k = 0; k < j; k++) {
+                    T[i][j] = Math.max(T[i][j], prices[j] + T[i-1][k] - prices[k]);
+                }
+                T[i][j] = Math.max(T[i][j], T[i][j-1]);
+            }
+        }
+        
+        return T[2][N-1];
+    }
+}
+
+or
+
+// Time Complexity: O(n)
+// Space Complexity: O(n)
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int N = prices.length;
+        int T[][] = new int[3][N];
+        
+        for(int i = 1; i <= 2; i++) {
+            int maxDiff = T[i-1][0] - prices[0];
+            for(int j = 1; j < N; j++) {
+                T[i][j] = Math.max(T[i][j-1], prices[j] + maxDiff);
+                maxDiff = Math.max(maxDiff, T[i-1][j] - prices[j]);
+            }
+        }
+        
+        return T[2][N-1];
+    }
+}
+
+C++
+
+class Solution
+{
+public:
+    int maxProfit(vector<int> &prices)
+    {
+        int hold_1 = INT_MIN;
+        int hold_2 = INT_MIN;
+        int cont_1 = 0;
+        int cont_2 = 0;
+
+        for (auto i : prices)
+        {
+            cont_2 = max(cont_2, hold_2 + i);
+            hold_2 = max(hold_2, cont_1 - i);
+
+            cont_1 = max(cont_1, hold_1 + i);
+            hold_1 = max(hold_1, -i);
+        }
+        return cont_2;
+    }
+};
+
+Python
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        s0 = 0
+        h1 = s1 = h2 = s2 = float('-inf')
+        for p in prices:
+            h1, s1, h2, s2 = max(h1, s0 - p), max(s1, h1 + p), max(h2, s1 - p), max(s2, h2 + p)
+        return max(s0, s1, s2)
