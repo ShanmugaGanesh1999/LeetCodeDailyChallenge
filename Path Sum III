@@ -1,0 +1,104 @@
+C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void dfs(TreeNode* root, int target, int prev_sum) {
+        if (!root) return;
+        prev_sum += root->val;
+        
+        res += prefix[prev_sum - target];
+        
+        prefix[prev_sum]++;
+        
+        dfs(root->left, target, prev_sum);
+        dfs(root->right, target, prev_sum);
+        
+        prefix[prev_sum]--;
+    }
+    
+    int pathSum(TreeNode* root, int targetSum) {
+        prefix[0]++;
+        dfs(root, targetSum, 0);
+        return res;
+    }
+    
+private:
+    unordered_map<int, int> prefix;
+    int res = 0;
+};
+
+Java
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int pathSum(TreeNode root, int targetSum) {
+        if(root == null)
+            return 0;
+        
+        return pathSum(root.left, targetSum) + pathSum(root.right, targetSum) + helper(root, 0, targetSum);
+    }
+    
+    int helper(TreeNode root, int current, int target) {
+        if(root == null)
+            return 0;
+        
+        current += root.val;
+        
+        return (current == target ? 1 : 0) + helper(root.left, current, target) + helper(root.right, current, target);
+    }
+}
+
+Python
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        prefix = defaultdict(int)
+        prefix[0] = 1
+        self.res = 0
+        
+        def dfs(root:TreeNode, target:int, prev_sum:int):
+            if not root:
+                return
+            
+            prev_sum += root.val
+            self.res += prefix[prev_sum - target]
+            prefix[prev_sum] += 1
+            
+            dfs(root.left, target, prev_sum)
+            dfs(root.right, target, prev_sum)
+            
+            prefix[prev_sum] -= 1
+            
+        dfs(root, sum, 0)
+        return self.res
