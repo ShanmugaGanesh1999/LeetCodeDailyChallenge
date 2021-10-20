@@ -1,0 +1,119 @@
+Java
+
+class Solution {
+    public String reverseWords(String s) {
+        StringBuilder result = new StringBuilder();
+        StringBuilder current = new StringBuilder();
+        int N = s.length();
+        
+        for(int i = N - 1; i >= 0; i--) {
+            current.setLength(0);
+            while(i >= 0 && s.charAt(i) != ' ') {
+                current.append(s.charAt(i));
+                i--;
+            }
+            if(current.length() > 0) {
+                result.append(result.length() == 0 ? "": " ");
+                result.append(current.reverse().toString());
+            }
+        }
+        
+        return result.toString();
+    }
+}
+
+or
+
+class Solution {
+    public String reverseWords(String s) {
+        String result = "";
+        String current = "";
+        int N = s.length();
+        
+        for(int i = N - 1; i >= 0; i--) {
+            current = "";
+            while(i >= 0 && s.charAt(i) != ' ') {
+                current = s.charAt(i) + current;
+                i--;
+            }
+            if(current.length() > 0) {
+                result += (result.length() == 0 ? "": " ") + current;
+            }
+        }
+        
+        return result;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    void removespace(string &s){    // in O(1) space removed all spaces
+        int n=s.length();
+        if(n==0)return ;
+        
+        int i=0,j=n-1,k=0;
+        while(i<n && s[i]==' '){
+            i++;
+        }
+        while(j>=0 && s[j]==' '){
+            j--;
+        }
+
+        for(int t=i;t<=j;t++){
+            
+            if(isalnum(s[t])){
+                s[k++]=s[t];
+            }
+            else{
+                s[k++]=s[t];
+                while(t+1<=j && s[t+1]==' '){
+                    t++;
+                }
+            }
+        }
+       
+       s.erase(k,n-k) ;
+          
+    }
+    
+    void reverse(string &s,int x,int y){
+        
+        int i=x,j=y;
+        while(i<j){
+            swap(s[i],s[j]);
+            i++;j--;    
+        }   
+    }
+    
+    string reverseWords(string s) {
+        
+        removespace(s);        //remove extra spaces
+        
+        int n=s.length();
+        int i=0,j=n-1;
+        
+        reverse(s,i,j);        //reverse whole string 
+        
+      
+        while(i<n){            //now reverse each word of string 
+            
+            int j=i;
+            while(j<n && s[j]!=' '){
+                j++;
+            }
+            reverse(s,i,j-1);
+            i=j+1;
+        }
+        
+        return s;       //finally return ans O(1) Space. Good luck.
+     }
+    
+};
+
+Python
+
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        return ' '.join(reversed(s.split()))
