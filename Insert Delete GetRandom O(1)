@@ -1,0 +1,121 @@
+C++
+
+class RandomizedSet {
+public:
+    unordered_map<int, int> mapVal2Idx;
+    vector<int> list;
+    
+    bool insert(int val) {
+        if (mapVal2Idx.count(val)) return false;
+        mapVal2Idx[val] = list.size();
+        list.push_back(val);
+        return true;
+    }
+    
+    bool remove(int val) {
+        if (!mapVal2Idx.count(val)) return false;
+        int todoRemoveIdx = mapVal2Idx[val];
+        mapVal2Idx.erase(val);
+        if (todoRemoveIdx < list.size() - 1) { // if we can replace with last value
+            int lastVal = list[list.size() - 1];
+            list[todoRemoveIdx] = lastVal;
+            mapVal2Idx[lastVal] = todoRemoveIdx;
+        }
+        list.pop_back();
+        return true;
+    }
+    
+    int getRandom() {
+        return list[rand() % list.size()];
+    }
+};
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet* obj = new RandomizedSet();
+ * bool param_1 = obj->insert(val);
+ * bool param_2 = obj->remove(val);
+ * int param_3 = obj->getRandom();
+ */
+ 
+ Java
+ 
+ import java.util.concurrent.ThreadLocalRandom;
+
+
+
+class RandomizedSet {
+    List<Integer> set;
+    HashMap<Integer,Integer> map;
+    int i;
+    public RandomizedSet() {
+        i=0;
+     set=new ArrayList<>();
+     map=new HashMap<>();
+    }
+    
+    public boolean insert(int val) {
+        if(!map.containsKey(val))
+         {set.add(val);
+         map.put(val,i++);
+         return true;}
+        return false;
+    }
+    
+    public boolean remove(int val) {
+        if(map.containsKey(val))
+        {
+            int lastElement=set.get(set.size()-1);
+            set.set(map.get(val),lastElement);
+            map.put(lastElement,map.get(val));
+            map.remove(val);
+            set.remove(set.size()-1);
+            i--;
+            return true;
+        }
+        return false;
+    }
+    
+    public int getRandom() {
+        int index=ThreadLocalRandom.current().nextInt(0,set.size());
+        return set.get(index);
+    }
+}
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet obj = new RandomizedSet();
+ * boolean param_1 = obj.insert(val);
+ * boolean param_2 = obj.remove(val);
+ * int param_3 = obj.getRandom();
+ */
+ 
+ Python
+ 
+ class RandomizedSet:
+    def __init__(self):
+        self.randomizedSet = {}
+        
+    def insert(self, val: int) -> bool:
+        present = self.randomizedSet.get(val)    
+        if present is None:
+            self.randomizedSet[val] = True
+            return True
+        return False
+    
+
+    def remove(self, val: int) -> bool:
+        present = self.randomizedSet.get(val)
+        if present is not None:
+            del self.randomizedSet[val]
+            return True
+        return False
+
+    def getRandom(self) -> int:
+        return random.choice(list(self.randomizedSet))
+
+
+# Your RandomizedSet object will be instantiated and called as such:
+# obj = RandomizedSet()
+# param_1 = obj.insert(val)
+# param_2 = obj.remove(val)
+# param_3 = obj.getRandom()
