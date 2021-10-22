@@ -1,0 +1,52 @@
+C++
+
+class Solution {
+public:
+    string frequencySort(string s) 
+{
+	unordered_map<char,int> m1;
+	multimap<int,char,greater<int>> m2;
+
+	int i,j=0;
+	for(i=0;i<s.size();i++)
+		m1[s[i]]++;
+	for(auto it=m1.begin();it!=m1.end();it++)
+		m2.insert({it->second,it->first});
+	for(auto jt=m2.begin();jt!=m2.end();jt++)
+	{
+		for(i=0;i<jt->first;i++)
+			s[j++]=jt->second;
+	}
+	return s;
+}
+};
+
+Java
+
+class Solution {
+    public String frequencySort(String s) {
+        int[] f = new int[128];
+        for(char c : s.toCharArray())
+            f[c]++;
+        
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[1] - a[1]);
+        for(int i = 0; i < f.length; i++)
+            pq.offer(new int[] {i, f[i]});
+        
+        StringBuilder sb = new StringBuilder();
+        while(pq.peek()[1] != 0) {
+            int[] pair = pq.poll();
+            int count = pair[1];
+            while(count-- > 0)
+                sb.append((char) pair[0]);
+        }
+        
+        return sb.toString();
+    }
+}
+
+Python
+
+class Solution:
+    def frequencySort(self, s: str) -> str:
+        return reduce(lambda a, b: a + b[1]*b[0], Counter(s).most_common(), '')
