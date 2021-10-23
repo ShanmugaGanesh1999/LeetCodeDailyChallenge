@@ -1,0 +1,84 @@
+Java
+
+class Solution {
+    public int findMin(int[] nums) {
+        int lo = 0, hi = nums.length - 1;
+        
+        if (nums[lo] < nums[hi]) return nums[lo];
+        
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            
+            if (nums[mid] > nums[hi]) {
+                lo = mid + 1;
+            } else if (nums[mid] < nums[hi]) {
+                hi = mid;
+            } else {
+                hi--;
+            }
+        }
+        
+        return nums[hi];
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int solve(vector<int>&nums,int l,int r){
+		if(l==r-1||l==r)
+			return min(nums[l],nums[r]);
+
+		int mid = l+(r-l)/2; // finding middle
+		
+		return min(solve(nums,l,mid),solve(nums,mid,r)); //return min element in both side;
+	}
+    int findMin(vector<int>& nums) {
+        return solve(nums,0,nums.size()-1);   
+    }
+};
+
+or
+
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        return *min_element(nums.begin(),nums.end());
+    }
+};
+
+or
+
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        
+        int l = 0, r = nums.size()-1;
+        
+        if(nums[l]<nums[r]) // already sorted (0 rotation)
+            return nums[0]; // return first element
+    
+        while(l<r)
+        {
+            int mid = l + (r-l)/2; // finding middle
+            
+            if(nums[mid]>nums[r]){
+                l = mid + 1;
+            }
+            else if(nums[l]>nums[mid]){
+                r = mid;
+            }
+            else{
+                r--; //overcome duplicate elements
+            }
+        }
+        return nums[r];   
+    }
+};
+
+Python
+
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        return min(nums)
