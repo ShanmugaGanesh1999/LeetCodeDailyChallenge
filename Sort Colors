@@ -1,0 +1,116 @@
+C++
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+    int zero=0,one=0,two=0;
+    
+    for(int i=0;i<nums.size();i++){
+       //count 0s,1s and 2s 
+        if(nums[i]==0){
+            zero++;
+        }else if(nums[i]==1)
+        {
+            one++;
+        }else{
+            two++;
+        }
+        
+    }
+    //final filling
+    int i=0;
+    while(zero){
+        nums[i++]=0;
+        zero--;
+    }
+    
+    while(one){
+        nums[i++]=1;
+        one--;
+    }
+    
+    while(two){
+        nums[i++]=2;
+        two--;
+    }
+}
+};
+
+or
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        //pointers initailization.
+        int zero = 0,one = 0,two =nums.size()-1;
+        //move pointer two in reverse order
+        
+        while(one<=two){
+            
+            if(nums[two]==2){//means '2' is in correct place, so moving to previous element
+                two--;
+            }
+            else if(nums[two]==1){//swaping element with pointer one
+                nums[two]=nums[one];
+                nums[one] = 1;
+                one++;
+            }
+            else{//swaping element with pointer zero
+                nums[two] = nums[zero];
+                nums[zero]=0;
+                
+                if(zero==one)//when no ones encounter, zero and one will be same, so increasing one pointer when zero pointer is increasing.
+                    one++;
+                zero++;
+            } 
+        }
+    }
+};
+
+Java
+
+class Solution {
+    public void sortColors(int[] nums) {
+        
+        int i=0,j=nums.length-1,k;
+        for(k=0;k<=j;k++) {
+            if(nums[k]==0) {
+                nums[k]=nums[i];
+                nums[i]=0;
+                i++;
+            }
+            else if(nums[k]==2) {
+                nums[k]=nums[j];
+                nums[j]=2;
+                j--; k--;                  //k-- becuase nums[k] may contains 0
+            }
+        }
+    }
+}
+
+Python
+
+# nums[:lo] has 0s
+# nums[lo:mid+1] unknown
+# nums[mid+1:hi+1] has 1s
+# nums[hi+1:] has 2s
+#
+#  0  0  0  ?  ?  ?  ?  1  1  1  2  2  2  2  2
+#           lo      mid       hi
+class Solution:
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        lo = 0
+        mid = hi = len(nums) - 1
+        while lo <= mid:
+            if   nums[mid] == 0:
+                nums[lo], nums[mid] = nums[mid], nums[lo]
+                lo += 1
+            elif nums[mid] == 1:
+                mid -= 1
+            elif nums[mid] == 2:
+                nums[mid], nums[hi] = nums[hi], nums[mid]
+                mid -= 1
+                hi -= 1
