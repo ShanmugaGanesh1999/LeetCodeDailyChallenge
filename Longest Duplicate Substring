@@ -1,0 +1,123 @@
+C++
+
+class Solution {
+public:
+    string longestDupSubstring(string s) {
+        
+		// map to store the indices of each character
+        unordered_map<char, vector<int>> hash;
+        int n = s.length();
+        
+        for(int i=0; i<n; i++)
+            hash[s[i]].push_back(i);
+        
+        int Max = 0, index = -1;
+        
+        for(int i=0; i<n; i++)
+        {
+            char f = s[i];
+            hash[f].erase(hash[f].begin());
+            
+			// erasing the current index and checking longest substring possible
+            for(int it : hash[f])
+            {
+                int j = 0;
+                
+                while(i+j < n and it+j < n and s[i+j] == s[it+j])
+                    j++;
+                
+                if(j > Max)
+                {
+                    Max = j;
+                    index = i;
+                }
+                
+				// this is required when we achieved the longest substring possible 
+                if(Max == n-i-1)
+                    return s.substr(index, Max);
+            }
+        }
+        
+        if(Max == 0)
+            return "";
+        
+        else
+            return s.substr(index, Max);
+    }
+};
+
+Java
+
+class Solution {
+    public String longestDupSubstring(String s) {
+    	int n = s.length(), left = 0, right = n - 1;
+    	String ans = "";
+    	while (left <= right) {   // binary search
+    		int mid = left + (right - left) / 2;  // the length of the searching string is mid + 1
+    		long hash = s.charAt(0), pow = 1;
+    		for (int i = 1; i <= mid; i++) {  // generate the hash of the first string, and the power of the first letter
+    			hash = hash * 31 + s.charAt(i);  // the minimum prime can be used is 29 
+    			pow *= 31;
+    		}
+    		java.util.Set<Long> set = new java.util.HashSet<>();  // define the set to check dup
+    		set.add(hash);
+    		boolean found = false;
+    		for (int i = 1; i + mid < n; i++) {
+    			hash = (hash - s.charAt(i - 1) * pow) * 31 + s.charAt(i + mid); // calculate new hash
+    			if (!set.add(hash)) {  // check if dup string found
+    				found = true;
+    				ans = s.substring(i, i + mid + 1);
+    				break;
+    			}
+    		}
+    		if (found)
+    			left = mid + 1;
+    		else
+    			right = mid - 1;
+    	}
+    	return ans;
+    }
+}
+
+Python
+
+class Solution:
+    def longestDupSubstring(self, s: str) -> str:
+        
+        # Hint 2: To check whether an answer of length K exists, we can use Rabin-Karp 's algorithm.
+        def RabinKarp(text, L):
+            assert L>0
+                
+            q = (1<<31) - 1
+            h, t, d = (1<<(8*L-8))%q, 0, 256
+            dic = defaultdict(list)
+
+            for i in range(L): 
+                t = (d * t + ord(text[i]))% q
+
+            dic[t].append(i-L+1)
+
+            for i in range(len(text) - L):
+                t = (d*(t-ord(text[i])*h) + ord(text[i + L]))% q
+                for j in dic[t]:
+                    if text[i+1:i+L+1] == text[j:j+L]:
+                        return text[j:j+L]
+                dic[t].append(i+1)
+            return None
+        
+        rst=""
+        
+        # Hint 1: Binary search for the length of the answer.
+        l , h = 1, len(s)-1
+        while l <= h: 
+            m = l + (h-l)//2 
+            dup = RabinKarp(s, m)
+            
+            print(l,h,m,dup)
+            if dup: # if have a duplicate we ask more, search the upper half without the middle
+                l=m+1
+                rst=dup
+            else:   # search the lower half without the middle
+                h=m-1
+            print("--", l,m,h, dup)
+        return rst
