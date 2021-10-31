@@ -1,0 +1,125 @@
+C++
+
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
+};
+*/
+
+class Solution {
+public:
+    Node* flatten(Node* head) {
+        Node *ptr = head, *tmp_next, *runner;
+        
+        while (ptr) {
+            if (ptr->child) {
+                
+                // Save the current next and connect the child to next
+                tmp_next = ptr->next;
+                ptr->next = ptr->child;
+                ptr->next->prev = ptr;
+                ptr->child = NULL;
+                
+                // Run till the end of the current list and connect last node to saved next
+                runner = ptr->next;
+                while (runner->next) runner = runner->next;
+                runner->next = tmp_next;
+                if (runner->next) runner->next->prev = runner;
+            }
+            
+            ptr = ptr->next;
+        }
+        
+        return head;
+    }
+};
+
+Java
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node prev;
+    public Node next;
+    public Node child;
+};
+*/
+
+class Solution {
+   public Node flatten(Node head) {
+        Node temp = head ;
+        Node prev = null ;
+        Node next = null ;
+        Node child = null ;
+        Stack<Node> s = new Stack<Node>();
+        while( temp != null || !s.isEmpty()){
+            if(temp == null){
+                next = s.pop();
+                next.prev = prev ;
+                prev.next = next ;
+                temp = next ;
+                
+            }
+            if(temp.child != null){
+                child = temp.child ;
+                temp.child = null ;
+                prev = temp;
+                if(temp.next !=null){
+                    temp.next.prev = null; 
+                    s.push(temp.next);
+                }
+                temp.next = child ;
+                child.prev = temp ;
+                temp = child ;
+            }
+            else if(temp.child == null){
+                prev = temp ;
+                temp = temp.next ;
+            }
+        }
+        return head ;
+    }
+}
+
+Python
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val, prev, next, child):
+        self.val = val
+        self.prev = prev
+        self.next = next
+        self.child = child
+"""
+
+class Solution:
+    def flatten(self, head: 'Node') -> 'Node':
+        def getTail(node):
+            prev = None
+            while node:
+                _next = node.next
+                if node.child:
+					# ... <-> node <-> node.child <-> ...
+                    node.next = node.child
+                    node.child = None
+                    node.next.prev = node
+					# get the end node of the node.child list
+                    prev = getTail(node.next)
+                    if _next:
+						# ... <-> prev (end node) <-> _next (originally node.next) <-> ...
+                        _next.prev = prev
+                        prev.next = _next
+                else:
+                    prev = node
+                node = _next  # loop through the list of nodes
+            return prev  # return end node
+        
+        getTail(head)
+        return head
