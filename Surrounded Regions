@@ -1,0 +1,208 @@
+Java
+
+class Solution {
+    public void solve(char[][] board) {
+        // Base condition
+        if(board.length == 0) return;
+        // 1st Loop : Traversing over top column & bottom column, to find any 'O' present by the boundary
+        for(int i = 0; i < board[0].length; i++){
+            if(board[0][i] == 'O'){
+                DFS(board, 0, i);
+            }
+            if(board[board.length - 1][i] == 'O'){
+                DFS(board, board.length - 1, i);
+            }
+        }
+        // 2nd Loop : Traversing over left row & right row, to find any 'O' present by the boundary
+        for(int i = 0; i < board.length; i++){
+            if(board[i][0] == 'O'){
+                DFS(board, i, 0);
+            }
+            if(board[i][board[0].length - 1] == 'O'){
+                DFS(board, i, board[0].length - 1);
+            }
+        }
+        // 3rd Loop : Now in this we will traverse on each n every node & check if they are 'O' convert into 'X', if they are '@' convert into 'O'
+        for(int i = 0; i < board.length; i++){
+            for(int j = 0; j < board[0].length; j++){
+                if(board[i][j] == 'O'){
+                    board[i][j] = 'X';
+                }
+                else if(board[i][j] == '@'){
+                    board[i][j] = 'O';
+                }
+            }
+        }
+        return;
+    }
+    // This calls helps in convert the 'O' node present near by the boundary convert them into '@'
+    public void DFS(char[][] board, int i, int j){
+        if(i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != 'O'){
+            return;
+        }
+        board[i][j] = '@';
+        DFS(board, i + 1, j);
+        DFS(board, i - 1, j);
+        DFS(board, i, j + 1);
+        DFS(board, i, j - 1);
+    }
+}
+
+C++
+
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) {
+        n = board.size();
+        m = board[0].size();
+        
+        // If board have less than 3 size in any direction: nothing to do, because all cells located on borders
+        if (n < 3 || m < 3) {
+            return;
+        }
+        boardPtr = &board;        
+        
+        // Go and check left and right borders of the board
+        for (auto row = 0; row < n; ++row) {
+            if (board[row][0] == 'O') {
+                dfs(row, 0);
+            }
+            if (board[row][m - 1] == 'O') {
+                dfs(row, m - 1);
+            }
+        }
+        // Same for check up and down borders of the board
+        // Since corners (0,0) and (n - 1, m - 1) where checked in previous cycle, skip them in this one
+        for (auto col = 1; col < m - 1; ++col) {
+            if (board[0][col] == 'O') {
+                dfs(0, col);
+            }
+            if (board[n - 1][col] == 'O') {
+                dfs(n - 1, col);
+            }
+        }
+        
+        // Follow through the whole board and flip all 'R' cells back into 'O' and all 'O' cell to 'X'
+        // since they're unreacheable from the board located 'O' cell if any
+        for (auto row = 0; row < n; ++row) {
+            for (auto col = 0; col < m; ++col) {
+                if (board[row][col] == 'O') {
+                    board[row][col] = 'X';
+                }
+                else if (board[row][col] == 'R') {
+                    board[row][col] = 'O';
+                }
+            }
+        }
+    }
+
+private:
+    // DFS to look for the next 'O' cell upper, lower, to the right and to the left of current coordinates
+    // If 'O' cell is found, recursevly mark this cell as 'R' which is mean REACHED
+    void dfs(int row, int col) {
+        boardPtr->at(row)[col] = 'R';
+        if (row > 0 && boardPtr->at(row - 1)[col] == 'O') {
+            dfs(row - 1, col);
+        }
+        if (row < n - 1 && boardPtr->at(row + 1)[col] == 'O') {
+            dfs(row + 1, col);
+        }
+        if (col > 0 && boardPtr->at(row)[col - 1] == 'O') {
+            dfs(row, col - 1);
+        }
+        if (col < m - 1 && boardPtr->at(row)[col + 1] == 'O') {
+            dfs(row, col + 1);
+        }
+    }
+    
+private:
+    vector<vector<char>>* boardPtr;
+    int n;
+    int m;
+};
+
+Python
+
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        rows = len(board)
+        cols = len(board[0])
+        
+        def dfs(row, col):
+            board[row][col] = "Z"
+            for dr, dc in (-1, 0), (0, 1), (1, 0), (0, -1):
+                nr, nc = row + dr, col + dc
+                if nr < 0 or nr >= rows or nc < 0 or nc >= cols or board[nr][nc] != 'O':
+                    continue
+                dfs(nr, nc)
+
+        def flip():
+            for row in range(rows):
+                for col in range(cols):
+                    if board[row][col] == "Z":
+                        board[row][col] = "O"
+                    elif board[row][col] == "O":
+                        board[row][col] = "X"
+
+        for row in [0, rows - 1]:
+            for col in range(cols):
+                if board[row][col] == 'O':
+                    dfs(row, col)
+
+        for col in [0, cols - 1]:
+            for row in range(1, rows - 1):
+                if board[row][col] == 'O':
+                    dfs(row, col)
+
+        flip()
+        
+or
+
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        n = len(board)
+        m = len(board[0])
+        
+        # If board have less than 3 size in any direction: nothing to do, because all cells located on borders
+        if n < 3 or m < 3:            
+            return
+        
+        # DFS to look for the next 'O' cell upper, lower, to the right and to the left of current coordinates
+        # If 'O' cell is found, recursevly mark this cell as 'R' which is mean REACHED
+        def dfs(row: int, col: int) -> None:
+            board[row][col] = 'R'
+            if row > 0 and board[row - 1][col] == 'O':
+                dfs(row - 1, col)
+            if row < n - 1 and board[row + 1][col] == 'O':
+                dfs(row + 1, col)
+            if col > 0 and board[row][col - 1] == 'O':
+                dfs(row, col - 1)
+            if col < m - 1 and board[row][col + 1] == 'O':
+                dfs(row, col + 1)
+        
+        # Go and check left and right borders of the board
+        for row in range(n):
+            if board[row][0] == 'O':
+                dfs(row, 0)
+            if board[row][m - 1] == 'O':
+                dfs(row, m - 1)
+        
+        # Same for check up and down borders of the board
+        # Since corners (0,0) and (n - 1, m - 1) where checked in previous cycle, skip them in this one
+        for col in range(1, m - 1):
+            if board[0][col] == 'O':
+                dfs(0, col)
+            if board[n - 1][col] == 'O':
+                dfs(n - 1, col)
+        
+        # Follow through the whole board and flip all 'R' cells back into 'O' and all 'O' cell to 'X'
+        # since they're unreacheable from the board located 'O' cell if any
+        for row in range(n):
+            for col in range(m):
+                if board[row][col] == 'O':
+                    board[row][col] = 'X'
+                elif board[row][col] == 'R':
+                    board[row][col] = 'O'
