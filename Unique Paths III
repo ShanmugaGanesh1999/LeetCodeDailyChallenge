@@ -1,0 +1,130 @@
+Java
+
+class Solution {
+    public int uniquePathsIII(int[][] grid) {
+        int zero = 0; // Count the 0's
+        int sx = 0; // starting x index
+        int sy = 0; // starting y index
+        
+        for(int r = 0; r < grid.length; r++){ // r = row
+            for(int c = 0; c < grid[0].length; c++){ // c = column
+                if(grid[r][c] == 0) zero++; // if current cell is 0, count it.
+                else if(grid[r][c] == 1){
+                    sx = r; // starting x co-ordinate
+                    sy = c; // starting y co-ordinate
+                }
+            }
+        }
+        return dfs(grid, sx, sy, zero);
+    }
+    public int dfs(int grid[][], int x, int y, int zero){
+        // Base Condition
+        if(x < 0 || y < 0 || x >= grid.length || y >= grid[0].length || grid[x][y] == -1){
+            return 0;
+        }
+        if(grid[x][y] == 2){
+            return zero == -1 ? 1 : 0; // Why zero = -1, because in above example we have 9 zero's. So, when we reach the final cell we are covering one cell extra then the zero count. 
+            // If that's the case we find the path and return '1' otherwise return '0';
+        }
+        grid[x][y] = -1; // mark the visited cells as -1;
+        zero--; // and reduce the zero by 1
+        
+        int totalPaths = dfs(grid, x + 1, y, zero) + // calculating all the paths available in 4 directions
+            dfs(grid, x - 1, y, zero) + 
+            dfs(grid, x, y + 1, zero) + 
+            dfs(grid, x, y - 1, zero);
+        
+        // Let's say if we are not able to count all the paths. Now we use Backtracking over here
+        grid[x][y] = 0;
+        zero++;
+        
+        return totalPaths; // if we get all the paths, simply return it.
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int res = 0, empty = 1;
+    void dfs(vector<vector<int>>& grid, int x, int y, int count) {
+        if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size() || grid[x][y] == -1) return;
+        
+        if (grid[x][y] == 2) {
+            if(empty == count) res++; 
+            return;
+        }
+        
+        grid[x][y] = -1;
+        
+        dfs(grid, x+1, y, count+1);
+        dfs(grid, x-1, y, count+1);
+        dfs(grid, x, y+1, count+1);
+        dfs(grid, x, y-1, count+1);
+        
+        grid[x][y] = 0;
+        
+    }
+    
+    int uniquePathsIII(vector<vector<int>>& grid) {
+        int start_x, start_y;
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                if (grid[i][j] == 1) start_x = i, start_y = j;
+                else if (grid[i][j] == 0) empty++;
+            }
+        }
+        
+        dfs(grid, start_x, start_y, 0);
+        return res;
+    }
+};
+
+Python
+
+class Solution:
+    def uniquePathsIII(self, grid: List[List[int]]) -> int:
+		# first, prepare the starting and ending points
+		# simultaneously, record all the non-obstacle coordinates
+        start = end = None
+        visit = set()
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j] == 0:
+                    visit.add((i, j))
+                elif grid[i][j] == 1:
+                    start = (i, j)
+                elif grid[i][j] == 2:
+                    end = (i, j)
+                    visit.add((i, j))
+        
+        def backtrack(x, y, visit):
+            if (x, y) == end:
+				# implement success condition: valid only if there are no more coordinates to visit
+                return len(visit) == 0
+            result = 0  # assume no valid paths by default
+			
+			# we need to try every possible path from this coordinate
+            if (x-1, y) in visit:
+				# the coordinate directly above this one is non-obstacle, try that path
+                visit.remove((x-1, y))  # first, note down the 'visited status' of the coordinate
+                result += backtrack(x-1, y, visit)  # then, DFS to find all valid paths from that coordinate
+                visit.add((x-1, y))  # last, reset the 'visited status' of the coordinate
+            if (x+1, y) in visit:
+				# the coordinate directly below this one is non-obstacle, try that path
+                visit.remove((x+1, y))
+                result += backtrack(x+1, y, visit)
+                visit.add((x+1, y))
+            if (x, y-1) in visit:
+				# the coordinate directly to the left of this one is non-obstacle, try that path
+                visit.remove((x, y-1))
+                result += backtrack(x, y-1, visit)
+                visit.add((x, y-1))
+            if (x, y+1) in visit:
+				# the coordinate directly to the right of this one is non-obstacle, try that path
+                visit.remove((x, y+1))
+                result += backtrack(x, y+1, visit)
+                visit.add((x, y+1))
+            return result
+        
+        return backtrack(start[0], start[1], visit)  # we start from the starting point, backtrack all the way back, and consolidate the result
