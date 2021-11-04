@@ -1,0 +1,295 @@
+C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        return dfs(root, false);
+    }
+    int dfs(TreeNode* root, bool isLeft) {
+        if(!root) return 0;
+        if(!root -> left && !root -> right) return isLeft ? root -> val : 0;
+        return dfs(root -> left, true) + dfs(root -> right, false);
+    }
+};
+
+or
+
+class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        stack<pair<TreeNode*, bool>> s;
+        s.push({root, false});
+        int ans = 0;
+        while(s.size()) {
+            auto [cur, isLeft] = s.top(); s.pop();
+            if(!cur -> left && !cur -> right && isLeft) 
+                ans += cur -> val;
+            if(cur -> right) s.push({cur -> right, false});
+            if(cur -> left) s.push({cur -> left, true});
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        queue<pair<TreeNode*, bool>> q;
+        q.push({root, false});
+        int ans = 0;
+        while(q.size()) {
+            auto [cur, isLeft] = q.front(); q.pop();
+            if(!cur -> left && !cur -> right && isLeft) 
+                ans += cur -> val;
+            if(cur -> right) q.push({cur -> right, false});
+            if(cur -> left) q.push({cur -> left, true});
+        }
+        return ans;
+    }
+};
+
+or
+
+ class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        int ans = 0;
+        bool isLeft = false;
+        while(root) {
+            if(root -> left) {
+                auto pre = root -> left;
+                isLeft = true;
+                while(pre -> right && pre -> right != root) 
+                    pre = pre -> right, isLeft = false;
+                if(!pre -> right) {
+                    pre -> right = root;
+                    root = root -> left;
+                } else {
+                    pre -> right = nullptr;
+                    if(!pre -> left && isLeft) ans += pre -> val;
+                    root = root -> right;
+                }
+            } 
+			else 
+                root = root -> right;
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    // global variable for result
+    int res = 0;
+    
+    void dfs(TreeNode* root, int direction){
+        if(root == NULL) return;
+        
+        // leaf node
+        if(root->left == NULL && root->right == NULL){
+            
+            // left leaf
+            if(direction == 0)
+                res += root->val;
+            
+            return;
+        }
+        
+        dfs(root->left, 0); // 0 means left direction
+        dfs(root->right, 1); // 1 means right direction
+    }
+    
+    int sumOfLeftLeaves(TreeNode* root) {
+        dfs(root, -1);
+        return res;
+    }
+};
+
+Java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+		
+		// Checking if left Node is a leaf node
+        if (root.left != null && root.left.left == null && root.left.right == null) {
+            return root.left.val + sumOfLeftLeaves(root.right);
+        }
+
+		// Exploring the tree further.
+        return sumOfLeftLeaves(root.left) + sumOfLeftLeaves(root.right);
+    }
+}
+
+or
+
+class Solution {
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+		
+		// In this solution we will also save if the node is a left node or not.
+        Deque<Pair<TreeNode, Boolean>> stack = new ArrayDeque<>();
+        stack.push(new Pair<>(root, false));
+
+        int result = 0;
+
+        while (!stack.isEmpty()) {
+            Pair<TreeNode, Boolean> cur = stack.pop();
+            TreeNode node = cur.getKey();
+            boolean isLeft = cur.getValue();
+
+            if (isLeft && node.left == null && node.right == null) {
+                result += node.val;
+                continue;
+            }
+
+            if (node.right != null) {
+                stack.push(new Pair<>(node.right, false));
+            }
+            if (node.left != null) {
+                stack.push(new Pair<>(node.left, true));
+            }
+        }
+
+        return result;
+    }
+}
+
+or
+
+class Solution {
+    public int sumOfLeftLeaves(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+		// In this solution we will also save if the node is a left node or not.
+        Queue<Pair<TreeNode, Boolean>> queue = new LinkedList<>();
+        queue.offer(new Pair<>(root, false));
+
+        int result = 0;
+
+        while (!queue.isEmpty()) {
+            Pair<TreeNode, Boolean> cur = queue.poll();
+            TreeNode node = cur.getKey();
+            boolean isLeft = cur.getValue();
+
+            if (isLeft && node.left == null && node.right == null) {
+                result += node.val;
+                continue;
+            }
+
+            if (node.left != null) {
+                queue.offer(new Pair<>(node.left, true));
+            }
+            if (node.right != null) {
+                queue.offer(new Pair<>(node.right, false));
+            }
+        }
+
+        return result;
+    }
+}
+
+Python
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:
+        s, ans = deque([(root, False)]), 0
+        while s:
+            cur, isLeft = s.pop()
+            if not cur.left and not cur.right and isLeft:
+                ans = ans + cur.val
+            if cur.right: 
+                s.append((cur.right, False))
+            if cur.left: 
+                s.append((cur.left, True))
+        return ans
+
+        
+or
+
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:
+        def dfs(root, isLeft):
+            if not root: return 0
+            if not root.left and not root.right:
+                return root.val if isLeft else 0
+            return dfs(root.left, True) + dfs(root.right, False)
+        return dfs(root, False)
+        
+or
+
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:
+        q, ans = deque([(root, False)]), 0
+        while q:
+            cur, isLeft = q.popleft()
+            if not cur.left and not cur.right and isLeft:
+                ans = ans + cur.val
+            if cur.right:
+                q.append((cur.right, False))
+            if cur.left: 
+                q.append((cur.left, True))
+        return ans
+        
+or
+
+class Solution:
+    def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:
+        ans, isLeft = 0, False
+        while root:
+            if root.left:
+                pre, isLeft = root.left, True
+                while pre.right and pre.right != root:
+                    pre, isLeft = pre.right, False
+                if not pre.right:
+                    pre.right = root
+                    root = root.left
+                else:
+                    pre.right = None
+                    if not pre.left and isLeft:
+                        ans = ans + pre.val
+                    root = root.right
+            else:
+                root = root.right
+        return ans
