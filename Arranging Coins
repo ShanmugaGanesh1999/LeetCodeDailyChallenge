@@ -1,0 +1,142 @@
+C++
+
+class Solution {
+public:
+    
+    bool canWeMake(long long int row, long long int coinsHave){
+        long long int coinsNeeded = (row * (row+1))/2; // here int*int can be greater than int
+        return coinsNeeded <= coinsHave;
+    }
+    
+    int arrangeCoins(int n) {
+        long long int low{}, high = 65536;
+        int res{};
+        
+        while(low <= high){
+            
+            int mid = low + (high-low)/2;
+            
+            if(canWeMake(mid, n)){
+                res = mid;
+                low = mid+1;
+            }
+            else high = mid-1;
+        }
+        
+        return res;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        int rows = 1;
+        while(n > 0) {     // iterate till we have coins left
+            rows++;        // move to next row
+            n -= rows;     // fill current row by subtracting from available coins
+        }
+        return rows - 1;  
+    }
+};
+
+or
+
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        int l = 1, r = n, ans;
+		long rows, coinsNeeded;
+        while(l <= r) {
+            rows = l + ((r-l) >> 1);                            // finding mid of range [l, r]
+            coinsNeeded = (rows * (rows + 1)) >> 1;             // coins needed for 'rows' number of row
+            if(coinsNeeded <= n) l = rows + 1, ans = rows;      // if available coins are sufficient
+            else r = rows - 1;                                  // coins insufficient, eliminate the half greater than rows
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        return sqrt(2l*n + .25) - .5;
+    }
+};
+
+Java
+
+class Solution {
+    public int arrangeCoins(int n) {
+        int i = 1; // which row we are on
+		while(n > 0){ // checking to see if we have used all our coins
+			i++; // increasing our row
+			n = n-i; // adding coins to our row
+		}
+		return i-1; // we return our current row minus one because the last row is our completed row
+    }
+}
+
+or
+
+class Solution {
+    public int arrangeCoins(int n) {
+        long left = 0; // we use "long" because we may get an integer overflow
+		long right = n;
+		while(left <= right){
+			long pivot = left + (right - left) / 2;
+			long coinsUsed = pivot * (pivot + 1)/2;
+			if(coinsUsed == n){
+				return (int)pivot;
+			}
+			if(n < coinsUsed){
+				right = pivot-1;
+			}
+			else{
+				left = pivot + 1;
+			}
+		}
+		return (int)right; // cast as an "int" because it was initiliazed as a "long"
+    }
+}
+
+or
+
+class Solution {
+    public int arrangeCoins(int n) {
+        return (int)(Math.sqrt(2 * (long)n + 0.25) - 0.5); // cast "n" to "long" to avoid integer overflow
+    }
+}
+
+Python
+
+class Solution:
+    def arrangeCoins(self, n: int) -> int:
+        return int(math.sqrt(2*n + .25) - .5)
+        
+or
+
+class Solution:
+    def arrangeCoins(self, n: int) -> int:
+        l, r, ans = 1, n, 0
+        while l <= r:
+            rows = (l + r) >> 1
+            coinsNeeded = rows * (rows + 1) >> 1
+            if coinsNeeded <= n:
+                l, ans = rows + 1, rows
+            else:
+                r = rows - 1
+        return ans
+        
+or
+
+class Solution:
+    def arrangeCoins(self, n: int) -> int:
+        rows = 1
+        while n > 0:
+            rows += 1
+            n -= rows
+        return rows - 1
