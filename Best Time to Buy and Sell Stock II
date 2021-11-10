@@ -1,0 +1,112 @@
+Java
+
+class Solution {
+    public int maxProfit(int[] prices) {
+		// We need prices for 2 days at least to find the profit.
+        if (prices == null || prices.length <= 1) {
+            return 0;
+        }
+
+        int totalProfit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            // Checking if we can profit with previous day's price.
+            // If yes, then we buy on previous day and sell on current day.
+            // Add all such profits to get the total profit.
+            if (prices[i - 1] < prices[i]) {
+                totalProfit += prices[i] - prices[i - 1];
+            }
+        }
+
+        return totalProfit;
+    }
+}
+
+or
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length <= 1) {
+            return 0;
+        }
+
+        int maxProfitHere = 0;
+        int maxProfitSoFar = 0;
+        for (int i = 1; i < prices.length; i++) {
+            maxProfitHere = Math.max(0, maxProfitHere + prices[i] - prices[i - 1]);
+            maxProfitSoFar = Math.max(maxProfitSoFar, maxProfitHere);
+        }
+
+        return maxProfitSoFar;
+    }
+}
+
+or
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length <= 1) {
+            return 0;
+        }
+
+        int buy1 = -prices[0];
+        int sell1 = buy1 + prices[0];
+        int buy2 = sell1 - prices[0];
+        int sell2 = buy2 + prices[0];
+
+        for (int i = 1; i < prices.length; i++) {
+            // The maximum money left after buying 1st stock.
+            buy1 = Math.max(buy1, -prices[i]);
+
+            // The maximum money left after selling 1st stock.
+            sell1 = Math.max(sell1, buy1 + prices[i]);
+
+            // The maximum money left after buying 2nd stock.
+            buy2 = Math.max(buy2, sell1 - prices[i]);
+
+            // The maximum money left after selling 2nd stock.
+            sell2 = Math.max(sell2, buy2 + prices[i]);
+        }
+
+        return Math.max(sell1, sell2);
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int maxProfit(vector<int>& P) {
+        int n = size(P), i = 1, profit = 0, buy, sell;
+        while(i < n) {
+            // find lowest price to buy - local valley 📉
+            for(buy = P[i-1]; i < n && P[i] < buy; i++) 
+                buy = P[i];    
+            if(i >= n) break;      // break if no more days remaining
+            // find highest price to sell - local peak  📈 
+            for(sell = P[i]; i < n && sell < P[i]; i++)
+                sell = P[i];    
+            profit += sell - buy; // keep adding the 💸
+            i++;
+        }
+        return profit;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int maxProfit(vector<int>& P) {
+        int profit = 0;
+        for(int i = 1; i < size(P); i++)
+            if(P[i] > P[i-1])              // yesterday was valley, today is peak
+                profit += P[i] - P[i-1];   // buy yesterday, sell today
+        return profit;
+    }
+};
+
+Python
+
+class Solution:
+    def maxProfit(self, P: List[int]) -> int:
+        return sum(P[i]-P[i-1] if P[i] > P[i-1] else 0 for i in range(1, len(P)))
