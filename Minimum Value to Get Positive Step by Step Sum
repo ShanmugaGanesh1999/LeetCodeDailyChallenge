@@ -1,0 +1,58 @@
+Java
+
+class Solution {
+    public int minStartValue(int[] nums) {
+        if (nums == null) {
+            throw new IllegalArgumentException("Input array is null");
+        }
+
+        int minVal = 0;
+        int prefixSum = 0;
+
+        for (int n : nums) {
+            prefixSum += n;
+            // Find the minimum prefix sum which is <= zero, as it will help us to find the lowest negative value.
+            minVal = Math.min(minVal, prefixSum);
+        }
+
+        return 1 - minVal;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int minStartValue(vector<int>& A) {
+        int ans = 0, sum = 0;
+        for(auto el : A)
+            sum += el, ans = min(ans, sum);
+        return -ans+1;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int minStartValue(vector<int>& A) {
+        partial_sum(begin(A), end(A), begin(A));
+        return -min(0, *min_element(begin(A), end(A))) + 1;
+    }
+};
+
+Python
+
+class Solution:
+    def minStartValue(self, A: List[int]) -> int:
+        return -min(0, min(accumulate(A))) + 1
+
+or
+
+class Solution:
+    def minStartValue(self, A: List[int]) -> int:
+        Sum, ans = 0, 0
+        for el in A:
+            Sum = Sum + el
+            ans = min(ans, Sum)
+        return -ans + 1
