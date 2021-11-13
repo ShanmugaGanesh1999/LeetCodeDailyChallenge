@@ -1,0 +1,152 @@
+Java
+
+class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+        if (temperatures == null) {
+            throw new IllegalArgumentException("Input is null");
+        }
+
+        int len = temperatures.length;
+        int[] result = new int[len];
+        if (len <= 1) {
+            return result;
+        }
+
+        // We are populating the result array in the reverse order.
+        for (int i = len - 2; i >= 0; i--) {
+            // We are now solving for ith temperature. We have already solved for everything
+            // on the right side of index i.
+
+            int k = i + 1;
+            while (temperatures[i] >= temperatures[k] && result[k] != 0) {
+                // We have found a lower temperature, we can just move pointer by the days
+                // stored at result[k] to search for a higher temperature.
+                // All temperatures between k and k + result[k] are smaller than temperatures[k]
+                // so we can safely move to k + result[k].
+                k += result[k];
+            }
+            if (temperatures[i] < temperatures[k]) {
+                // If a higher temperature is found, the difference of indexes will give us the
+                // number days to get the higher temperature.
+                result[i] = k - i;
+            }
+        }
+
+        return result;
+    }
+}
+
+or
+
+class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+        if (temperatures == null) {
+            throw new IllegalArgumentException("Input array is null");
+        }
+
+        int len = temperatures.length;
+        int[] result = new int[len];
+        if (len <= 1) {
+            return result;
+        }
+
+        Deque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < len; i++) {
+            while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {
+                int idx = stack.pop();
+                result[idx] = i - idx;
+            }
+            stack.push(i);
+        }
+
+        return result;
+    }
+}
+
+C++
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& T) {
+        stack<int> s;
+        vector<int> ans(size(T));
+        for(int cur = 0; cur < size(T); cur++) {
+            while(size(s) and T[cur] > T[s.top()]) {    // pop till current temp < stack's top's temp. This maintains monotonic stack
+                ans[s.top()] = cur - s.top();           // cur day will be next warmer day for each element that's popped
+                s.pop();
+            }
+            s.push(cur);                                // push onto stack to find next warmer day for cur later on
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& T) {
+        stack<int> s;
+        vector<int> ans(size(T));
+        for(int cur = size(T)-1; cur >= 0; cur--) {
+		// pop till current temp > stack top's temp. All popped element can never be next warmer day for any other elements
+            while(size(s) and T[s.top()] <= T[cur]) s.pop(); 
+            ans[cur] = s.empty() ? 0 : s.top() - cur;   // no warmer element exists if stack empty. Otherwise, assign distance between stack's top and cur day
+            s.push(cur);                                // push onto stack as it can potentially be next warmer day for rest elements
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& T) {
+        vector<int> ans(size(T));
+        for(int n = size(T), cur = n-2; cur >= 0; cur--) {
+            int next = cur + 1;                         // start at next day & iterate till you find next warmer day (NWD)
+            while(next < n && T[next] <= T[cur])        // jump till you reach NWD
+                next += ans[next] ? ans[next] : n;      // ?: operator just to make sure that if we reach ans[next], we know NWD doesnt exist, so jump direct to end
+            if(next < n) ans[cur] = next-cur;           // if next > n, NWD doesnt exist. Otherwise, assign distance to NWD
+        }
+        return ans;
+    }
+};
+
+Python
+
+class Solution:
+    def dailyTemperatures(self, T):
+        ans, n = [0]*len(T), len(T)
+        for cur in range(n-2,-1,-1):
+            nxt = cur+1
+            while nxt < n and T[nxt] <= T[cur]:
+                nxt += ans[nxt] if ans[nxt] else n
+            ans[cur] = nxt-cur if nxt < n else 0
+        return ans
+        
+or
+
+class Solution:
+    def dailyTemperatures(self, T):
+        ans, s = [0]*len(T), deque()
+        for cur in range(len(T)-1,-1,-1):
+            while s and T[s[-1]] <= T[cur]:
+                s.pop()
+            ans[cur] = s[-1] - cur if s else 0
+            s.append(cur)
+        return ans
+        
+or
+
+class Solution:
+    def dailyTemperatures(self, T):
+        ans, s = [0]*len(T), deque()
+        for cur, cur_tmp in enumerate(T):
+            while s and cur_tmp > T[s[-1]]:
+                ans[s[-1]] = cur - s[-1]
+                s.pop()
+            s.append(cur)
+        return ans
+         
