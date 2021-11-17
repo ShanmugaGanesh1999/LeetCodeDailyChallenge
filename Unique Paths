@@ -1,0 +1,117 @@
+C++
+
+class Solution {
+public:
+    int dp[101][101]{};
+    int uniquePaths(int m, int n, int i = 0, int j = 0) {
+        if(i >= m || j >= n) return 0;
+        if(i == m-1 && j == n-1) return 1;
+        if(dp[i][j]) return dp[i][j];
+        return dp[i][j] = uniquePaths(m, n, i+1, j) + uniquePaths(m, n, i, j+1);
+    }
+};
+
+or
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(2, vector<int>(n,1));
+        for(int i = 1; i < m; i++)
+            for(int j = 1; j < n; j++)
+                dp[i & 1][j] = dp[(i-1) & 1][j] + dp[i & 1][j-1];   // <- &  used to alternate between rows
+        return dp[(m-1) & 1][n-1];
+    }
+};
+
+or
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        long ans = 1;
+        for(int i = m+n-2, j = 1; i >= max(m, n); i--, j++) 
+            ans = (ans * i) / j;
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n));
+        return dfs(dp, 0, 0);
+    }
+    int dfs(vector<vector<int>>& dp, int i, int j) {
+        if(i >= size(dp)   || j >= size(dp[0]))   return 0;     // out of bounds - invalid
+        if(i == size(dp)-1 && j == size(dp[0])-1) return 1;     // reached end - valid path
+        if(dp[i][j]) return dp[i][j];                           // directly return if already calculated
+        return dp[i][j] = dfs(dp, i+1, j) + dfs(dp, i, j+1);    // store the result in dp[i][j] and then return
+    }
+};
+
+or
+
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, 1));
+        for(int i = 1; i < m; i++)
+            for(int j = 1; j < n; j++)
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];   // sum of unique paths ending at adjacent top and left cells
+        return dp[m-1][n-1];         // return unique paths ending at cell (m-1, n-1)
+    }
+};
+
+Java
+
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] a = new int[m][n];
+        boolean[][] visited = new boolean[m][n];
+        return findPaths(a, 0, 0, visited);
+    }
+    public static int findPaths(int[][] a, int i, int j, boolean[][] visited){
+        visited[i][j] = true;
+        if(i == a.length-1 && j == a[0].length-1){
+            visited[i][j] = false;
+            return 1;
+        }
+        int p1 = 0, p2 = 0;
+        if(j < a[0].length-1 && !visited[i][j+1] && a[i][j+1] == 0)
+            p1 = findPaths(a, i, j+1, visited);
+        else if(j < a[0].length-1 && a[i][j+1] > 0)
+            p1 = a[i][j+1];
+        
+        if(i < a.length-1 && !visited[i+1][j] && a[i+1][j] == 0)
+            p2 = findPaths(a, i+1, j, visited);
+        else if(i < a.length-1 && a[i+1][j] > 0)
+            p2 = a[i+1][j];
+            
+        a[i][j] = p1+p2;
+        visited[i][j] = false;
+        return p1+p2;
+    }
+}
+
+Python
+
+class Solution:
+    def uniquePaths(self, m, n):
+        @cache
+        def dfs(i, j):
+            if i >= m or j >= n:      return 0
+            if i == m-1 and j == n-1: return 1
+            return dfs(i+1, j) + dfs(i, j+1)
+        return dfs(0, 0)
+        
+or
+
+class Solution:
+    def uniquePaths(self, m, n):
+        dp = [[1]*n for i in range(m)]
+        for i, j in product(range(1, m), range(1, n)):
+            dp[i][j] = dp[i-1][j] + dp[i][j-1]
+        return dp[-1][-1]
