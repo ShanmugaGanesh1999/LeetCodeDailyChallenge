@@ -1,0 +1,105 @@
+Java
+
+class Solution {
+
+public int hammingDistance(int x, int y) {
+    int res = 0;
+    while(x != 0 || y != 0){
+        if(((x&1) ^ (y&1)) == 1)   // extract the last bit of x and y and XOR them
+            res++;                 // if it is equals to 1 then inc the res
+        x = x>>1;
+        y = y>>1;
+    }
+    return res;
+}
+
+}
+
+C++
+
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        bitset<32> xb(x), yb(y);
+        int ans = 0;
+        for(int i = 0; i < 32; i++)
+            ans += xb[i] != yb[i];
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        int ans = 0;
+        for(int i = 0; i < 32; i++)
+            ans += (x >> i & 1) != (y >> i & 1);
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        int Xor = x ^ y, ans = 0;
+        for(int i = 0; i < 32; i++) 
+            ans += (Xor & (1 << i)) != 0;
+        // other ways -
+        // ans = bitset<32>(Xor).count()
+        // ans = __builtin_popcount(Xor);
+		// ans = popcount(Xor)            // only since C++20
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        int Xor = x ^ y, ans = 0;
+        while(Xor) {
+            ans++;
+            Xor &= Xor-1;
+        }
+        return ans;
+    }
+};
+
+Python
+
+class Solution:
+    def hammingDistance(self, x, y):
+        Xor, ans = x ^ y, 0
+        while Xor:
+            ans += 1
+            Xor &= Xor-1
+        return ans
+
+or
+
+class Solution:
+    def hammingDistance(self, x, y):
+        Xor = x ^ y
+        return sum(Xor & 1 << i != 0 for i in range(32))
+        # other ways -
+        # return bin(Xor).count('1')
+		# return Xor.bit_count()          # only since python 3.10
+
+or
+
+class Solution:
+    def hammingDistance(self, x, y):
+        return sum(x >> i & 1 != y >> i & 1 for i in range(32))
+
+or
+
+class Solution:
+    def hammingDistance(self, x, y):
+        xb, yb, ans = f'{x:032b}', f'{y:032b}', 0
+        return sum(i != j for i, j in zip(xb, yb))
+
