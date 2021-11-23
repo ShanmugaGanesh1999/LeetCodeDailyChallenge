@@ -1,0 +1,208 @@
+Java
+
+class Solution {
+    public int largestComponentSize(int[] A) {
+        
+        Map<Integer,Integer> map = new HashMap<>();
+        
+        int max = Arrays.stream(A).max().getAsInt();
+        
+        UF uf = new UF(max);
+        
+        for(int a:A) {
+            for(int num=2;num<=Math.sqrt(a);num++) {
+                
+                if(a%num==0) {
+                    uf.union(a,num);
+                    uf.union(a,a/num);
+                }
+                
+            }
+        }
+        
+        int ans = 0;
+        
+        for(int a: A) {
+            int m = uf.find(a);
+            if(map.containsKey(m)) {
+                map.put(m,map.get(m)+1);
+            } else {
+                map.put(m,1);
+            }
+            
+            ans = Math.max(ans,map.get(m));
+        }
+        
+        return ans;
+    }
+}
+
+
+class UF {
+    int parent[];
+    int rank[];
+    
+    UF(int max) {
+        this.parent = new int[max+1];
+        this.rank = new int[max+1];
+        
+        for(int i=0;i<=max;i++) {
+            parent[i] = i;
+        }
+    }
+    
+    public void union(int u,int v) {
+        
+        int pau = find(u);
+        int pav = find(v);
+        
+        if(pau==pav) {
+            return;
+        } 
+        
+        if(rank[pau]<rank[pav]) {
+            parent[pau]= pav;
+        } else if(rank[pau]>rank[pav]) {
+            parent[pav]= pau;
+        } else {
+            parent[pau] = pav;
+            rank[pav]++;
+        }
+        
+    }
+    
+    
+    public int find(int u) {
+        while(u!=parent[u]) {
+            parent[u]= parent[parent[u]];
+            u= parent[u];
+        }
+        
+        return u;
+    } 
+             
+             
+}       
+
+C++
+
+class Solution {
+public:
+    vector<int> parent;
+    vector<int> rank;
+    
+    int find(int x){
+        if(parent[x]==x) return x;
+        return parent[x] = find(parent[x]);
+    }
+    
+    void unionDsu(int x, int y){
+        int _x = find(x), _y = find(y);
+        if(_x == _y) return;
+        if (rank[_x] < rank[_y]){
+            parent[_x] = _y;
+        }else if(rank[_x] > rank[_y]){
+            parent[_y] = _x;
+        }else{
+            parent[_y] = _x;
+            rank[_x]+=1;
+        }
+    }
+    
+    int largestComponentSize(vector<int>& nums) {
+        int size = *max_element(nums.begin(), nums.end());
+        parent.resize(size+1);
+        for(int i=0; i<size+1; ++i) parent[i]=i;
+        rank.resize(size+1,1);
+        
+        for(int i=0; i<nums.size(); ++i){
+            for(int j=2; j<=sqrt(nums[i]); ++j){
+                if(nums[i]%j==0){
+                    unionDsu(nums[i], j);
+                    unionDsu(nums[i]/j, j);
+                }
+            }
+        }
+        
+        unordered_map<int,int> map;
+        for(int i=0; i<nums.size(); ++i){
+            int _x = find(nums[i]);
+            map[_x]++;
+        }
+        
+        int maxCount = 0;
+        for(auto &m : map) maxCount = max(maxCount, m.second);
+        
+        return maxCount;
+    }
+};
+
+Python
+
+class DSU:
+    def __init__(self, n):
+        self.parent = [i for i in range(n)]
+        self.ranks = [1 for i in range(n)]
+    
+    def find(self, u):
+        if self.parent[u] == u:
+            return u
+        self.parent[u] = self.find(self.parent[u])
+        return self.parent[u]
+    
+    def merge(self, u, v):
+        u, v = self.find(u), self.find(v)
+        if u == v:
+            return
+        
+        if self.ranks[u] < self.ranks[v]:
+            u, v = v, u
+        self.ranks[u] += self.ranks[v]
+        self.parent[v] = u
+
+
+class PrimeFactorizer:
+    def __init__(self, mx):
+        self.spf = [i for i in range(mx)]
+        self.mx = mx
+        self.sieve()
+    
+    def sieve(self):
+        limit = int(sqrt(self.mx)) + 1
+        
+        for i in range(2, limit):
+            if self.spf[i] != i:
+                continue
+            for j in range(i*i, self.mx, i):
+                if self.spf[j] == j:
+                    self.spf[j] = i
+    
+    def getPrimes(self, n):
+        primes = []
+        
+        while n > 1:
+            prime = self.spf[n]
+            primes.append(prime)
+            while n % prime == 0:
+                n //= prime
+        
+        return primes
+
+
+class Solution:
+    def largestComponentSize(self, nums: List[int]) -> int:
+        max_num = max(nums)
+        mp = defaultdict(list)
+        
+        dsu = DSU(len(nums))
+        prime_factorizer = PrimeFactorizer(max_num + 1)
+        
+        for idx, num in enumerate(nums):
+            for prime in prime_factorizer.getPrimes(num):
+                mp[prime].append(idx)
+        
+        for prime in mp:
+            for i in range(1, len(mp[prime])):
+                dsu.merge(mp[prime][i], mp[prime][i-1])
+        
+        return max(dsu.ranks)
