@@ -1,0 +1,109 @@
+Java
+
+class Solution {
+    public int searchInsert(int[] arr, int target) {
+        
+        int index = Arrays.binarySearch(arr,target);
+        return index<0 ? -(index+1) : index;
+    }
+}
+
+or
+
+class Solution {
+    public int searchInsert(int[] arr, int target) {
+        
+        int lo = 0, hi = arr.length-1;
+        
+        while(lo<=hi){
+            
+            int mid = lo+(hi-lo)/2;
+            
+            if(arr[mid]==target){
+                return mid;
+            }
+            else if(arr[mid]<target){
+                lo = mid+1;
+            }
+            else{
+                hi = mid-1;
+            }
+        }
+        return lo;
+    }
+}
+
+
+C++
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int T) {
+        return search(nums, 0, size(nums)-1, T);
+    }
+    int search(vector<int> A, int L, int R, int T) {
+        if(L > R) return L;
+        int mid = (L + R) / 2;
+        if(A[mid] == T) return mid;
+        if(A[mid] < T) return search(A, mid + 1, R, T);
+        return search(A, L, mid - 1, T);
+    }
+};
+
+or
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int T) {
+        int L = 0, R = size(nums)-1, mid, ans = size(nums);
+        while(L <= R) {
+            mid = (L + R) >> 1;
+            if(nums[mid] < T) 
+                L = mid + 1;
+            else R = mid - 1, ans = mid;
+        }
+        return ans;
+    }
+};
+
+or
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int T) {
+        return lower_bound(begin(nums), end(nums), T) - begin(nums);
+		// lower_bound returns iterator to 1st element >= target element
+    }
+};
+
+Python
+
+class Solution:
+    def searchInsert(self, nums, T):
+        return bisect_left(nums, T)
+		# bisect_left returns 1st position where target must be inserted to keep list sorted
+
+or
+
+class Solution:
+    def searchInsert(self, nums, T):
+        L, R, ans = 0, len(nums)-1, len(nums)
+        while L <= R:
+            mid = (L + R) >> 1
+            if nums[mid] < T: 
+                L = mid + 1
+            else:
+                R, ans = mid - 1, mid
+        return ans
+        
+or
+
+class Solution:
+    def searchInsert(self, nums, T):
+        def search(L, R):
+            if L > R: return L
+            mid = (L + R) >> 1
+            if nums[mid] == T: return mid
+            return search(mid + 1, R) if nums[mid] < T else search(L, mid - 1)
+        return search(0, len(nums)-1)
+
