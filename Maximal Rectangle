@@ -1,0 +1,158 @@
+C++
+
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n=heights.size();
+        stack<int> s;
+        s.push(-1);
+        int maxArea=0;
+        int rm=0,lm=0;
+        for(int i=0;i<=n;i++)
+        {
+            int val = (i==n ? 0 : heights[i]);
+            while(s.top() != -1 and heights[s.top()]>=val)
+            {
+                rm = i;
+                int h = heights[s.top()];
+                s.pop();
+                lm = s.top();
+                maxArea = max(maxArea, h*(rm-lm-1));
+            }
+            s.push(i);
+        }
+        return maxArea;
+    }
+    int maximalRectangle(vector<vector<char>>& matrix){
+        int row = matrix.size();
+        if(row == 0) return 0;
+        int col = matrix[0].size();
+    
+        vector<int> v(col);
+        for(int i=0;i<col;i++)
+        {
+            v[i] = matrix[0][i] - '0';
+        }
+        int maxArea = 0;
+        maxArea = max(maxArea, largestRectangleArea(v));
+        for(int i=1;i<row;i++)
+        {
+            for(int j=0;j<col;j++)
+            {
+                if(matrix[i][j]=='1')
+                {
+                    v[j]++;
+                }
+                else
+                {
+                    v[j]=0;
+                }
+            }
+            maxArea = max(maxArea, largestRectangleArea(v));
+        }
+        return maxArea;
+    }
+};
+
+Java
+
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        if(matrix.length == 0)  return 0;
+        int maxArea = 0;
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int[] dp = new int[col];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                dp[j] = matrix[i][j] == '1' ? dp[j]+1 : 0;
+            }
+            //treating dp[j] as histogram, solving max area problem there and updating the max area
+            maxArea = Math.max(maxArea, findMaxAreaInHistogram(dp));
+        }
+        return maxArea;
+    }
+	//84. Largest Rectangle in Histogram code
+    public int findMaxAreaInHistogram(int[] dp){
+        int len = dp.length;
+        int maxArea = 0;
+        int[] left = new int[len];
+        int[] right = new int[len];
+        Stack<Integer> stack = new Stack<>();
+        //traversing left to right, finding right limit
+        for(int i=0;i<len;i++){
+            if(stack.isEmpty()){
+                stack.push(i);
+                left[i] = 0;
+            }else{
+                while(!stack.isEmpty() && dp[stack.peek()] >= dp[i])
+                    stack.pop();
+                left[i] = stack.isEmpty() ? 0 : stack.peek()+1;
+                stack.push(i);
+            }
+        }
+        //doing empty to stack
+        while(!stack.isEmpty())
+            stack.pop();
+        
+        //traversing right to left, find left limit
+        for(int i=len-1;i>=0;i--){
+            if(stack.isEmpty()){
+                stack.push(len-1);
+                right[i] = len - 1;
+            }else{
+                while(!stack.isEmpty() && dp[stack.peek()] >= dp[i])
+                    stack.pop();
+                right[i] = stack.isEmpty() ? len-1 : stack.peek()-1;
+                stack.push(i);
+            }
+        }
+        //traversing the array , caculating area
+        int[] area = new int[len];
+        for(int i=0;i<len;i++){
+            area[i] = (right[i] - left[i] + 1) * dp[i];
+            maxArea = Math.max(maxArea, area[i]);
+        }
+        return maxArea;
+    }
+}
+
+Python
+
+class Solution:
+    def maximalRectangle(self, m: List[List[str]]) -> int:
+        rows = len(m)
+        if not rows:
+            return 0
+        
+        cols = len(m[0])
+        
+        dp = [[0] * cols for _ in range(rows)]
+
+        for i in range(rows): # fill dp, value = number of 1s on the left side
+            acc = 0
+            
+            for j in range(cols):
+                if m[i][j] == "1":
+                    acc += 1
+                else:
+                    acc = 0
+                    
+                dp[i][j] = acc
+                
+        res = 0
+        
+        for i in reversed(range(rows)):
+            for j in reversed(range(cols)):
+                bSide, rSide = dp[i][j], 0 # bottom and right side
+                k = i
+                
+                while k > -1 and dp[k][j]:  # iterate all possible rectangles
+                    bSide = min(bSide, dp[k][j])
+                    rSide += 1
+
+                    res = max(res, bSide * rSide)
+                    
+                    k -= 1
+                
+        return res
