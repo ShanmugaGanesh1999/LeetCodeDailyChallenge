@@ -1,0 +1,101 @@
+Java
+
+class Solution {
+    public int rob(int[] nums) {
+        
+        int n = nums.length;
+        int dp[] = new int[n];
+        dp[0]=nums[0];
+        if(n==1){
+            return nums[0];
+        }
+        
+        dp[1] = Math.max(nums[0],nums[1]);
+        
+        for(int i=2;i<n;i++){
+            dp[i] = Math.max(nums[i]+dp[i-2],dp[i-1]);
+        }
+        
+        return dp[n-1];
+
+    }
+}
+
+or
+
+class Solution {
+    public int rob(int[] nums) {
+        
+        int n = nums.length;
+        
+        if(n == 1) return nums[0];
+        
+        int dp2=nums[0], dp1=Math.max(nums[0],nums[1]),dp=dp1;
+        
+        for(int i = 2; i < n; i++){
+            dp = Math.max(dp1, dp2 + nums[i]);
+            dp2 = dp1;
+            dp1 = dp;
+        }
+        return dp;
+
+    }
+}
+
+C++
+
+class Solution {
+public:
+    int rec(vector<int>& nums,int idx){
+        if(index>=nums.size())return 0;
+        return max(nums[idx]+rec(nums,idx+2),rec(nums,idx+1));
+    }
+    int rob(vector<int>& nums) {
+        return rec(nums,0);
+    }
+};
+
+or
+
+class Solution {
+public:
+   int rec(vector<int>& nums,int idx,vector<int>&dp){
+       if(idx>=nums.size())return 0;
+       if(dp[index]!=-1)return dp[idx];
+       return dp[index] = max(nums[idx]+DP(nums,idx+2,dp+1,dp));
+   }
+   int rob(vector<int>& nums) {
+       vector<int>dp(nums.size()+1,-1);
+       return rec(nums,0,dp);
+   }
+};
+
+or
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if(n == 1) return nums[0];
+        
+        int prev_ans2=nums[0], prev_ans=max(nums[0],nums[1]),curr_ans=prev_ans;
+        
+        for(int i = 2; i < n; i++){
+            curr_ans = max(prev_ans, prev_ans2 + nums[i]);
+            prev_ans2 = prev_ans;
+            prev_ans = curr_ans;
+        }
+        return curr_ans;
+    }
+};    
+
+Python
+
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        max1, max2 = 0, 0
+        
+        for n in nums:
+            max1, max2 = max2, max(max2, max1 + n)
+        
+        return max2
