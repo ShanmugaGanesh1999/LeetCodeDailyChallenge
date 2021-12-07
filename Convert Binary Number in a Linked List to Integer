@@ -1,0 +1,13 @@
+Java
+
+class Solution {
+    public int getDecimalValue(ListNode head) {
+        String s ="";
+        while(head!=null){
+            s=s+Integer.toString(head.val);
+            head=head.next;
+        }
+
+        return Integer.parseInt(s,2);   // we can pass the radix also in which the number has to be converted
+    }
+}
