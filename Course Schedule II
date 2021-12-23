@@ -1,0 +1,39 @@
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        HashMap<Integer, ArrayList<Integer>> adj = new HashMap<>();
+        int[] inDegree = new int[numCourses];
+        for ( int t[]: prerequisites ) {
+            ArrayList<Integer> list = adj.getOrDefault(t[1], new ArrayList<Integer>());
+            list.add(t[0]);
+            adj.put(t[1], list);
+            inDegree[t[0]]++;
+        }
+		// Adding courses that don't have any prerequisite to the queue.
+        Queue<Integer> queue = new LinkedList<>();
+        for ( int i=0; i<numCourses; i++ ) {
+            if ( inDegree[i]==0 ) {
+                queue.offer(i);
+            }
+        }
+		// If there are no such courses there is no way we would be able to do any course. (Forming a cycle)
+        if ( queue.isEmpty() ) {
+            return new int[] {};
+        }
+        int[] res = new int[numCourses];
+        int k = 0;
+        while ( !queue.isEmpty() ) {
+            int curr = queue.poll();
+            res[k++] = curr;
+            if ( adj.containsKey(curr) ) {
+                for ( int j: adj.get(curr) ) {
+                    inDegree[j]--;
+                    if ( inDegree[j]==0 ) {
+                        queue.offer(j);
+                    }
+                }
+            }
+        }
+		// Here we check if k==numCourses or not because if its not then we weren't able to traverse the whole graph which means we weren't able to complete all the courses
+        return k==numCourses ? res : new int[] {};
+    }
+}
