@@ -1,0 +1,14 @@
+class Solution {
+    public int removeDuplicates(int[] nums, int k) {
+	var n = nums.length;
+	if (n < k + 1)
+		return n;
+		
+	var i = k;
+	for (var j = i; j < n; j++)
+		if (nums[i - k] != nums[j])
+			nums[i++] = nums[j];
+			
+	return i;
+}
+}
